@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<base target="_top">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -362,19 +361,22 @@ function show(viewId){ document.querySelectorAll('.view').forEach(v=>v.classList
 function toast(msg, kind){ const t=document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3500); }
 function fmt(n){ return (n==null||isNaN(n))?'—':new Intl.NumberFormat('fr-FR').format(Math.round(n))+' XOF'; }
 
-/* ═══ API helper via google.script.run ═══ */
-function api(action, body){
-  return new Promise((resolve,reject)=>{
-    if(typeof google==='undefined' || !google.script){
-      // fallback for local preview (no Apps Script bridge)
-      resolve({ error: 'Hors contexte Apps Script — fonctionnera après déploiement.'});
-      return;
-    }
-    google.script.run
-      .withSuccessHandler(r=>resolve(r))
-      .withFailureHandler(e=>reject(e))
-      .api(action, body||{});
-  });
+/* ═══ API helper — fetch CORS vers backend Apps Script ═══ */
+const M3A_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyCr1QUqofrrxFHUeamWUtQrRKhmEIpBcgQ2srNsxxKZm_A2PyCJI-_7eW3-sgRYjVDIA/exec';
+async function api(action, body){
+  body = body || {};
+  try {
+    const r = await fetch(M3A_BACKEND_URL, {
+      method: 'POST',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, ...body })
+    });
+    if (!r.ok) return { error: 'HTTP ' + r.status };
+    return await r.json();
+  } catch(e) {
+    return { error: 'Erreur réseau : ' + e.message };
+  }
 }
 
 /* ═══ LOGIN ═══ */
