@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -144,6 +144,11 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
 .photo-modal.show{display:flex}
 .photo-modal img{max-width:100%;max-height:100%;border-radius:10px}
 .photo-modal .close{position:absolute;top:24px;right:32px;background:#fff;color:var(--navy);border:none;width:42px;height:42px;border-radius:50%;font-size:22px;cursor:pointer;font-weight:800}
+
+/* Saisie admin */
+.adm-st-btn{padding:8px 18px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:.15s;font-family:'Inter',sans-serif}
+.adm-st-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cfg-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:5px}
 </style>
 </head>
 <body>
@@ -177,6 +182,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       <button class="tab" data-view="histo">📋 Historique</button>
       <button class="tab" data-view="users">👥 Utilisateurs</button>
       <button class="tab" data-view="config">⚙ Paramètres</button>
+      <button class="tab" data-view="saisie">&#9998; Saisie</button>
     </div>
     <div class="actions">
       <button class="btn-ico" onclick="refresh()">↻ Rafraîchir</button>
@@ -353,6 +359,65 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
   </div>
 </div>
 
+
+    <!-- PANE SAISIE MANUELLE ADMIN -->
+    <div class="view-pane" id="pane-saisie" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <h1>&#9998; Saisie manuelle</h1>
+        <span class="tag blue" style="font-size:11px;padding:4px 10px">Admin only &mdash; Bypass champs obligatoires</span>
+      </div>
+      <div class="card" style="max-width:640px;margin:0 auto">
+        <div class="alert info" style="margin-bottom:16px">&#128221; Combler une journ&eacute;e manquante ou saisir des donn&eacute;es incompl&egrave;tes. Aucune photo requise. Saisie <strong>directement valid&eacute;e</strong> dans le journal.</div>
+        <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+          <div>
+            <label class="cfg-label">V&eacute;hicule *</label>
+            <select id="adm-vehicle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:#fff">
+              <option value="">&#8212; choisir &#8212;</option>
+            </select>
+          </div>
+          <div>
+            <label class="cfg-label">Date de la journ&eacute;e *</label>
+            <input type="date" id="adm-date" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label class="cfg-label">Statut</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            <button type="button" class="adm-st-btn active" data-st="ACTIF" onclick="admSetSt('ACTIF',this)">Travail</button>
+            <button type="button" class="adm-st-btn" data-st="REPOS" onclick="admSetSt('REPOS',this)">Repos</button>
+            <button type="button" class="adm-st-btn" data-st="PANNE" onclick="admSetSt('PANNE',this)">Panne</button>
+          </div>
+        </div>
+        <div id="adm-fields-actif">
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Km compteur</label><input type="number" id="adm-km" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="adm-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">CA Yango brut (XOF)</label><input type="number" id="adm-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Hors Yango (XOF)</label><input type="number" id="adm-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Versement cash (XOF)</label><input type="number" id="adm-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Solde Wallet (XOF)</label><input type="number" id="adm-wal" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Carburant (L)</label><input type="number" id="adm-cbl" placeholder="0" step="0.1" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Carburant (XOF)</label><input type="number" id="adm-cbm" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Note Yango (/ 5)</label><input type="number" id="adm-note" placeholder="ex: 4.8" step="0.1" min="0" max="5" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Incident</label><input type="text" id="adm-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label class="cfg-label">Notes propri&eacute;taire</label>
+            <textarea id="adm-notes" rows="2" placeholder="Notes internes..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div id="adm-result" style="margin-bottom:12px"></div>
+        <button class="btn btn-gold" id="adm-btn-submit" onclick="doAdminSubmit()" style="width:100%">&#10003; Valider la saisie</button>
+      </div>
+    </div>
 <!-- PHOTO MODAL -->
 <div class="photo-modal" id="photo-modal">
   <button class="close" onclick="$('photo-modal').classList.remove('show')">×</button>
@@ -433,10 +498,12 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   const v = t.dataset.view;
-  ['dash','valid','histo','users','config'].forEach(x=>$('pane-'+x).style.display='none');
+  ['dash','valid','histo','users','config','saisie'].forEach(x=>$('pane-'+x).style.display='none');
   $('pane-'+v).style.display='block';
   if(v==='users') loadUsers();
   if(v==='config') fillConfig();
+  if(v==='saisie'){ $('adm-date').value=todayISO(); loadAdminVehicles(); }
+  if(v==='saisie'){ $('adm-date').value = todayISO(); loadAdminVehicles(); }
   if(v==='valid') loadPending();
 }));
 
@@ -772,6 +839,69 @@ $('lg-pw').addEventListener('keydown',e=>{if(e.key==='Enter') doLogin();});
 checkSession();
 // Refresh automatique pending toutes les 2 minutes
 setInterval(()=>{ if(TOKEN) api('pending',{token:TOKEN}).then(r=>{ if(r.ok){ PENDING=r.pending; renderPendingBadge(); }}); }, 120000);
+
+/* ═══ SAISIE MANUELLE ADMIN ═══════════════════════════════════════════════ */
+let ADM_VEHICLES = [];
+
+async function loadAdminVehicles(){
+  if(ADM_VEHICLES.length > 0) { return; }
+  const r = await api('users_list', { token: TOKEN });
+  if(r.error || !r.users) return;
+  const seen = {};
+  r.users.forEach(u => {
+    if(u.role === 'driver' && u.vehicle_id && !seen[u.vehicle_id]){
+      seen[u.vehicle_id] = true;
+      ADM_VEHICLES.push({ id: u.vehicle_id, label: u.vehicle_id + ' — ' + (u.full_name || u.username) });
+    }
+  });
+  const sel = $('adm-vehicle');
+  if(sel) sel.innerHTML = '<option value="">— choisir —</option>' + ADM_VEHICLES.map(v=>`<option value="${v.id}">${v.label}</option>`).join('');
+}
+
+function admSetSt(st, btn){
+  document.querySelectorAll('.adm-st-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  $('adm-fields-actif').style.display = (st==='ACTIF') ? '' : 'none';
+}
+
+async function doAdminSubmit(){
+  const vehicle_id = $('adm-vehicle').value.trim();
+  const date = $('adm-date').value;
+  if(!vehicle_id){ toast('Sélectionne un véhicule','err'); return; }
+  if(!date){ toast('La date est obligatoire','err'); return; }
+  const statut = document.querySelector('.adm-st-btn.active')?.dataset.st || 'ACTIF';
+  const payload = {
+    vehicle_id, date, statut,
+    km:              $('adm-km').value   !== '' ? +$('adm-km').value   : null,
+    nb_courses_yango: +($('adm-nb').value  || 0),
+    ca_yango_brut:   +($('adm-ca').value  || 0),
+    ca_hors_yango:   +($('adm-ad').value  || 0),
+    vers_recu:       +($('adm-vers').value || 0),
+    wal_solde:       $('adm-wal').value  !== '' ? +$('adm-wal').value  : null,
+    carb_l:          +($('adm-cbl').value || 0),
+    carb_xof:        +($('adm-cbm').value || 0),
+    note_yango:      $('adm-note').value !== '' ? +$('adm-note').value : null,
+    incident:        $('adm-inc').value.trim(),
+    owner_notes:     ($('adm-notes').value.trim() || '[Saisie manuelle admin]')
+  };
+  const btn = $('adm-btn-submit');
+  btn.innerHTML = '<span class="loader"></span> Envoi…'; btn.disabled = true;
+  $('adm-result').innerHTML = '';
+  try {
+    const r = await api('admin_submit', { token: TOKEN, payload });
+    if(r.error){ $('adm-result').innerHTML = '<div class="alert danger">Erreur : '+r.error+'</div>'; return; }
+    $('adm-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">✅ Journée du '+date+' saisie et validée (#'+r.submission_id+')</div>';
+    ['adm-km','adm-nb','adm-ca','adm-ad','adm-vers','adm-wal','adm-cbl','adm-cbm','adm-note','adm-inc','adm-notes'].forEach(id=>{ if($(id)) $(id).value=''; });
+    await refresh();
+    toast('✅ Saisie enregistrée','ok');
+  } catch(e) {
+    $('adm-result').innerHTML = '<div class="alert danger">Erreur réseau : '+e.message+'</div>';
+  } finally {
+    btn.innerHTML = '✓ Valider la saisie'; btn.disabled = false;
+  }
+}
 </script>
 </body>
 </html>
+
+
