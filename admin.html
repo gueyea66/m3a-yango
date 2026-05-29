@@ -394,7 +394,14 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
             <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="adm-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
           </div>
           <div class="row cols-2" style="gap:12px;margin-bottom:12px">
-            <div><label class="cfg-label">CA Yango brut (XOF)</label><input type="number" id="adm-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div>
+  <label class="cfg-label" id="adm-ca-label">CA Yango brut (XOF)</label>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-top:2px">
+    <button type="button" id="adm-net-toggle" onclick="admToggleNet()" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--bleu);background:transparent;color:var(--bleu);cursor:pointer;font-family:inherit;font-weight:600">Passer en saisie NET</button>
+    <span id="adm-net-hint" style="font-size:11px;color:var(--muted);display:none">Commission déduite automatiquement</span>
+  </div>
+  <input type="number" id="adm-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+</div>
             <div><label class="cfg-label">Hors Yango (XOF)</label><input type="number" id="adm-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
           </div>
           <div class="row cols-2" style="gap:12px;margin-bottom:12px">
@@ -864,6 +871,29 @@ function admSetSt(st, btn){
   $('adm-fields-actif').style.display = (st==='ACTIF') ? '' : 'none';
 }
 
+/* Toggle saisie brut / net */
+let _admIsNet = false;
+function admToggleNet(){
+  _admIsNet = !_admIsNet;
+  const btn = $('adm-net-toggle');
+  const lbl = $('adm-ca-label');
+  const hint = $('adm-net-hint');
+  if(_admIsNet){
+    lbl.textContent = 'CA Yango NET (XOF)';
+    btn.textContent = 'Passer en saisie BRUT';
+    btn.style.borderColor = 'var(--vert)';
+    btn.style.color = 'var(--vert)';
+    btn.style.background = 'var(--vert-l)';
+    hint.style.display = 'inline';
+  } else {
+    lbl.textContent = 'CA Yango brut (XOF)';
+    btn.textContent = 'Passer en saisie NET';
+    btn.style.borderColor = 'var(--bleu)';
+    btn.style.color = 'var(--bleu)';
+    btn.style.background = 'transparent';
+    hint.style.display = 'none';
+  }
+}
 async function doAdminSubmit(){
   const vehicle_id = $('adm-vehicle').value.trim();
   const date = $('adm-date').value;
@@ -882,7 +912,8 @@ async function doAdminSubmit(){
     carb_xof:        +($('adm-cbm').value || 0),
     note_yango:      $('adm-note').value !== '' ? +$('adm-note').value : null,
     incident:        $('adm-inc').value.trim(),
-    owner_notes:     ($('adm-notes').value.trim() || '[Saisie manuelle admin]')
+    owner_notes:     ($('adm-notes').value.trim() || '[Saisie manuelle admin]'),
+    is_net_input:    _admIsNet
   };
   const btn = $('adm-btn-submit');
   btn.innerHTML = '<span class="loader"></span> Envoi…'; btn.disabled = true;
@@ -891,7 +922,7 @@ async function doAdminSubmit(){
     const r = await api('admin_submit', { token: TOKEN, payload });
     if(r.error){ $('adm-result').innerHTML = '<div class="alert danger">Erreur : '+r.error+'</div>'; return; }
     $('adm-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">✅ Journée du '+date+' saisie et validée (#'+r.submission_id+')</div>';
-    ['adm-km','adm-nb','adm-ca','adm-ad','adm-vers','adm-wal','adm-cbl','adm-cbm','adm-note','adm-inc','adm-notes'].forEach(id=>{ if($(id)) $(id).value=''; });
+    ['adm-km','adm-nb','adm-ca','adm-ad','adm-vers','adm-wal','adm-cbl','adm-cbm','adm-note','adm-inc','adm-notes'].forEach(id=>{ if($(id)) $(id).value=''; }); if(_admIsNet){ admToggleNet(); }
     await refresh();
     toast('✅ Saisie enregistrée','ok');
   } catch(e) {
@@ -903,5 +934,7 @@ async function doAdminSubmit(){
 </script>
 </body>
 </html>
+
+
 
 
