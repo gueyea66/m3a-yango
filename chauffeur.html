@@ -385,6 +385,15 @@ let CFG = null;
 let ad_hoc=false, carb_on=false, is_net=false;
 let PHOTOS = {}; // name → {base64, mime}
 
+function parseISODate(d){
+  if(!d) return null;
+  var s = String(d).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return new Date(s+'T00:00:00');
+  var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]));
+  if(s.length > 10 && s.indexOf('T') > -1) return new Date(s.slice(0,10)+'T00:00:00');
+  var x = new Date(s); return isNaN(x.getTime()) ? null : x;
+}
 function $(id){ return document.getElementById(id); }
 function show(viewId){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(viewId).classList.add('active'); }
 function toast(msg, kind){ const t=document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3500); }
@@ -698,7 +707,7 @@ async function loadHistory(){
   const items = r.history || [];
   if(items.length===0){ list.innerHTML='<div class="muted center" style="padding:30px 0">Aucune soumission</div>'; return; }
   list.innerHTML = items.map(s=>{
-    const dt = new Date(s.date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
+    const dt = (function(d){ var x=parseISODate(d); return x ? x.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}) : String(d); })(s.date);
     return `<div class="histo-card">
       <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
         <div><div class="h-date">${dt}</div><span class="h-stat ${s.status}">${s.status}</span></div>
