@@ -5,12 +5,12 @@
 // ═══════════════════════════════════════════════════════
 
 const FIREBASE_CONFIG = {
-  apiKey:            "COLLE_API_KEY_ICI",
-  authDomain:        "COLLE_PROJECT_ID.firebaseapp.com",
-  projectId:         "COLLE_PROJECT_ID",
-  storageBucket:     "COLLE_PROJECT_ID.appspot.com",
-  messagingSenderId: "COLLE_SENDER_ID",
-  appId:             "COLLE_APP_ID"
+  apiKey:            "AIzaSyA8e-GhVzfBhSbdSwZCzF5TqRD5Wqv466Q",
+  authDomain:        "m3a-yango.firebaseapp.com",
+  projectId:         "m3a-yango",
+  storageBucket:     "m3a-yango.firebasestorage.app",
+  messagingSenderId: "321874213956",
+  appId:             "1:321874213956:web:5f0cb9c6eac963673d9011"
 };
 
 // ═══════════════════════════════════════════════════════

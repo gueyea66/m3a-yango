@@ -194,7 +194,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F0F4FF;color:#0
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<!-- Storage non requis — photos stockées en base64 dans Firestore -->
 <script src="firebase-config.js"></script>
 
 <!-- ═══ LOGIN ═══ -->
@@ -421,9 +421,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F0F4FF;color:#0
 //  INIT FIREBASE
 // ═══════════════════════════════════════════
 firebase.initializeApp(FIREBASE_CONFIG);
-const auth    = firebase.auth();
-const db      = firebase.firestore();
-const storage = firebase.storage();
+const auth = firebase.auth();
+const db   = firebase.firestore();
 
 // ═══ STATE ═══
 let userProfile = null;
@@ -658,12 +657,12 @@ function handlePhoto(box, file) {
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
-      const max = 1000, ratio = Math.min(1, max / Math.max(img.width, img.height));
+      const max = 500, ratio = Math.min(1, max / Math.max(img.width, img.height)); // compact pour Firestore
       const w = Math.round(img.width * ratio), h = Math.round(img.height * ratio);
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const data = canvas.toDataURL('image/jpeg', 0.72);
+      const data = canvas.toDataURL('image/jpeg', 0.5); // qualité réduite pour stockage Firestore
       PHOTOS[name] = { name, base64: data, mime: 'image/jpeg' };
       box.classList.add('has-photo');
       box.innerHTML = `<img src="${data}" style="width:100%;height:110px;object-fit:cover;border-radius:10px"/><button class="rm-btn" data-name="${name}">✕</button>`;
@@ -705,17 +704,10 @@ async function doSubmit() {
   setBtn('btn-submit', true, 'Envoi…');
 
   try {
-    // 1. Upload photos → Firebase Storage
+    // 1. Photos stockées en base64 directement dans Firestore (pas de Storage requis)
     const photoURLs = {};
-    const totalPhotos = Object.keys(PHOTOS).length;
-    let uploaded = 0;
-
     for (const [name, photo] of Object.entries(PHOTOS)) {
-      $('upload-progress-wrap').innerHTML = `<div class="upload-progress">📤 Upload photo ${++uploaded}/${totalPhotos}…</div>`;
-      const path = `submissions/${uid}/${date}/${name}.jpg`;
-      const ref  = storage.ref(path);
-      const snap = await ref.putString(photo.base64, 'data_url', { contentType: 'image/jpeg' });
-      photoURLs[name] = await snap.ref.getDownloadURL();
+      photoURLs[name] = photo.base64; // base64 JPEG compressé ~30-60KB par photo
     }
     $('upload-progress-wrap').innerHTML = '';
 
