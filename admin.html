@@ -183,6 +183,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       <button class="tab" data-view="users">👥 Utilisateurs</button>
       <button class="tab" data-view="config">⚙ Paramètres</button>
       <button class="tab" data-view="saisie">&#9998; Saisie</button>
+      <button class="tab" data-view="factures">&#128203; Factures</button>
     </div>
     <div class="actions">
       <button class="btn-ico" onclick="refresh()">↻ Rafraîchir</button>
@@ -578,11 +579,12 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   const v = t.dataset.view;
-  ['dash','valid','histo','users','config','saisie'].forEach(x=>$('pane-'+x).style.display='none');
+  ['dash','valid','histo','users','config','saisie','factures'].forEach(x=>$('pane-'+x).style.display='none');
   $('pane-'+v).style.display='block';
   if(v==='users') loadUsers();
   if(v==='config') fillConfig();
   if(v==='saisie'){ $('adm-date').value=todayISO(); loadAdminVehicles(); }
+  if(v==='factures') initFactures();
   
   if(v==='valid') loadPending();
 }));
@@ -1086,6 +1088,419 @@ function markAsPaid(){
   // Copier auto le recap
   copyPaySummary();
 }
+</script>
+
+    <!-- VIEW FACTURES -->
+    <div class="view-pane" id="pane-factures" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <div>
+          <h1>&#128203; Générateur de Factures</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">Créez et imprimez des factures pour vos clients</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-gold" onclick="previewFacture()">&#128065; Aperçu</button>
+          <button class="btn-gold" onclick="printFacture()">&#128438; Imprimer / PDF</button>
+          <button class="btn-ico" onclick="resetFacture()">&#10006; Réinitialiser</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+        <!-- Formulaire gauche -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Infos client -->
+          <div class="card">
+            <div class="card-header">&#128100; Informations Client</div>
+            <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label class="lbl">Prénom</label>
+                <input class="inp" id="fac-prenom" placeholder="ex: Mamadou" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Nom</label>
+                <input class="inp" id="fac-nom" placeholder="ex: Diallo" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Société (optionnel)</label>
+                <input class="inp" id="fac-societe" placeholder="ex: Transport SARL" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Email (optionnel)</label>
+                <input class="inp" id="fac-email" placeholder="client@email.com" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Téléphone (optionnel)</label>
+                <input class="inp" id="fac-tel" placeholder="+221 77 000 00 00" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Adresse (optionnel)</label>
+                <input class="inp" id="fac-adresse" placeholder="Dakar, Sénégal" oninput="liveUpdateFacture()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Période & Véhicule -->
+          <div class="card">
+            <div class="card-header">&#128664; Détails de la Prestation</div>
+            <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label class="lbl">Du (From)</label>
+                <input class="inp" type="date" id="fac-from" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Au (To)</label>
+                <input class="inp" type="date" id="fac-to" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Véhicule / Prestation</label>
+                <input class="inp" id="fac-vehicule" placeholder="ex: Kia K3 - AA 123 DA" oninput="liveUpdateFacture()">
+              </div>
+              <div>
+                <label class="lbl">Description</label>
+                <input class="inp" id="fac-desc" placeholder="Location avec chauffeur" oninput="liveUpdateFacture()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Lignes de facturation -->
+          <div class="card">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+              <span>&#128722; Lignes de Facturation</span>
+              <button class="btn-ico" style="font-size:12px;padding:4px 10px" onclick="addLigne()">+ Ajouter ligne</button>
+            </div>
+            <div class="card-body">
+              <div id="fac-lignes" style="display:flex;flex-direction:column;gap:8px"></div>
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span class="muted">Sous-total HT</span>
+                  <span id="fac-subtotal" style="font-weight:600">0 FCFA</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                  <span class="muted">TVA</span>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <select class="inp" id="fac-tva" style="width:90px;padding:4px 6px" onchange="liveUpdateFacture()">
+                      <option value="0">0%</option>
+                      <option value="18">18%</option>
+                      <option value="20">20%</option>
+                    </select>
+                    <span id="fac-tva-amount" style="font-weight:600">0 FCFA</span>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--gold)">
+                  <span>TOTAL TTC</span>
+                  <span id="fac-total">0 FCFA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="card">
+            <div class="card-header">&#128221; Notes & Conditions</div>
+            <div class="card-body">
+              <textarea class="inp" id="fac-notes" rows="3" placeholder="Ex: Paiement à réception. Merci pour votre confiance." style="resize:vertical" oninput="liveUpdateFacture()"></textarea>
+              <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label class="lbl">Mode de paiement</label>
+                  <select class="inp" id="fac-paiement" onchange="liveUpdateFacture()">
+                    <option>Wave Mobile Money</option>
+                    <option>Orange Money</option>
+                    <option>Espèces</option>
+                    <option>Virement bancaire</option>
+                    <option>Chèque</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl">Statut paiement</label>
+                  <select class="inp" id="fac-statut" onchange="liveUpdateFacture()">
+                    <option value="payee" style="color:green">✅ Payée</option>
+                    <option value="attente">⏳ En attente</option>
+                    <option value="partiel">⚠️ Partiel</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Aperçu droite -->
+        <div>
+          <div class="card" style="position:sticky;top:80px">
+            <div class="card-header" style="display:flex;justify-content:space-between">
+              <span>&#128065; Aperçu Facture</span>
+              <span class="muted" style="font-size:11px" id="fac-numero-display"></span>
+            </div>
+            <div class="card-body" style="padding:0">
+              <div id="facture-preview" style="padding:24px;min-height:400px;font-family:'Inter',sans-serif">
+                <div style="text-align:center;color:var(--muted);padding:40px 0">
+                  <div style="font-size:36px">&#128203;</div>
+                  <div style="margin-top:8px">Remplissez le formulaire pour voir l'aperçu</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+<style>
+/* Styles spécifiques facture */
+.fac-ligne{display:grid;grid-template-columns:1fr 80px 110px 32px;gap:6px;align-items:center}
+.fac-ligne .inp{padding:6px 8px;font-size:12.5px}
+.fac-ligne-header{display:grid;grid-template-columns:1fr 80px 110px 32px;gap:6px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+#facture-preview{background:#fff}
+
+/* Print zone */
+@media print {
+  body > *:not(#print-zone) { display: none !important; }
+  #print-zone { display: block !important; }
+}
+</style>
+
+<div id="print-zone" style="display:none"></div>
+
+<script>
+// ===== MODULE FACTURES =====
+let factureLignes = [];
+let factureNum = '';
+
+function initFactures(){
+  // Générer numéro facture
+  const d = new Date();
+  factureNum = 'FAC-' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '-' + Math.floor(Math.random()*900+100);
+  $('fac-numero-display').textContent = factureNum;
+  // Date par défaut
+  const today = d.toISOString().split('T')[0];
+  const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0];
+  $('fac-from').value = firstDay;
+  $('fac-to').value = today;
+  // Ligne par défaut
+  factureLignes = [];
+  addLigne('Location véhicule avec chauffeur', 1, 0);
+  liveUpdateFacture();
+}
+
+function addLigne(desc='', qty=1, pu=0){
+  const id = Date.now() + Math.random();
+  factureLignes.push({id, desc, qty, pu});
+  renderLignes();
+}
+
+function removeLigne(id){
+  factureLignes = factureLignes.filter(l => l.id !== id);
+  renderLignes();
+  liveUpdateFacture();
+}
+
+function renderLignes(){
+  const container = $('fac-lignes');
+  container.innerHTML = `
+    <div class="fac-ligne-header">
+      <span>Description</span><span>Qté</span><span>Prix unit.</span><span></span>
+    </div>`;
+  factureLignes.forEach(l => {
+    const row = document.createElement('div');
+    row.className = 'fac-ligne';
+    row.innerHTML = `
+      <input class="inp" value="${l.desc}" placeholder="Description" oninput="updateLigne(${l.id},'desc',this.value);liveUpdateFacture()">
+      <input class="inp" type="number" value="${l.qty}" min="1" style="text-align:center" oninput="updateLigne(${l.id},'qty',this.value);liveUpdateFacture()">
+      <input class="inp" type="number" value="${l.pu}" min="0" placeholder="FCFA" oninput="updateLigne(${l.id},'pu',this.value);liveUpdateFacture()">
+      <button onclick="removeLigne(${l.id})" style="background:var(--danger-l);border:none;border-radius:6px;color:var(--danger);cursor:pointer;font-size:14px;padding:4px 6px;font-weight:700">✕</button>`;
+    container.appendChild(row);
+  });
+}
+
+function updateLigne(id, field, val){
+  const l = factureLignes.find(x => x.id === id);
+  if(l) l[field] = field === 'desc' ? val : parseFloat(val)||0;
+}
+
+function calcTotaux(){
+  const subtotal = factureLignes.reduce((s, l) => s + (parseFloat(l.qty)||0)*(parseFloat(l.pu)||0), 0);
+  const tvaRate = parseFloat($('fac-tva').value)||0;
+  const tvaAmt = subtotal * tvaRate / 100;
+  const total = subtotal + tvaAmt;
+  return {subtotal, tvaRate, tvaAmt, total};
+}
+
+function liveUpdateFacture(){
+  const {subtotal, tvaAmt, total} = calcTotaux();
+  $('fac-subtotal').textContent = subtotal.toLocaleString('fr-FR') + ' FCFA';
+  $('fac-tva-amount').textContent = tvaAmt.toLocaleString('fr-FR') + ' FCFA';
+  $('fac-total').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+  renderPreview();
+}
+
+function fmtDate(d){
+  if(!d) return '-';
+  const [y,m,j] = d.split('-');
+  const mois = ['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  return j+' '+mois[parseInt(m)]+' '+y;
+}
+
+function statutBadge(s){
+  if(s==='payee') return '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">✅ PAYÉE</span>';
+  if(s==='attente') return '<span style="background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">⏳ EN ATTENTE</span>';
+  return '<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">⚠️ PARTIEL</span>';
+}
+
+function renderPreview(){
+  const prenom = $('fac-prenom').value.trim();
+  const nom = $('fac-nom').value.trim();
+  const client = (prenom + ' ' + nom).trim() || 'Client';
+  const societe = $('fac-societe').value.trim();
+  const email = $('fac-email').value.trim();
+  const tel = $('fac-tel').value.trim();
+  const adresse = $('fac-adresse').value.trim();
+  const vehicule = $('fac-vehicule').value.trim();
+  const desc = $('fac-desc').value.trim();
+  const from = $('fac-from').value;
+  const to = $('fac-to').value;
+  const notes = $('fac-notes').value.trim();
+  const paiement = $('fac-paiement').value;
+  const statut = $('fac-statut').value;
+  const {subtotal, tvaRate, tvaAmt, total} = calcTotaux();
+
+  const lignesHTML = factureLignes.map(l => {
+    const montant = (parseFloat(l.qty)||0)*(parseFloat(l.pu)||0);
+    return `<tr>
+      <td style="padding:8px 10px;border-bottom:1px solid #F1F5F9">${l.desc||'-'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #F1F5F9;text-align:center">${l.qty}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #F1F5F9;text-align:right">${parseFloat(l.pu).toLocaleString('fr-FR')} FCFA</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #F1F5F9;text-align:right;font-weight:600">${montant.toLocaleString('fr-FR')} FCFA</td>
+    </tr>`;
+  }).join('');
+
+  $('facture-preview').innerHTML = `
+    <div style="font-family:'Inter',sans-serif;color:#0F172A;max-width:680px;margin:0 auto">
+
+      <!-- En-tête -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid #C9A227">
+        <div>
+          <div style="font-size:22px;font-weight:800;letter-spacing:1px">M3A <span style="color:#C9A227">GROUP</span></div>
+          <div style="font-size:11px;color:#64748B;margin-top:2px">Yango Business Solutions</div>
+          <div style="font-size:11px;color:#64748B">Dakar, Sénégal</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:1px">Facture</div>
+          <div style="font-size:18px;font-weight:800;color:#0F172A">${factureNum}</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px">Émise le ${fmtDate(new Date().toISOString().split('T')[0])}</div>
+          <div style="margin-top:8px">${statutBadge(statut)}</div>
+        </div>
+      </div>
+
+      <!-- Période & Client -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+        <div style="background:#F8FAFC;border-radius:10px;padding:14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">Facturé à</div>
+          <div style="font-weight:700;font-size:15px">${client}</div>
+          ${societe ? `<div style="font-size:12px;color:#64748B">${societe}</div>` : ''}
+          ${adresse ? `<div style="font-size:12px;color:#64748B">${adresse}</div>` : ''}
+          ${email ? `<div style="font-size:12px;color:#64748B">${email}</div>` : ''}
+          ${tel ? `<div style="font-size:12px;color:#64748B">${tel}</div>` : ''}
+        </div>
+        <div style="background:#F8FAFC;border-radius:10px;padding:14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">Période de prestation</div>
+          ${vehicule ? `<div style="font-weight:600;font-size:13px">🚗 ${vehicule}</div>` : ''}
+          ${desc ? `<div style="font-size:12px;color:#64748B;margin-bottom:4px">${desc}</div>` : ''}
+          <div style="font-size:12px;margin-top:6px"><strong>Du :</strong> ${fmtDate(from)}</div>
+          <div style="font-size:12px"><strong>Au :</strong> ${fmtDate(to)}</div>
+        </div>
+      </div>
+
+      <!-- Tableau lignes -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+        <thead>
+          <tr style="background:#0F172A;color:#fff">
+            <th style="padding:10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-radius:8px 0 0 0">Description</th>
+            <th style="padding:10px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Qté</th>
+            <th style="padding:10px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Prix Unit.</th>
+            <th style="padding:10px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-radius:0 8px 0 0">Montant</th>
+          </tr>
+        </thead>
+        <tbody>${lignesHTML}</tbody>
+      </table>
+
+      <!-- Totaux -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+        <div style="min-width:260px">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px">
+            <span style="color:#64748B">Sous-total HT</span>
+            <span style="font-weight:600">${subtotal.toLocaleString('fr-FR')} FCFA</span>
+          </div>
+          ${tvaRate > 0 ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px">
+            <span style="color:#64748B">TVA (${tvaRate}%)</span>
+            <span style="font-weight:600">${tvaAmt.toLocaleString('fr-FR')} FCFA</span>
+          </div>` : ''}
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:linear-gradient(135deg,#C9A227,#B8861E);border-radius:8px;margin-top:8px">
+            <span style="color:#fff;font-weight:800;font-size:15px">TOTAL TTC</span>
+            <span style="color:#fff;font-weight:800;font-size:15px">${total.toLocaleString('fr-FR')} FCFA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode de paiement -->
+      <div style="background:#EFF6FF;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:12px">
+        <strong>💳 Mode de paiement :</strong> ${paiement}
+      </div>
+
+      ${notes ? `<div style="background:#FFFBEB;border-left:3px solid #C9A227;padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:#64748B;margin-bottom:20px"><strong>Note :</strong> ${notes}</div>` : ''}
+
+      <!-- Footer -->
+      <div style="border-top:1px solid #E2E8F0;padding-top:12px;text-align:center;font-size:11px;color:#94A3B8">
+        M3A Group — Merci pour votre confiance 🙏
+      </div>
+    </div>`;
+}
+
+function previewFacture(){
+  liveUpdateFacture();
+  toast('Aperçu mis à jour','ok');
+}
+
+function printFacture(){
+  liveUpdateFacture();
+  const preview = $('facture-preview').innerHTML;
+  const printZone = $('print-zone');
+  printZone.innerHTML = `<html><head><style>
+    body{font-family:'Inter',sans-serif;margin:0;padding:20px;color:#0F172A}
+    @page{margin:15mm}
+  </style></head><body>${preview}</body></html>`;
+  
+  // Ouvrir dans nouvelle fenêtre pour impression
+  const w = window.open('','_blank','width=800,height=1000');
+  w.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${factureNum}</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+      body{font-family:'Inter',sans-serif;margin:0;padding:30px;color:#0F172A;background:#fff}
+      @page{margin:10mm;size:A4}
+    </style>
+  </head><body>
+    ${preview}
+    <script>window.onload=()=>{window.print();}<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+function resetFacture(){
+  ['fac-prenom','fac-nom','fac-societe','fac-email','fac-tel','fac-adresse',
+   'fac-vehicule','fac-desc','fac-notes'].forEach(id => {
+    const el = $(id); if(el) el.value = '';
+  });
+  $('fac-tva').value = '0';
+  $('fac-statut').value = 'payee';
+  $('fac-paiement').selectedIndex = 0;
+  factureLignes = [];
+  initFactures();
+  toast('Formulaire réinitialisé','ok');
+}
+// ===== FIN MODULE FACTURES =====
 </script>
 </body>
 </html>
