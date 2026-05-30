@@ -583,7 +583,7 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   if(v==='users') loadUsers();
   if(v==='config') fillConfig();
   if(v==='saisie'){ $('adm-date').value=todayISO(); loadAdminVehicles(); }
-  if(v==='saisie'){ $('adm-date').value = todayISO(); loadAdminVehicles(); }
+  
   if(v==='valid') loadPending();
 }));
 
@@ -966,7 +966,7 @@ setInterval(()=>{ if(TOKEN) api('pending',{token:TOKEN}).then(r=>{ if(r.ok){ PEN
 /* ═══ SAISIE MANUELLE ADMIN ═══════════════════════════════════════════════ */
 let ADM_VEHICLES = [];
 
-async function loadAdminVehicles(){
+async async function loadAdminVehicles(){
   if(ADM_VEHICLES.length > 0) { return; }
   const r = await api('users_list', { token: TOKEN });
   if(r.error || !r.users) return;
