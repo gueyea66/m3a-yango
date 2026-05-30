@@ -228,7 +228,16 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         </div>
       </div>
 
+      
       <div class="card">
+        <h2><span class="icon">&#127873;</span> Bonus journalier</h2>
+        <div class="field">
+          <label>Bonus du jour (XOF) <span style="color:var(--muted);font-weight:400;font-size:11px">&#8212; modifiable</span></label>
+          <input type="number" id="f-bonus" inputmode="numeric" placeholder="0" value="0"/>
+          <div class="hint">Bonus Yango, prime journali&#232;re ou autre &#8212; impact direct sur le net. 0 par d&#233;faut.</div>
+        </div>
+      </div>
+<div class="card">
         <h2><span class="icon">⛽</span> Carburant</h2>
         <div class="toggle">
           <button type="button" id="cb-no" class="active" onclick="setCarb(false,this)">Pas de plein</button>
@@ -297,7 +306,17 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div class="calc-row"><span class="muted">- Commission Yango (15 %)</span><span class="v" id="r-cy">—</span></div>
         <div class="calc-row"><span class="muted">- Commission partenaire (0,75 %)</span><span class="v" id="r-cp">—</span></div>
         <div class="calc-row"><span class="muted">+ Hors Yango (cash)</span><span class="v" id="r-ad">—</span></div>
-        <div class="calc-row"><span>TOTAL net + cash</span><span class="v" id="r-tot">—</span></div>
+        <div class="calc-row" style="color:var(--vert)"><span class="muted" style="color:var(--vert)">+ Bonus journalier</span><span class="v" style="color:var(--vert)" id="r-bonus">+ 0 XOF</span></div>
+        <div class="calc-row" style="border-top:2px solid var(--border);margin-top:6px;padding-top:8px"><span style="font-weight:700">TOTAL collect&#233; du jour</span><span class="v" style="font-weight:800;font-size:17px" id="r-tot">-</span></div>
+      </div>
+
+      <div class="card" style="background:linear-gradient(135deg,#003087,#1565C0);border:none;padding:18px;margin-bottom:12px">
+        <div style="color:rgba(255,255,255,0.75);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;font-weight:700">&#128153; Paiement Wave professionnel</div>
+        <a id="btn-wave" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#00C2FF;color:#fff;font-weight:800;font-size:15px;padding:15px;border-radius:12px;text-decoration:none;letter-spacing:.2px;transition:.2s;pointer-events:none;opacity:.5">
+          <span style="font-size:20px">&#128153;</span>
+          <span>Envoyer <span class="wave-amt">0 XOF</span> via Wave</span>
+        </a>
+        <div style="color:rgba(255,255,255,0.5);font-size:10.5px;margin-top:8px;text-align:center">Ouvre directement l&#8217;app Wave avec le montant total collect&#233;</div>
       </div>
 
       <div class="sticky-submit">
@@ -458,7 +477,7 @@ function setNetMode(v, btn){
   updateCalc();
 }
 
-['f-km','f-caY','f-caAd','f-vers','f-wal','f-cbL','f-cbM'].forEach(id=>$(id).addEventListener('input',updateCalc));
+['f-km','f-caY','f-caAd','f-vers','f-wal','f-cbL','f-cbM','f-bonus'].forEach(id=>$(id).addEventListener('input',updateCalc));
 
 function updateCalc(){
   const comY = (CFG?+CFG.comY:15)/100, comP = (CFG?+CFG.comP:0.75)/100;
@@ -466,12 +485,38 @@ function updateCalc(){
   if(is_net && caBrut>0) caBrut = caBrut/(1-comY);
   const cy = caBrut*comY, cp = caBrut*comP, net = caBrut-cy-cp;
   const ad = +$('f-caAd').value || 0;
+  const bonus = +$('f-bonus').value || 0;
+  const total = net + ad + bonus;
   $('r-km').textContent = (+$('f-km').value || 0) + ' km';
   $('r-brut').textContent = fmt(caBrut);
   $('r-cy').textContent = '- '+fmt(cy);
   $('r-cp').textContent = '- '+fmt(cp);
   $('r-ad').textContent = '+ '+fmt(ad);
-  $('r-tot').textContent = fmt(net+ad);
+  $('r-bonus').textContent = '+ '+fmt(bonus);
+  $('r-tot').textContent = fmt(total);
+  // Bouton Wave dynamique
+  const waveBtn = $('btn-wave');
+  if(waveBtn){
+    const waveNum = (CFG && CFG.wave_number) ? CFG.wave_number.trim() : '';
+    const amt = Math.round(total);
+    if(amt > 0){
+      let waveUrl;
+      if(waveNum){
+        waveUrl = 'https://pay.wave.com/m/' + waveNum + '/c/?amount=' + amt;
+      } else {
+        waveUrl = 'https://pay.wave.com/';
+      }
+      waveBtn.href = waveUrl;
+      waveBtn.querySelector('.wave-amt').textContent = new Intl.NumberFormat('fr-FR').format(amt) + ' XOF';
+      waveBtn.style.opacity = '1';
+      waveBtn.style.pointerEvents = 'auto';
+    } else {
+      waveBtn.href = '#';
+      waveBtn.querySelector('.wave-amt').textContent = '0 XOF';
+      waveBtn.style.opacity = '0.5';
+      waveBtn.style.pointerEvents = 'none';
+    }
+  }
 }
 
 /* ═══ PHOTOS ═══ */
@@ -546,6 +591,7 @@ async function doSubmit(){
     carb_l: carb_on ? (+$('f-cbL').value || 0) : 0,
     carb_xof: carb_on ? (+$('f-cbM').value || 0) : 0,
     note_yango: $('f-note').value ? +$('f-note').value : null,
+    bonus_daily: +$('f-bonus').value || 0,
     incident: $('f-inc').value.trim(),
     remarques: $('f-rem').value.trim()
   };
@@ -564,7 +610,7 @@ async function doSubmit(){
       const n=b.dataset.name;
       removePhoto({stopPropagation:()=>{}}, n);
     });
-    ['f-km','f-nbY','f-caY','f-caAd','f-vers','f-wal','f-cbL','f-cbM','f-note','f-inc','f-rem'].forEach(id=>$(id).value='');
+    ['f-km','f-nbY','f-caY','f-caAd','f-vers','f-wal','f-cbL','f-cbM','f-note','f-inc','f-rem','f-bonus'].forEach(id=>$(id).value='');
     is_net=false; ad_hoc=false; carb_on=false;
     setNetMode(false, $('bt-net-no')); setAdHoc(false, $('ad-no')); setCarb(false, $('cb-no'));
     updateCalc();

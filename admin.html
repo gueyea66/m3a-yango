@@ -399,6 +399,18 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
           <div class="cfg-row"><label>Numéro WhatsApp (+221…)</label><input id="c-wphone"/></div>
           <div class="cfg-row"><label>CallMeBot API Key</label><input id="c-wkey"/></div>
         </div>
+
+        <div class="card">
+          <h2>&#128153; Paiement Wave pro</h2>
+          <div class="cfg-row"><label>Identifiant Wave (slug business)</label><input id="c-waveNum" placeholder="ex: m3a-group"/></div>
+          <div class="cfg-row"><label>Lien Wave complet (optionnel)</label><input id="c-waveLink" placeholder="https://pay.wave.com/m/..."/></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5">
+            L&#8217;identifiant est le slug de ton compte Wave Business.<br>
+            <strong>Exemple :</strong> si ton lien est <code>pay.wave.com/m/abc123</code>, mets <code>abc123</code>.<br>
+            Le chauffeur verra un bouton Wave avec le montant total collect&#233; du jour.
+          </p>
+        </div>
+
         <div class="card">
           <h2>Import depuis v1</h2>
           <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Si tu avais saisi des journées dans la v1 locale (localStorage), importe-les ici.</p>
@@ -887,6 +899,8 @@ function fillConfig(){
   $('c-nwa').value = CFG.notify_whatsapp;
   $('c-wphone').value = CFG.whatsapp_phone;
   $('c-wkey').value = CFG.whatsapp_apikey;
+  if($('c-waveNum')) $('c-waveNum').value = CFG.wave_number || '';
+  if($('c-waveLink')) $('c-waveLink').value = CFG.wave_link || '';
 }
 async function saveConfig(){
   const upd = {};
@@ -895,6 +909,8 @@ async function saveConfig(){
   upd.notify_whatsapp = $('c-nwa').value;
   upd.whatsapp_phone = $('c-wphone').value;
   upd.whatsapp_apikey = $('c-wkey').value;
+  upd.wave_number = $('c-waveNum') ? $('c-waveNum').value.trim() : '';
+  upd.wave_link = $('c-waveLink') ? $('c-waveLink').value.trim() : '';
   const r = await api('config_set',{token:TOKEN, config:upd});
   if(r.ok){ toast('Paramètres sauvegardés ✓','ok'); await loadConfig(); renderDash(); }
 }
