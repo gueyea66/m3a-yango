@@ -1,114 +1,171 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>M3A — Admin</title>
+<title>M3A — Pilotage Yango</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-:root{--navy:#0F172A;--navy2:#1E293B;--gold:#C9A227;--gold-bg:#FEF3C7;--green:#059669;--green-bg:#D1FAE5;--red:#DC2626;--red-bg:#FEE2E2;--orange:#D97706;--orange-bg:#FEF3C7;--blue:#2563EB;--blue-bg:#DBEAFE;--border:#E2E8F0;--muted:#64748B;--bg:#F8FAFC;--card:#fff}
+:root{--navy:#0F172A;--navy-m:#1E293B;--gold:#C9A227;--gold-d:#92740A;--gold-l:#FEF3C7;--vert:#059669;--vert-l:#D1FAE5;--orange:#D97706;--orange-l:#FEF3C7;--bleu:#2563EB;--bleu-l:#DBEAFE;--danger:#DC2626;--danger-l:#FEE2E2;--bg:#F8FAFC;--card:#FFFFFF;--card2:#F1F5F9;--card3:#E8EFF7;--border:#E2E8F0;--text:#0F172A;--muted:#64748B;--shadow-sm:0 1px 3px rgba(15,23,42,.06);--shadow-md:0 4px 12px rgba(15,23,42,.08);--shadow-lg:0 12px 28px rgba(15,23,42,.10)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--navy);font-size:14px;min-height:100vh}
-.view{display:none}.view.active{display:block}
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0F172A,#1E293B)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%)}
 .login-card{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .login-logo{text-align:center;margin-bottom:24px}
 .login-logo .b{font-size:24px;font-weight:800;letter-spacing:1.5px}
-.login-logo .b em{color:var(--gold);font-style:normal}
+.login-logo .b span{color:var(--gold)}
 .login-logo .s{font-size:11px;color:var(--muted);letter-spacing:.5px;margin-top:4px}
-.login-card h1{font-size:18px;font-weight:700;text-align:center;margin-bottom:6px}
-.lg-err{background:var(--red-bg);color:#7F1D1D;border-radius:8px;padding:10px;font-size:13px;margin-bottom:12px;display:none}
+.login-card h1{font-size:18px;font-weight:700;margin-bottom:6px;text-align:center}
+
+/* Topbar */
+.topbar{background:var(--navy);box-shadow:var(--shadow-lg);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo{font-size:18px;font-weight:800;letter-spacing:1px;color:#fff}
+.logo span{color:var(--gold)}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.45);font-weight:400;margin-left:10px}
+.tabs{display:flex;gap:4px}
+.tab{padding:8px 16px;font-size:11.5px;font-weight:600;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.55);border-radius:6px;cursor:pointer;transition:.2s;letter-spacing:.3px;text-transform:uppercase;font-family:'Inter',sans-serif;position:relative}
+.tab.active{background:linear-gradient(135deg,var(--gold) 0%,#B8861E 100%);color:var(--navy);border-color:transparent;box-shadow:0 2px 10px rgba(201,162,39,.4);font-weight:700}
+.tab:not(.active):hover{background:rgba(255,255,255,.08);color:#fff}
+.tab .bdg{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 6px rgba(220,38,38,.5)}
+.actions{display:flex;gap:8px;align-items:center}
+.btn-ico{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;padding:6px 12px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.3px;transition:.2s}
+.btn-ico:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.wrap{padding:22px 24px;max-width:1440px;margin:0 auto}
+.view{display:none}
+.view.active{display:block}
+
+h1{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+h2{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:12px}
+h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label:before{content:"";width:24px;height:2px;background:var(--gold)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-sm);padding:18px;margin-bottom:16px}
+.row{display:grid;gap:14px}
+.row.cols-2{grid-template-columns:1fr 1fr}
+.row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.row.cols-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:900px){.row.cols-2,.row.cols-3,.row.cols-4{grid-template-columns:1fr}}
+
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.kpi.accent{background:linear-gradient(135deg,var(--navy) 0%,#1E293B 100%);color:#fff;border:none}
+.kpi.accent .kpi-lbl,.kpi.accent .kpi-sub{color:rgba(255,255,255,.6)}
+.kpi.gold{background:linear-gradient(135deg,var(--gold) 0%,#B8861E 100%);color:var(--navy);border:none}
+.kpi.gold .kpi-lbl{color:rgba(15,23,42,.7)}
+.kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.kpi-val{font-size:20px;font-weight:800;letter-spacing:-.3px;line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
+
+.progress-bar{height:14px;background:var(--card2);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold) 0%,#E5BB39 100%);border-radius:8px;transition:width .4s}
+.progress-fill.ok{background:linear-gradient(90deg,var(--vert) 0%,#10B981 100%)}
+
 .field{margin-bottom:12px}
 .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:4px}
-.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);background:#fff}
-.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.12)}
-.field .hint{font-size:11px;color:var(--muted);margin-top:3px}
-.topbar{background:var(--navy);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 3px 12px rgba(0,0,0,.2)}
-.logo{font-size:18px;font-weight:800;letter-spacing:1px;color:#fff}
-.logo em{color:var(--gold);font-style:normal}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.45);font-weight:400;margin-left:8px}
-.nav{display:flex;gap:4px}
-.nav-btn{padding:7px 14px;font-size:11.5px;font-weight:600;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.55);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.3px;transition:.2s;position:relative}
-.nav-btn.active{background:linear-gradient(135deg,var(--gold),#B8861E);color:var(--navy);border-color:transparent;font-weight:700}
-.nav-btn .bdg{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:9px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-.topbar-right{display:flex;gap:8px;align-items:center}
-.logout-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-size:11px;font-weight:600;padding:6px 12px;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif}
-.live-dot{width:8px;height:8px;background:#10B981;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.wrap{padding:22px 24px;max-width:1440px;margin:0 auto}
-.btn{padding:9px 18px;font-size:12px;font-weight:700;border-radius:7px;cursor:pointer;border:none;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.5px;transition:.2s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--navy);color:#fff}.btn-gold{background:linear-gradient(135deg,var(--gold),#B8861E);color:var(--navy)}
-.btn-green{background:var(--green);color:#fff}.btn-red{background:var(--red);color:#fff}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.15)}
+
+.btn{padding:10px 20px;font-size:12px;font-weight:700;border-radius:7px;cursor:pointer;border:none;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.5px;transition:.2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy-m)}
+.btn-gold{background:linear-gradient(135deg,var(--gold) 0%,#B8861E 100%);color:var(--navy)}
+.btn-vert{background:var(--vert);color:#fff}
 .btn-ghost{background:transparent;color:var(--navy);border:1px solid var(--border)}
-.btn:disabled{opacity:.6;pointer-events:none}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
-.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}
-@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-.kpi.dark{background:var(--navy);border:none;color:#fff}.kpi.gold{background:linear-gradient(135deg,var(--gold),#B8861E);border:none;color:var(--navy)}
-.kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;color:var(--muted);margin-bottom:5px}
-.kpi.dark .kpi-lbl{color:rgba(255,255,255,.5)}.kpi.gold .kpi-lbl{color:rgba(0,0,0,.5)}
-.kpi-val{font-size:22px;font-weight:800;letter-spacing:-.3px}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.kpi.dark .kpi-sub{color:rgba(255,255,255,.45)}
-.sec-hd{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}
-.sec-hd h2{font-size:15px;font-weight:700}.sec-hd .sub{font-size:11px;color:var(--muted)}
-.sub-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;transition:.15s}
-.sub-card:hover{box-shadow:0 4px 16px rgba(15,23,42,.08)}
-.sub-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.sub-driver{font-size:15px;font-weight:700}.sub-date{font-size:13px;color:var(--muted);margin-top:2px}
-.sub-badge{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:20px}
-.PENDING{background:var(--orange-bg);color:var(--orange)}.VALIDATED{background:var(--green-bg);color:var(--green)}.REJECTED{background:var(--red-bg);color:var(--red)}
-.sub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px;font-size:12px;margin-bottom:12px}
-.sg-k{color:var(--muted)}.sg-v{font-weight:700}
-.sub-photos{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.sub-photos a img{width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:.15s}
-.sub-photos a img:hover{transform:scale(1.05)}
-.sub-actions{display:flex;gap:8px;flex-wrap:wrap}
-.val-input{flex:1;min-width:140px;padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px}
-.val-input:focus{outline:none;border-color:var(--gold)}
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:4px;background:var(--blue-bg);color:var(--blue)}
-.config-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
-.config-row:last-child{border:none}
-.cr-label{font-size:13px;font-weight:600}.cr-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.cr-input{padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;width:120px;text-align:right}
-.cr-input:focus{outline:none;border-color:var(--gold)}
-.user-table{width:100%;border-collapse:collapse;font-size:13px}
-.user-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;padding:8px 12px;border-bottom:1px solid var(--border)}
-.user-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-.user-table tr:last-child td{border:none}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:88%;text-align:center}
-.toast.ok{background:var(--green)}.toast.err{background:var(--red)}
-.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:currentColor;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes sp{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal-box{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.modal-title{font-size:17px;font-weight:800;margin-bottom:16px}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-small{padding:7px 12px;font-size:11px;border-radius:5px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl thead{background:var(--card2)}
+.tbl th{text-align:left;padding:9px 11px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 11px;border-bottom:1px solid var(--border);font-weight:500}
+.tbl tr:hover{background:var(--card2)}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tag.green{background:var(--vert-l);color:var(--vert)}
+.tag.orange{background:var(--orange-l);color:var(--orange)}
+.tag.red{background:var(--danger-l);color:var(--danger)}
+.tag.blue{background:var(--bleu-l);color:var(--bleu)}
+.tag.setup{background:var(--card3);color:var(--navy-m)}
+
+.alert{display:flex;gap:10px;padding:11px 13px;border-radius:7px;margin-bottom:8px;border-left:3px solid;font-size:12.5px;line-height:1.5}
+.alert.warn{background:var(--orange-l);border-color:var(--orange);color:#7C2D12}
+.alert.danger{background:var(--danger-l);border-color:var(--danger);color:#7F1D1D}
+.alert.ok{background:var(--vert-l);border-color:var(--vert);color:#065F46}
+.alert.info{background:var(--bleu-l);border-color:var(--bleu);color:#1E3A8A}
+
+.chart-box{position:relative;height:260px}
+
+/* À valider — submission card */
+.sub-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.sub-head{display:flex;justify-content:space-between;align-items:start;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:14px}
+.sub-head .left{font-size:11px;color:var(--muted)}
+.sub-head .left strong{display:block;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.sub-head .right{display:flex;gap:6px;flex-wrap:wrap}
+.sub-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start}
+@media (max-width:900px){.sub-grid{grid-template-columns:1fr}}
+.sub-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;font-size:12px}
+.sub-fields .k{color:var(--muted);font-weight:600}
+.sub-fields .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.sub-photos{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sub-photos a{display:block;border-radius:8px;overflow:hidden;border:1px solid var(--border);position:relative;aspect-ratio:1.4;background:var(--card2)}
+.sub-photos a img{width:100%;height:100%;object-fit:cover;display:block}
+.sub-photos a .lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(15,23,42,.85);color:#fff;padding:4px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.sub-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px}
+.sub-correction{margin-top:12px;padding:12px;background:var(--card2);border-radius:8px;display:none}
+.sub-correction.show{display:block}
+.sub-correction input{padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;font-size:12px;width:100%}
+.sub-correction-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+
+.muted{color:var(--muted)}
+.center{text-align:center}
+.mono{font-variant-numeric:tabular-nums}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+
+.loader{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(15,23,42,.2);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 22px;border-radius:8px;font-size:13px;font-weight:600;z-index:5000;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.toast.ok{background:var(--vert)}
+.toast.err{background:var(--danger)}
+
+.cfg-row{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border)}
+.cfg-row:last-child{border:none}
+.cfg-row input{padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-family:'Inter',sans-serif;font-size:12.5px}
+
+/* Photo modal */
+.photo-modal{position:fixed;inset:0;background:rgba(15,23,42,.92);display:none;align-items:center;justify-content:center;z-index:9999;padding:30px}
+.photo-modal.show{display:flex}
+.photo-modal img{max-width:100%;max-height:100%;border-radius:10px}
+.photo-modal .close{position:absolute;top:24px;right:32px;background:#fff;color:var(--navy);border:none;width:42px;height:42px;border-radius:50%;font-size:22px;cursor:pointer;font-weight:800}
+
+/* Saisie admin */
+.adm-st-btn{padding:8px 18px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:.15s;font-family:'Inter',sans-serif}
+.adm-st-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cfg-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:5px}
 </style>
 </head>
 <body>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js"></script>
 
 <!-- LOGIN -->
 <div class="view active" id="v-login">
   <div class="login-wrap">
     <div class="login-card">
       <div class="login-logo">
-        <div class="b">M3A<em>SOLUTION</em></div>
-        <div class="s">Espace Propriétaire · Admin</div>
+        <div class="b">M3A<span>SOLUTION</span></div>
+        <div class="s">Pilotage Yango — Espace propriétaire</div>
       </div>
-      <h1>🔐 Accès Admin</h1>
-      <div class="lg-err" id="lg-err"></div>
-      <div class="field"><label>Identifiant</label><input type="text" id="lg-user" placeholder="admin" autocapitalize="off"/></div>
-      <div class="field"><label>Mot de passe</label><input type="password" id="lg-pw"/></div>
-      <button class="btn btn-primary" id="btn-login" style="width:100%;padding:12px;font-size:14px;margin-top:4px">🔓 Connexion</button>
+      <h1>Connexion administrateur</h1>
+      <div id="login-err" style="margin:10px 0"></div>
+      <div class="field"><label>Identifiant</label><input type="text" id="lg-user" autocomplete="username"/></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="lg-pw" autocomplete="current-password"/></div>
+      <button class="btn btn-primary" id="btn-login" style="width:100%" onclick="doLogin()">Se connecter</button>
     </div>
   </div>
 </div>
@@ -117,317 +174,897 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--navy);font-
 <div class="view" id="v-app">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="logo">M3A<em>SOLUTION</em><span class="logo-sub">Admin · Yango Dakar</span></div>
-      <div class="live-dot" title="Temps réel Firebase"></div>
+      <div class="logo">M3A<span>SOLUTION</span> <span class="logo-sub">Pilotage Yango • <span id="adm-name">—</span></span></div>
     </div>
-    <div class="nav">
-      <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
-      <button class="nav-btn" data-tab="soumissions">📥 Soumissions <span class="bdg" id="pending-count" style="display:none">0</span></button>
-      <button class="nav-btn" data-tab="chauffeurs">👤 Chauffeurs</button>
-      <button class="nav-btn" data-tab="config">⚙️ Config</button>
+    <div class="tabs">
+      <button class="tab active" data-view="dash">📊 Dashboard</button>
+      <button class="tab" data-view="valid">✓ À valider <span class="bdg" id="bdg-pending" style="display:none">0</span></button>
+      <button class="tab" data-view="histo">📋 Historique</button>
+      <button class="tab" data-view="users">👥 Utilisateurs</button>
+      <button class="tab" data-view="config">⚙ Paramètres</button>
+      <button class="tab" data-view="saisie">&#9998; Saisie</button>
     </div>
-    <div class="topbar-right">
-      <button class="logout-btn" id="btn-logout">Déconnexion</button>
+    <div class="actions">
+      <button class="btn-ico" onclick="refresh()">↻ Rafraîchir</button>
+      <button class="btn-ico" onclick="exportExcel()">⬇ Excel</button>
+      <button class="btn-ico" onclick="doLogout()">Sortir</button>
     </div>
   </div>
 
   <div class="wrap">
-    <!-- DASHBOARD -->
-    <div class="view active" id="t-dashboard">
-      <div class="sec-hd"><h2>📊 Vue d'ensemble</h2><div class="sub" id="dash-date">—</div></div>
-      <div class="grid g4" style="margin-bottom:20px">
-        <div class="kpi dark"><div class="kpi-lbl">CA brut aujourd'hui</div><div class="kpi-val" id="kpi-ca-today">—</div></div>
-        <div class="kpi gold"><div class="kpi-lbl">Versements du jour</div><div class="kpi-val" id="kpi-vers-today">—</div></div>
-        <div class="kpi"><div class="kpi-lbl">Courses Yango</div><div class="kpi-val" id="kpi-courses-today">—</div></div>
-        <div class="kpi"><div class="kpi-lbl">En attente validation</div><div class="kpi-val" id="kpi-pending">0</div></div>
-      </div>
-      <div class="grid g2">
-        <div class="card">
-          <h2 style="font-size:14px;margin-bottom:14px">CA 7 derniers jours (XOF)</h2>
-          <canvas id="chart-ca" height="160"></canvas>
+
+    <!-- VIEW DASH -->
+    <div class="view-pane" id="pane-dash">
+      <div class="flex-between" style="margin:4px 0 12px">
+        <div>
+          <h1>Dashboard — <span id="dash-period">—</span></h1>
+          <div class="muted" style="font-size:12px;margin-top:2px" id="dash-info">—</div>
         </div>
-        <div class="card">
-          <h2 style="font-size:14px;margin-bottom:14px">Soumissions récentes</h2>
-          <div id="recent-list"><div class="empty">Chargement…</div></div>
+        <select id="dash-month" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px"></select>
+      </div>
+
+      <div class="section-label">Performance financière</div>
+      <div class="row cols-4">
+        <div class="kpi accent"><div class="kpi-lbl">CA TOTAL mois</div><div class="kpi-val mono" id="k-tot">—</div><div class="kpi-sub">Yango NET + hors-Yango</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA Yango BRUT</div><div class="kpi-val mono" id="k-brut">—</div><div class="kpi-sub">Avant commissions</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA Yango NET (Bonus)</div><div class="kpi-val mono" id="k-net">—</div><div class="kpi-sub">Base bonus contractuel</div></div>
+        <div class="kpi gold"><div class="kpi-lbl">Hors-Yango (cash)</div><div class="kpi-val mono" id="k-ad">—</div><div class="kpi-sub">100 % propriétaire</div></div>
+      </div>
+
+      <div class="row cols-4" style="margin-top:14px">
+        <div class="kpi"><div class="kpi-lbl">Commissions cumul</div><div class="kpi-val mono" id="k-com">—</div><div class="kpi-sub">Yango + partenaire</div></div>
+        <div class="kpi"><div class="kpi-lbl">Versements cash reçus</div><div class="kpi-val mono" id="k-vers">—</div><div class="kpi-sub">Cumul mensuel</div></div>
+        <div class="kpi"><div class="kpi-lbl">Solde wallet</div><div class="kpi-val mono" id="k-wal">—</div><div class="kpi-sub" id="k-wal-sub">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Note Yango moy.</div><div class="kpi-val mono" id="k-note">—</div><div class="kpi-sub" id="k-note-sub">—</div></div>
+      </div>
+
+      <div class="section-label">Opérations véhicule</div>
+      <div class="row cols-4">
+        <div class="kpi"><div class="kpi-lbl">Km parcourus</div><div class="kpi-val mono" id="k-km">—</div><div class="kpi-sub" id="k-km-sub">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA NET / km</div><div class="kpi-val mono" id="k-ckm">—</div><div class="kpi-sub">Productivité</div></div>
+        <div class="kpi"><div class="kpi-lbl">Carburant</div><div class="kpi-val mono" id="k-carb">—</div><div class="kpi-sub" id="k-carb-sub">—</div></div>
+        <div class="kpi"><div class="kpi-lbl">Conso L/100km</div><div class="kpi-val mono" id="k-conso">—</div><div class="kpi-sub" id="k-conso-sub">—</div></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="flex-between"><h2 style="margin:0">🎯 Progression CA Yango NET — Cible bonus 100k</h2><div id="prog-pct" style="font-weight:700">—</div></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px">
+          <span>0</span><span>1 000 000</span><span>1 150 000</span><span>1 300 000 (cible)</span>
+        </div>
+        <div class="row cols-3" style="margin-top:16px">
+          <div class="kpi"><div class="kpi-lbl">Bonus actuel</div><div class="kpi-val mono" id="prog-bonus">—</div><div class="kpi-sub" id="prog-tranche">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">Projection fin mois</div><div class="kpi-val mono" id="prog-proj">—</div><div class="kpi-sub" id="prog-proj-sub">—</div></div>
+          <div class="kpi"><div class="kpi-lbl">Reste à faire / jour</div><div class="kpi-val mono" id="prog-rest">—</div><div class="kpi-sub" id="prog-rest-sub">—</div></div>
         </div>
       </div>
+
+      <div class="row cols-2" style="margin-top:14px">
+        <div class="card"><h2>📊 CA quotidien</h2><div class="chart-box"><canvas id="ch-ca"></canvas></div></div>
+        <div class="card"><h2>📈 Cumul CA NET vs paliers</h2><div class="chart-box"><canvas id="ch-cumul"></canvas></div></div>
+      </div>
+
+      <div class="section-label">Alertes</div>
+      <div class="card" id="alerts-box"><div class="muted">Aucune alerte.</div></div>
+
+      <div class="section-label">&#128176; Paie chauffeur &mdash; Bilan du mois</div>
+      <div class="card" id="pay-card">
+
+        <!-- TOP ROW : 3 gros KPIs -->
+        <div class="row cols-3" style="margin-bottom:18px">
+          <div class="kpi" style="text-align:center">
+            <div class="kpi-lbl">Fixe mensuel</div>
+            <div class="kpi-val mono" id="pay-f">-</div>
+          </div>
+          <div class="kpi gold" style="text-align:center">
+            <div class="kpi-lbl">Bonus palier</div>
+            <div class="kpi-val mono" id="pay-b">-</div>
+            <div class="kpi-sub" id="pay-b-tr">-</div>
+          </div>
+          <div class="kpi accent" style="text-align:center">
+            <div class="kpi-lbl">Total brut d&#251;</div>
+            <div class="kpi-val mono" id="pay-gross">-</div>
+          </div>
+        </div>
+
+        <!-- TABLEAU DETAIL -->
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px" id="pay-detail-tbl">
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 4px;color:var(--muted)">&#43; Fixe mensuel</td>
+              <td style="padding:8px 4px;text-align:right;font-weight:600" class="mono" id="pd-fixe">-</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 4px;color:var(--muted)">&#43; Bonus performance</td>
+              <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--gold-d)" class="mono" id="pd-bonus">-</td>
+            </tr>
+            <tr style="border-bottom:2px solid var(--border);background:rgba(0,0,0,.03)">
+              <td style="padding:8px 4px;font-weight:700">= Total brut d&#251;</td>
+              <td style="padding:8px 4px;text-align:right;font-weight:800" class="mono" id="pd-gross">-</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash re&#231;us (mois)</td>
+              <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--danger)" class="mono" id="pd-vers">-</td>
+            </tr>
+            <tr style="background:rgba(5,150,105,.07);border-radius:8px">
+              <td style="padding:10px 4px;font-weight:800;font-size:15px;color:var(--vert)">= NET A VERSER</td>
+              <td style="padding:10px 4px;text-align:right;font-weight:900;font-size:18px;color:var(--vert)" class="mono" id="pay-n">-</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- STATUT + ACTIONS -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div id="pay-status-badge" style="font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--muted);color:var(--muted)">
+            &#9679; Calcul en attente
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" onclick="copyPaySummary()" style="font-size:12px;padding:6px 14px">
+              &#128203; Copier recap
+            </button>
+            <button class="btn btn-gold" onclick="markAsPaid()" id="pay-btn-paid" style="font-size:12px;padding:6px 16px" disabled>
+              &#9989; Marquer paye
+            </button>
+          </div>
+        </div>
+        <div id="pay-note" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+      </div>
+    </div><!-- VIEW VALID -->
+    <div class="view-pane" id="pane-valid" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <h1>Soumissions à valider</h1>
+        <button class="btn btn-ghost" onclick="loadPending()">↻ Rafraîchir</button>
+      </div>
+      <div id="pending-list"><div class="muted center" style="padding:40px 0">Chargement…</div></div>
     </div>
 
-    <!-- SOUMISSIONS -->
-    <div class="view" id="t-soumissions">
-      <div class="sec-hd">
-        <h2>📥 Soumissions</h2>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="filter-status" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'Inter',sans-serif">
-            <option value="ALL">Tout</option>
-            <option value="PENDING" selected>En attente</option>
-            <option value="VALIDATED">Validées</option>
-            <option value="REJECTED">Refusées</option>
-          </select>
-          <button class="btn btn-ghost" id="btn-refresh">🔄 Rafraîchir</button>
-        </div>
+    <!-- VIEW HISTO -->
+    <div class="view-pane" id="pane-histo" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <h1>Historique Journal (données validées)</h1>
+        <button class="btn btn-ghost" onclick="exportCSV()">⬇ CSV</button>
       </div>
-      <div id="sub-list"><div class="empty">Chargement…</div></div>
-    </div>
-
-    <!-- CHAUFFEURS -->
-    <div class="view" id="t-chauffeurs">
-      <div class="sec-hd">
-        <h2>👤 Chauffeurs</h2>
-        <button class="btn btn-gold" id="btn-add-driver">+ Ajouter un chauffeur</button>
-      </div>
-      <div class="card">
-        <table class="user-table">
-          <thead><tr><th>Identifiant</th><th>Nom</th><th>Véhicule</th><th>Plaque</th><th>Statut</th></tr></thead>
-          <tbody id="drivers-table-body"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Chargement…</td></tr></tbody>
+      <div class="card" style="overflow-x:auto">
+        <table class="tbl" id="histo-tbl">
+          <thead><tr><th>Date</th><th>Statut</th><th>Km</th><th class="num">Courses</th><th class="num">CA brut</th><th class="num">CA NET 15%</th><th class="num">Hors Yango</th><th class="num">Versement</th><th class="num">Wallet</th><th class="num">Carb.</th><th class="num">Note</th></tr></thead>
+          <tbody></tbody>
         </table>
       </div>
     </div>
 
-    <!-- CONFIG -->
-    <div class="view" id="t-config">
-      <div class="sec-hd"><h2>⚙️ Configuration</h2></div>
-      <div class="card" style="max-width:560px">
-        <h2 style="font-size:14px;margin-bottom:14px">Commissions</h2>
-        <div class="config-row">
-          <div><div class="cr-label">Commission Yango (%)</div><div class="cr-sub">Prélevée par Yango sur le CA brut</div></div>
-          <input class="cr-input" type="number" id="cfg-comY" step="0.1" value="15"/>
-        </div>
-        <div class="config-row">
-          <div><div class="cr-label">Commission partenaire (%)</div><div class="cr-sub">Frais réseau partenaire</div></div>
-          <input class="cr-input" type="number" id="cfg-comP" step="0.01" value="0.75"/>
-        </div>
-        <div style="margin-top:16px"><button class="btn btn-gold" id="btn-save-config">💾 Sauvegarder commissions</button></div>
+    <!-- VIEW USERS -->
+    <div class="view-pane" id="pane-users" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <h1>Utilisateurs</h1>
+        <button class="btn btn-primary" onclick="openAddUser()">+ Nouveau</button>
       </div>
-      <div class="card" style="max-width:560px;margin-top:0">
-        <h2 style="font-size:14px;margin-bottom:14px">💙 Lien Wave professionnel</h2>
-        <div class="field">
-          <label>URL pay.wave.com du compte propriétaire</label>
-          <input type="text" id="cfg-wave" placeholder="https://pay.wave.com/m/..."/>
+      <div class="card">
+        <table class="tbl" id="users-tbl">
+          <thead><tr><th>Identifiant</th><th>Nom</th><th>Rôle</th><th>Véhicule</th><th>Email</th><th>Tel</th><th>Actif</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card" id="adduser-box" style="display:none">
+        <h2>Nouvel utilisateur</h2>
+        <div class="row cols-2">
+          <div class="field"><label>Identifiant *</label><input id="nu-user"/></div>
+          <div class="field"><label>Mot de passe *</label><input id="nu-pw"/></div>
+          <div class="field"><label>Nom complet</label><input id="nu-name"/></div>
+          <div class="field"><label>Rôle *</label><select id="nu-role"><option value="driver">Chauffeur</option><option value="admin">Admin</option></select></div>
+          <div class="field"><label>Téléphone</label><input id="nu-phone" placeholder="+221..."/></div>
+          <div class="field"><label>Véhicule (id)</label><input id="nu-veh" placeholder="k3"/></div>
+          <div class="field"><label>Email</label><input id="nu-email" type="email"/></div>
         </div>
-        <button class="btn btn-primary" id="btn-save-wave">Mettre à jour Wave</button>
+        <div style="text-align:right"><button class="btn btn-ghost" onclick="$('adduser-box').style.display='none'">Annuler</button> <button class="btn btn-gold" onclick="addUser()">Créer</button></div>
       </div>
     </div>
+
+    <!-- VIEW CONFIG -->
+    <div class="view-pane" id="pane-config" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px"><h1>Paramètres</h1><button class="btn btn-gold" onclick="saveConfig()">Sauvegarder</button></div>
+      <div class="row cols-2">
+        <div class="card">
+          <h2>Commissions & paie</h2>
+          <div class="cfg-row"><label>Commission Yango (%)</label><input id="c-comY" step="0.01"/></div>
+          <div class="cfg-row"><label>Commission partenaire (%)</label><input id="c-comP" step="0.01"/></div>
+          <div class="cfg-row"><label>Fixe mensuel chauffeur</label><input id="c-fixe"/></div>
+        </div>
+        <div class="card">
+          <h2>Paliers bonus</h2>
+          <div class="cfg-row"><label>Palier 1 — seuil</label><input id="c-b1"/></div>
+          <div class="cfg-row"><label>Palier 1 — bonus</label><input id="c-bv1"/></div>
+          <div class="cfg-row"><label>Palier 2 — seuil</label><input id="c-b2"/></div>
+          <div class="cfg-row"><label>Palier 2 — bonus</label><input id="c-bv2"/></div>
+          <div class="cfg-row"><label>Palier 3 — seuil</label><input id="c-b3"/></div>
+          <div class="cfg-row"><label>Palier 3 — bonus</label><input id="c-bv3"/></div>
+        </div>
+        <div class="card">
+          <h2>Objectifs</h2>
+          <div class="cfg-row"><label>Jours travaillés / mois</label><input id="c-jrs"/></div>
+          <div class="cfg-row"><label>Cible CA NET / mois</label><input id="c-cible"/></div>
+          <div class="cfg-row"><label>Cible CA NET / jour</label><input id="c-cibleJ"/></div>
+        </div>
+        <div class="card">
+          <h2>Alertes & carburant</h2>
+          <div class="cfg-row"><label>Prix moyen litre</label><input id="c-prixL"/></div>
+          <div class="cfg-row"><label>Capacité réservoir</label><input id="c-tank"/></div>
+          <div class="cfg-row"><label>Conso cible L/100km</label><input id="c-conso"/></div>
+          <div class="cfg-row"><label>Seuil alerte wallet</label><input id="c-seuilW"/></div>
+          <div class="cfg-row"><label>Note Yango min</label><input id="c-noteMin"/></div>
+        </div>
+        <div class="card">
+          <h2>Notifications</h2>
+          <div class="cfg-row"><label>Email activé (1/0)</label><input id="c-nemail"/></div>
+          <div class="cfg-row"><label>WhatsApp activé (1/0)</label><input id="c-nwa"/></div>
+          <div class="cfg-row"><label>Numéro WhatsApp (+221…)</label><input id="c-wphone"/></div>
+          <div class="cfg-row"><label>CallMeBot API Key</label><input id="c-wkey"/></div>
+        </div>
+        <div class="card">
+          <h2>Import depuis v1</h2>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Si tu avais saisi des journées dans la v1 locale (localStorage), importe-les ici.</p>
+          <input type="file" id="legacy-file" accept=".json"/>
+          <button class="btn btn-primary" onclick="importLegacy()" style="margin-top:10px">Importer</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- MODAL ADD DRIVER -->
-<div class="modal-overlay" id="modal-add-driver">
-  <div class="modal-box">
-    <div class="modal-title">➕ Nouveau chauffeur</div>
-    <div class="field"><label>Identifiant (ex: k3, orlando)</label><input type="text" id="new-username" autocapitalize="off"/></div>
-    <div class="field"><label>Mot de passe temporaire</label><input type="password" id="new-pw" placeholder="min. 6 caractères"/></div>
-    <div class="field"><label>Nom complet</label><input type="text" id="new-fullname"/></div>
-    <div class="field"><label>Nom du véhicule</label><input type="text" id="new-veh-name" placeholder="ex: Kia K3"/></div>
-    <div class="field"><label>Plaque</label><input type="text" id="new-plate" placeholder="ex: AB-872-JG"/></div>
-    <div style="display:flex;gap:10px;margin-top:4px">
-      <button class="btn btn-gold" id="btn-confirm-add" style="flex:1">✅ Créer le compte</button>
-      <button class="btn btn-ghost" id="btn-cancel-add">Annuler</button>
-    </div>
-    <div id="add-err" style="color:var(--red);font-size:12px;margin-top:8px;display:none"></div>
+
+    <!-- PANE SAISIE MANUELLE ADMIN -->
+    <div class="view-pane" id="pane-saisie" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <h1>&#9998; Saisie manuelle</h1>
+        <span class="tag blue" style="font-size:11px;padding:4px 10px">Admin only &mdash; Bypass champs obligatoires</span>
+      </div>
+      <div class="card" style="max-width:640px;margin:0 auto">
+        <div class="alert info" style="margin-bottom:16px">&#128221; Combler une journ&eacute;e manquante ou saisir des donn&eacute;es incompl&egrave;tes. Aucune photo requise. Saisie <strong>directement valid&eacute;e</strong> dans le journal.</div>
+        <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+          <div>
+            <label class="cfg-label">V&eacute;hicule *</label>
+            <select id="adm-vehicle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:#fff">
+              <option value="">&#8212; choisir &#8212;</option>
+            </select>
+          </div>
+          <div>
+            <label class="cfg-label">Date de la journ&eacute;e *</label>
+            <input type="date" id="adm-date" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label class="cfg-label">Statut</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            <button type="button" class="adm-st-btn active" data-st="ACTIF" onclick="admSetSt('ACTIF',this)">Travail</button>
+            <button type="button" class="adm-st-btn" data-st="REPOS" onclick="admSetSt('REPOS',this)">Repos</button>
+            <button type="button" class="adm-st-btn" data-st="PANNE" onclick="admSetSt('PANNE',this)">Panne</button>
+          </div>
+        </div>
+        <div id="adm-fields-actif">
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Km compteur</label><input type="number" id="adm-km" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="adm-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div>
+  <label class="cfg-label" id="adm-ca-label">CA Yango brut (XOF)</label>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-top:2px">
+    <button type="button" id="adm-net-toggle" onclick="admToggleNet()" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--bleu);background:transparent;color:var(--bleu);cursor:pointer;font-family:inherit;font-weight:600">Passer en saisie NET</button>
+    <span id="adm-net-hint" style="font-size:11px;color:var(--muted);display:none">Commission déduite automatiquement</span>
   </div>
+  <input type="number" id="adm-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+</div>
+            <div><label class="cfg-label">Hors Yango (XOF)</label><input type="number" id="adm-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Versement cash (XOF)</label><input type="number" id="adm-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Solde Wallet (XOF)</label><input type="number" id="adm-wal" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Carburant (L)</label><input type="number" id="adm-cbl" placeholder="0" step="0.1" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Carburant (XOF)</label><input type="number" id="adm-cbm" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+            <div><label class="cfg-label">Note Yango (/ 5)</label><input type="number" id="adm-note" placeholder="ex: 4.8" step="0.1" min="0" max="5" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+            <div><label class="cfg-label">Incident</label><input type="text" id="adm-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label class="cfg-label">Notes propri&eacute;taire</label>
+            <textarea id="adm-notes" rows="2" placeholder="Notes internes..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div id="adm-result" style="margin-bottom:12px"></div>
+        <button class="btn btn-gold" id="adm-btn-submit" onclick="doAdminSubmit()" style="width:100%">&#10003; Valider la saisie</button>
+      </div>
+    </div>
+<!-- PHOTO MODAL -->
+<div class="photo-modal" id="photo-modal">
+  <button class="close" onclick="$('photo-modal').classList.remove('show')">×</button>
+  <img id="photo-modal-img"/>
 </div>
 
 <script>
-firebase.initializeApp(FIREBASE_CONFIG);
-const auth = firebase.auth();
-const db   = firebase.firestore();
+let TOKEN = localStorage.getItem('m3a_admin_token') || null;
+let ME = null, CFG = null, JOURNAL = [], PENDING = [];
+let CH = {};
 
-const $ = id => document.getElementById(id);
-const fmt = n => (!n || isNaN(n)) ? '—' : new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' XOF';
-let allSubs = [], caChart = null, unsubFn = null;
+function $(id){ return document.getElementById(id); }
+function show(viewId){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(viewId).classList.add('active'); }
+function toast(msg, kind){ const t=document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3500); }
+function fmt(n){ return (n==null||isNaN(n))?'—':new Intl.NumberFormat('fr-FR').format(Math.round(n)); }
+function fmtX(n){ return fmt(n)+' XOF'; }
+function fmt2(n){ return (n==null||isNaN(n))?'—':Number(n).toFixed(2); }
+function frDateShort(d){ if(!d) return '—'; const x=new Date(d+'T00:00:00'); return x.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function frDate(d){ if(!d) return '—'; const x=new Date(d+'T00:00:00'); return x.toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function monthKey(d){ return String(d).slice(0,7); }
 
-function toast(msg, kind) {
-  const t = document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg;
-  document.body.appendChild(t); setTimeout(()=>t.remove(),3500);
-}
-function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(id).classList.add('active'); }
-function showTabContent(tab){
-  ['dashboard','soumissions','chauffeurs','config'].forEach(t=>$('t-'+t).classList.toggle('active',t===tab));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-  if(tab==='soumissions') renderSubs();
-  if(tab==='chauffeurs')  loadDrivers();
-  if(tab==='config')      loadCfg();
-  if(tab==='dashboard')   renderDash();
-}
-
-// AUTH
-auth.onAuthStateChanged(async user=>{
-  if(!user){ showView('v-login'); return; }
-  try{
-    const snap=await db.collection('users').doc(user.uid).get();
-    if(!snap.exists||snap.data().role!=='admin'){ await auth.signOut(); showLoginErr("Accès refusé."); return; }
-    showView('v-app');
-    setupRealtime();
-  }catch(e){ showLoginErr(e.message); await auth.signOut(); }
-});
-
-function showLoginErr(msg){ const e=$('lg-err'); e.textContent=msg; e.style.display='block'; }
-
-$('btn-login').addEventListener('click', async()=>{
-  const u=$('lg-user').value.trim().toLowerCase(), p=$('lg-pw').value;
-  if(!u||!p){ showLoginErr('Identifiant et mot de passe requis.'); return; }
-  $('lg-err').style.display='none';
-  $('btn-login').innerHTML='<span class="spin"></span>Connexion…'; $('btn-login').disabled=true;
-  try{ await auth.signInWithEmailAndPassword(u+EMAIL_DOMAIN,p); }
-  catch(e){ showLoginErr('Identifiant ou mot de passe incorrect.'); $('btn-login').innerHTML='🔓 Connexion'; $('btn-login').disabled=false; }
-});
-$('lg-pw').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btn-login').click(); });
-$('btn-logout').addEventListener('click',()=>{ if(unsubFn) unsubFn(); auth.signOut(); });
-document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>showTabContent(b.dataset.tab)));
-
-// REALTIME
-function setupRealtime(){
-  $('dash-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  unsubFn=db.collection('submissions').onSnapshot(snap=>{
-    allSubs=snap.docs.map(d=>({id:d.id,...d.data()}));
-    const pending=allSubs.filter(s=>s.status==='PENDING').length;
-    const pc=$('pending-count'); pc.textContent=pending; pc.style.display=pending>0?'flex':'none';
-    $('kpi-pending').textContent=pending;
-    const activeTab=document.querySelector('.nav-btn.active')?.dataset.tab;
-    if(activeTab==='soumissions') renderSubs();
-    if(activeTab==='dashboard')   renderDash();
-  });
-  renderDash();
-}
-
-// DASHBOARD
-function renderDash(){
-  const today=new Date().toISOString().slice(0,10);
-  const td=allSubs.filter(s=>s.date===today);
-  $('kpi-ca-today').textContent=fmt(td.reduce((a,s)=>a+(s.ca_yango_brut||0),0));
-  $('kpi-vers-today').textContent=fmt(td.reduce((a,s)=>a+(s.vers_recu||0),0));
-  $('kpi-courses-today').textContent=td.reduce((a,s)=>a+(s.nb_courses_yango||0),0)||'—';
-
-  const recent=[...allSubs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
-  $('recent-list').innerHTML=recent.length?recent.map(s=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">
-      <div><strong>${s.username||'—'}</strong> · ${s.date}</div>
-      <div style="display:flex;gap:6px;align-items:center"><span>${fmt(s.ca_yango_brut)}</span>
-      <span class="sub-badge ${s.status}">${s.status==='PENDING'?'⏳':s.status==='VALIDATED'?'✅':'❌'}</span></div>
-    </div>`).join(''):'<div class="empty">Aucune donnée</div>';
-
-  // Chart
-  const labels=[],data=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const key=d.toISOString().slice(0,10);
-    labels.push(d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}));
-    data.push(allSubs.filter(s=>s.date===key).reduce((a,s)=>a+(s.ca_yango_brut||0),0));
+const M3A_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyCr1QUqofrrxFHUeamWUtQrRKhmEIpBcgQ2srNsxxKZm_A2PyCJI-_7eW3-sgRYjVDIA/exec';
+async function api(action, body){
+  body = body || {};
+  try {
+    const r = await fetch(M3A_BACKEND_URL, {
+      method: 'POST',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, ...body })
+    });
+    if (!r.ok) return { error: 'HTTP ' + r.status };
+    return await r.json();
+  } catch(e) {
+    return { error: 'Erreur réseau : ' + e.message };
   }
-  if(caChart) caChart.destroy();
-  caChart=new Chart($('chart-ca'),{type:'bar',data:{labels,datasets:[{data,backgroundColor:'#C9A227',borderRadius:6,label:'CA brut XOF'}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}},responsive:true}});
 }
 
-// SUBMISSIONS
-function renderSubs(){
-  const filter=$('filter-status').value;
-  let items=[...allSubs];
-  if(filter!=='ALL') items=items.filter(s=>s.status===filter);
-  items.sort((a,b)=>b.date.localeCompare(a.date));
-  if(!items.length){ $('sub-list').innerHTML='<div class="empty">Aucune soumission pour ce filtre.</div>'; return; }
-  $('sub-list').innerHTML=items.map(s=>{
-    const photos=s.photos||{};
-    const photoHTML=Object.entries(photos).map(([n,u])=>`<a href="${u}" target="_blank"><img src="${u}" alt="${n}" loading="lazy"/></a>`).join('');
-    return `<div class="sub-card">
-      <div class="sub-top">
-        <div><div class="sub-driver">🚗 ${s.username||'—'} · ${s.vehicle_name||''} ${s.vehicle_plate?'('+s.vehicle_plate+')':''}</div>
-        <div class="sub-date">${new Date(s.date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</div></div>
-        <span class="sub-badge ${s.status}">${s.status==='PENDING'?'⏳ En attente':s.status==='VALIDATED'?'✅ Validée':'❌ Refusée'}</span>
+/* ═══ AUTH ═══ */
+async function doLogin(){
+  const u=$('lg-user').value.trim(), p=$('lg-pw').value;
+  if(!u||!p) return;
+  $('btn-login').innerHTML='<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
+  try{
+    const r = await api('login',{username:u, password:p});
+    if(r.error){ $('login-err').innerHTML='<div class="alert danger">'+r.error+'</div>'; return; }
+    if(r.role!=='admin'){ $('login-err').innerHTML='<div class="alert danger">Accès réservé aux administrateurs</div>'; return; }
+    TOKEN = r.token; localStorage.setItem('m3a_admin_token', TOKEN);
+    ME = r.user;
+    initApp();
+  }catch(e){ $('login-err').innerHTML='<div class="alert danger">Erreur réseau : '+e.message+'</div>'; }
+  finally{ $('btn-login').innerHTML='Se connecter'; $('btn-login').disabled=false; }
+}
+async function doLogout(){ await api('logout',{token:TOKEN}).catch(()=>{}); localStorage.removeItem('m3a_admin_token'); location.reload(); }
+async function checkSession(){
+  if(!TOKEN) return;
+  const r = await api('me',{token:TOKEN});
+  if(r.error || !r.user || r.user.role!=='admin'){ localStorage.removeItem('m3a_admin_token'); return; }
+  ME = r.user; initApp();
+}
+async function initApp(){
+  $('adm-name').textContent = ME.full_name || ME.username;
+  show('v-app');
+  await loadConfig();
+  await refresh();
+}
+async function loadConfig(){ const r = await api('config_get',{token:TOKEN}); if(r.ok) CFG = r.config; }
+async function refresh(){
+  const j = await api('journal',{token:TOKEN});
+  if(j.ok){ JOURNAL = j.journal; CFG = j.config; renderDash(); renderHisto(); }
+  const p = await api('pending',{token:TOKEN});
+  if(p.ok){ PENDING = p.pending; renderPendingBadge(); renderPending(); }
+}
+
+/* ═══ TABS ═══ */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const v = t.dataset.view;
+  ['dash','valid','histo','users','config','saisie'].forEach(x=>$('pane-'+x).style.display='none');
+  $('pane-'+v).style.display='block';
+  if(v==='users') loadUsers();
+  if(v==='config') fillConfig();
+  if(v==='saisie'){ $('adm-date').value=todayISO(); loadAdminVehicles(); }
+  if(v==='saisie'){ $('adm-date').value = todayISO(); loadAdminVehicles(); }
+  if(v==='valid') loadPending();
+}));
+
+/* ═══ COMPUTE ═══ */
+function bonusFor(net){
+  if(!CFG) return {amt:0,tr:'—'};
+  if(net>=+CFG.b3) return {amt:+CFG.bv3, tr:'Palier 3 (>'+fmt(CFG.b3)+')'};
+  if(net>=+CFG.b2) return {amt:+CFG.bv2, tr:'Palier 2'};
+  if(net>=+CFG.b1) return {amt:+CFG.bv1, tr:'Palier 1'};
+  return {amt:0, tr:'Aucun palier'};
+}
+function compRow(r){
+  const cy = (+CFG.comY)/100, cp=(+CFG.comP)/100;
+  const brut = +r.ca_yango_brut||0;
+  return {
+    brut, net15: brut*(1-cy), com:brut*(cy+cp), netP:brut*(1-cy-cp),
+    ad:+r.ca_hors_yango||0, vers:+r.vers_recu||0,
+    km: r._kmP || 0,
+    carbL:+r.carb_l||0, carbM:+r.carb_xof||0,
+    walF: r.wal_solde, note: r.note_yango
+  };
+}
+
+/* ═══ DASHBOARD ═══ */
+function buildMonths(){
+  const sel = $('dash-month');
+  const m = [...new Set(JOURNAL.map(d=>monthKey(d.date)))].sort();
+  if(!m.includes(monthKey(todayISO()))) m.push(monthKey(todayISO()));
+  sel.innerHTML = m.map(x=>{ const d=new Date(x+'-01T00:00:00'); return `<option value="${x}">${d.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</option>`; }).join('');
+  sel.value = monthKey(todayISO());
+  sel.onchange = renderDash;
+}
+
+function renderDash(){
+  if(!CFG){ return; }
+  buildMonths();
+  const m = $('dash-month').value;
+  const md = new Date(m+'-01T00:00:00');
+  $('dash-period').textContent = md.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+
+  let days = JOURNAL.filter(d=>monthKey(d.date)===m).sort((a,b)=>a.date.localeCompare(b.date));
+  // calc km parcourus en chaîne (km du jour - km du jour précédent)
+  let prevKm = null;
+  days.forEach((d,i)=>{
+    if(d.km!=null && prevKm!=null) d._kmP = Math.max(0, +d.km - prevKm);
+    else d._kmP = 0;
+    if(d.km!=null) prevKm = +d.km;
+  });
+  const C = days.map(compRow);
+  const sum = a=>a.reduce((s,x)=>s+x,0);
+  const brut = sum(C.map(c=>c.brut)), net15 = sum(C.map(c=>c.net15));
+  const com = sum(C.map(c=>c.com)), ad = sum(C.map(c=>c.ad)), vers = sum(C.map(c=>c.vers));
+  const km = sum(C.map(c=>c.km));
+  const carbL = sum(C.map(c=>c.carbL)), carbM = sum(C.map(c=>c.carbM));
+  const lastWal = [...C].reverse().find(c=>c.walF!=null);
+  const notes = C.filter(c=>c.note!=null).map(c=>+c.note);
+  const noteMoy = notes.length? notes.reduce((a,b)=>a+b,0)/notes.length : null;
+  const actDays = days.filter(d=>d.statut==='ACTIF').length;
+
+  $('k-tot').textContent = fmtX(net15+ad);
+  $('k-brut').textContent = fmtX(brut);
+  $('k-net').textContent = fmtX(net15);
+  $('k-ad').textContent = fmtX(ad);
+  $('k-com').textContent = fmtX(com);
+  $('k-vers').textContent = fmtX(vers);
+  $('k-wal').textContent = lastWal? fmtX(lastWal.walF):'—';
+  $('k-wal-sub').textContent = (lastWal && +lastWal.walF<+CFG.seuilW)?'⚠ Sous le seuil':'OK';
+  $('k-note').textContent = noteMoy? fmt2(noteMoy)+' / 5':'—';
+  $('k-note-sub').textContent = noteMoy? (noteMoy>=+CFG.noteMin?'≥ '+CFG.noteMin:'⚠ Sous '+CFG.noteMin):'—';
+  $('k-km').textContent = fmt(km)+' km';
+  $('k-km-sub').textContent = actDays+' jours actifs';
+  $('k-ckm').textContent = km>0? fmt(net15/km)+' XOF/km':'—';
+  $('k-carb').textContent = fmtX(carbM);
+  $('k-carb-sub').textContent = fmt2(carbL)+' L';
+  const conso = (km>0&&carbL>0)?(carbL*100/km):null;
+  $('k-conso').textContent = conso? fmt2(conso):'—';
+  $('k-conso-sub').textContent = conso && conso>+CFG.conso*1.15? '⚠ +'+fmt2(conso-+CFG.conso):'OK';
+
+  // progression
+  const cible = +CFG.cible;
+  const pct = Math.min(100, net15/cible*100);
+  $('prog-fill').style.width = pct+'%';
+  $('prog-fill').className = 'progress-fill ' + (pct>=100?'ok':'');
+  $('prog-pct').textContent = fmt(pct)+' % de '+fmtX(cible);
+  const b = bonusFor(net15);
+  $('prog-bonus').textContent = fmtX(b.amt); $('prog-tranche').textContent = b.tr;
+  const proj = actDays>0? net15*(+CFG.jrs)/actDays : 0;
+  const bProj = bonusFor(proj);
+  $('prog-proj').textContent = fmtX(proj); $('prog-proj-sub').textContent = 'Bonus projeté '+fmtX(bProj.amt);
+  const reste = Math.max(0, cible-net15), jrs = Math.max(1, +CFG.jrs - actDays);
+  $('prog-rest').textContent = fmtX(reste/jrs); $('prog-rest-sub').textContent = jrs+' jours restants';
+  $('dash-info').textContent = actDays+' / '+CFG.jrs+' jours travaillés • cible quotidienne NET '+fmtX(+CFG.cibleJ);
+
+  // === PAIE CHAUFFEUR — Bilan complet ===
+  const payFixe  = +CFG.fixe || 0;
+  const payBonus = b.amt || 0;
+  const payGross = payFixe + payBonus;
+  const payVers  = vers; // versements cash reçus ce mois
+  const payNet   = Math.max(0, payGross - payVers);
+
+  // KPIs top
+  $('pay-f').textContent     = fmtX(payFixe);
+  $('pay-b').textContent     = fmtX(payBonus);
+  $('pay-b-tr').textContent  = b.tr;
+  $('pay-gross').textContent = fmtX(payGross);
+
+  // Tableau détail
+  $('pd-fixe').textContent  = fmtX(payFixe);
+  $('pd-bonus').textContent = fmtX(payBonus);
+  $('pd-gross').textContent = fmtX(payGross);
+  $('pd-vers').textContent  = '- ' + fmtX(payVers);
+  $('pay-n').textContent    = fmtX(payNet);
+
+  // Badge statut
+  const badge = $('pay-status-badge');
+  const payBtn = $('pay-btn-paid');
+  if(payNet <= 0){
+    badge.textContent = '\u2705 Solde = 0 — Rien à verser';
+    badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--vert);color:var(--vert);background:var(--vert-l)';
+    payBtn.disabled = true;
+  } else {
+    badge.textContent = '\u26A0 Reste à verser : ' + fmtX(payNet);
+    badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--gold);color:var(--gold-d);background:var(--gold-l)';
+    payBtn.disabled = false;
+  }
+
+  // Note récap
+  $('pay-note').textContent = actDays + ' jours travaillés — Base bonus: CA NET ' + fmtX(net15) + ' — Palier: ' + b.tr;
+
+  // Stocker pour copie
+  window._PAY_SUMMARY = {
+    mois: $('dash-period').textContent,
+    fixe: payFixe, bonus: payBonus, gross: payGross,
+    vers: payVers, net: payNet, palier: b.tr,
+    net15, actDays
+  };
+
+  // Charts
+  Object.values(CH).forEach(c=>{try{c.destroy()}catch(e){}}); CH = {};
+  const labels = days.map(d=>frDateShort(d.date).slice(0,5));
+  CH.ca = new Chart($('ch-ca'),{type:'bar',data:{labels,datasets:[{label:'Yango net',data:C.map(c=>c.net15),backgroundColor:'#2563EB'},{label:'Hors-Yango',data:C.map(c=>c.ad),backgroundColor:'#C9A227'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>fmt(v)}}},plugins:{legend:{position:'bottom'}}}});
+  const cumul=[]; let acc=0; C.forEach(c=>{acc+=c.net15; cumul.push(acc)});
+  CH.cumul = new Chart($('ch-cumul'),{type:'line',data:{labels,datasets:[{label:'Cumul CA NET',data:cumul,borderColor:'#0F172A',backgroundColor:'rgba(15,23,42,.07)',fill:true,tension:.25,borderWidth:2},{label:'+30k (1M)',data:labels.map(()=>+CFG.b1),borderColor:'#94A3B8',borderDash:[4,4],pointRadius:0,borderWidth:1},{label:'+60k (1.15M)',data:labels.map(()=>+CFG.b2),borderColor:'#D97706',borderDash:[4,4],pointRadius:0,borderWidth:1},{label:'+100k (1.3M)',data:labels.map(()=>+CFG.b3),borderColor:'#059669',borderDash:[4,4],pointRadius:0,borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{ticks:{callback:v=>fmt(v)}}}}});
+
+  renderAlerts(days, C, {net15, proj, lastWal, conso});
+}
+
+function renderAlerts(days, C, ctx){
+  const box = $('alerts-box'); const al = [];
+  if(ctx.lastWal && +ctx.lastWal.walF < +CFG.seuilW) al.push({lvl:'danger',i:'⚠',b:'<strong>Wallet bas</strong> ('+fmtX(ctx.lastWal.walF)+'). Recharger.'});
+  if(ctx.conso && ctx.conso > +CFG.conso*1.15) al.push({lvl:'warn',i:'⛽',b:'<strong>Conso élevée</strong> '+fmt2(ctx.conso)+' L/100km vs cible '+fmt2(CFG.conso)});
+  if(ctx.proj && ctx.proj < +CFG.b1) al.push({lvl:'warn',i:'🎯',b:'<strong>Projection sous palier 1</strong> ('+fmtX(ctx.proj)+').'});
+  if(ctx.proj >= +CFG.b3) al.push({lvl:'ok',i:'✅',b:'<strong>Trajectoire palier 100k</strong> ('+fmtX(ctx.proj)+').'});
+  const notes = days.filter(d=>d.note_yango!=null).slice(-3);
+  if(notes.length===3 && notes.every(d=>+d.note_yango<+CFG.noteMin)) al.push({lvl:'danger',i:'⭐',b:'<strong>Note Yango < '+CFG.noteMin+' sur 3 jours consécutifs</strong>'});
+  if(al.length===0){ box.innerHTML='<div class="alert ok"><div>✓</div><div>Aucune alerte active.</div></div>'; return; }
+  box.innerHTML = al.map(a=>`<div class="alert ${a.lvl}"><div>${a.i}</div><div>${a.b}</div></div>`).join('');
+}
+
+/* ═══ PENDING / À VALIDER ═══ */
+function renderPendingBadge(){
+  const b = $('bdg-pending');
+  if(PENDING.length>0){ b.style.display='inline-flex'; b.textContent = PENDING.length; }
+  else b.style.display='none';
+}
+async function loadPending(){
+  const p = await api('pending',{token:TOKEN});
+  if(p.error){ toast(p.error,'err'); return; }
+  PENDING = p.pending; renderPendingBadge(); renderPending();
+}
+function renderPending(){
+  const list = $('pending-list');
+  if(PENDING.length===0){ list.innerHTML='<div class="card center muted" style="padding:40px">✅ Aucune soumission en attente.</div>'; return; }
+  list.innerHTML = PENDING.map(s=>{
+    let photos = []; try{ photos = JSON.parse(s.photos_json || '[]'); }catch(e){}
+    const photoHtml = photos.length>0 ? photos.map(p=>{
+      const thumb = p.id ? 'https://drive.google.com/thumbnail?id='+p.id+'&sz=w800' : '';
+      return `<a href="javascript:void(0)" onclick="openPhoto('${thumb}','${p.url||''}')"><img src="${thumb}" loading="lazy"/><span class="lbl">${p.name}</span></a>`;
+    }).join('') : '<div class="muted" style="padding:20px;text-align:center">Aucune photo</div>';
+    const c = compRow(s);
+    return `<div class="sub-card" id="sub-${s.id}">
+      <div class="sub-head">
+        <div class="left"><strong>${frDate(s.date)} — ${s.username}</strong>${s.vehicle_label||''} • soumis le ${new Date(s.timestamp).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+        <div class="right">
+          <span class="tag ${s.statut==='ACTIF'?'green':(s.statut==='SETUP'?'setup':'orange')}">${s.statut}</span>
+          <span class="tag blue">PENDING</span>
+        </div>
       </div>
       <div class="sub-grid">
-        <div><div class="sg-k">Km</div><div class="sg-v">${s.km||'—'}</div></div>
-        <div><div class="sg-k">Courses</div><div class="sg-v">${s.nb_courses_yango||0}</div></div>
-        <div><div class="sg-k">CA brut</div><div class="sg-v">${fmt(s.ca_yango_brut)}</div></div>
-        <div><div class="sg-k">Cash extra</div><div class="sg-v">${fmt(s.ca_hors_yango)}</div></div>
-        <div><div class="sg-k">Versement</div><div class="sg-v">${fmt(s.vers_recu)}</div></div>
-        <div><div class="sg-k">Wallet</div><div class="sg-v">${s.wal_solde!=null?fmt(s.wal_solde):'—'}</div></div>
-        ${s.carb_xof?`<div><div class="sg-k">Carburant</div><div class="sg-v">${fmt(s.carb_xof)}</div></div>`:''}
-        ${s.note_yango?`<div><div class="sg-k">Note Yango</div><div class="sg-v">⭐ ${s.note_yango}/5</div></div>`:''}
-        ${s.incident?`<div style="grid-column:span 3"><div class="sg-k">Incident</div><div class="sg-v" style="color:var(--red)">${s.incident}</div></div>`:''}
+        <div>
+          <h3>Valeurs déclarées par le chauffeur</h3>
+          <div class="sub-fields">
+            <div class="k">Km</div><div class="v">${s.km!=null?fmt(s.km):'—'}</div>
+            <div class="k">Nb courses</div><div class="v">${s.nb_courses_yango}</div>
+            <div class="k">CA Yango brut</div><div class="v">${fmtX(c.brut)}</div>
+            <div class="k">+ Hors Yango</div><div class="v">${fmtX(c.ad)}</div>
+            <div class="k">- Commissions calc.</div><div class="v">${fmtX(c.com)}</div>
+            <div class="k">CA NET (bonus)</div><div class="v">${fmtX(c.net15)}</div>
+            <div class="k">Versement cash</div><div class="v" style="color:var(--vert)">${fmtX(c.vers)}</div>
+            <div class="k">Wallet</div><div class="v">${c.walF!=null?fmtX(c.walF):'—'}</div>
+            <div class="k">Carburant</div><div class="v">${c.carbL>0?(fmt2(c.carbL)+' L / '+fmtX(c.carbM)):'—'}</div>
+            <div class="k">Note Yango</div><div class="v">${c.note!=null?fmt2(c.note)+' / 5':'—'}</div>
+          </div>
+          ${s.incident?'<div class="alert warn" style="margin-top:10px">Incident : '+s.incident+'</div>':''}
+          ${s.remarques?'<div class="alert info" style="margin-top:10px">Remarques : '+s.remarques+'</div>':''}
+        </div>
+        <div>
+          <h3>Pièces jointes (cliquer pour agrandir)</h3>
+          <div class="sub-photos">${photoHtml}</div>
+        </div>
       </div>
-      ${photoHTML?`<div class="sub-photos">${photoHTML}</div>`:''}
-      ${s.status==='PENDING'?`<div class="sub-actions">
-        <input class="val-input" placeholder="Note pour le chauffeur (optionnel)" id="note-${s.id}"/>
-        <button class="btn btn-green" onclick="valSub('${s.id}','VALIDATED')">✅ Valider</button>
-        <button class="btn btn-ghost" onclick="askReject('${s.id}')">❌ Refuser</button>
-      </div>`:''}
-      ${s.reject_reason?`<div style="margin-top:8px;padding:8px 10px;background:var(--red-bg);border-radius:6px;font-size:12px;color:#7F1D1D">Refusé : ${s.reject_reason}</div>`:''}
-      ${s.owner_notes?`<div style="margin-top:8px;padding:8px 10px;background:var(--gold-bg);border-radius:6px;font-size:12px">📝 ${s.owner_notes}</div>`:''}
+      <div class="sub-correction" id="corr-${s.id}">
+        <strong style="font-size:12px">Corrections (laisser vide pour garder la valeur déclarée)</strong>
+        <div class="sub-correction-grid">
+          <div><label class="muted" style="font-size:10px">Km</label><input data-field="km" type="number" placeholder="${s.km||''}"/></div>
+          <div><label class="muted" style="font-size:10px">CA brut Yango</label><input data-field="ca_yango_brut" type="number" placeholder="${s.ca_yango_brut||''}"/></div>
+          <div><label class="muted" style="font-size:10px">Nb courses</label><input data-field="nb_courses_yango" type="number" placeholder="${s.nb_courses_yango||''}"/></div>
+          <div><label class="muted" style="font-size:10px">Hors Yango</label><input data-field="ca_hors_yango" type="number" placeholder="${s.ca_hors_yango||''}"/></div>
+          <div><label class="muted" style="font-size:10px">Versement</label><input data-field="vers_recu" type="number" placeholder="${s.vers_recu||''}"/></div>
+          <div><label class="muted" style="font-size:10px">Wallet</label><input data-field="wal_solde" type="number" placeholder="${s.wal_solde||''}"/></div>
+        </div>
+        <div class="field" style="margin-top:8px"><label class="muted" style="font-size:10px">Note du propriétaire</label><input data-field="owner_notes" placeholder="(facultatif)"/></div>
+      </div>
+      <div class="sub-actions">
+        <button class="btn btn-vert" onclick="validateSub('${s.id}', false)">✓ Valider tel quel</button>
+        <button class="btn btn-ghost" onclick="toggleCorr('${s.id}')">✎ Corriger & valider</button>
+        <button class="btn btn-vert" id="corr-btn-${s.id}" style="display:none" onclick="validateSub('${s.id}', true)">✓ Sauver corrections</button>
+        <button class="btn btn-danger" onclick="rejectSub('${s.id}')">✗ Refuser</button>
+      </div>
     </div>`;
   }).join('');
 }
-
-$('filter-status').addEventListener('change',renderSubs);
-$('btn-refresh').addEventListener('click',async()=>{ const sn=await db.collection('submissions').get(); allSubs=sn.docs.map(d=>({id:d.id,...d.data()})); renderSubs(); });
-
-async function valSub(id,status){
-  const note=($('note-'+id)||{}).value||'';
-  try{
-    await db.collection('submissions').doc(id).update({status,owner_notes:note,updated_at:firebase.firestore.FieldValue.serverTimestamp()});
-    const i=allSubs.findIndex(s=>s.id===id); if(i>=0){allSubs[i].status=status;allSubs[i].owner_notes=note;}
-    toast(status==='VALIDATED'?'✅ Validée !':'❌ Refusée','ok'); renderSubs();
-  }catch(e){toast('Erreur : '+e.message,'err');}
+function toggleCorr(id){
+  $('corr-'+id).classList.toggle('show');
+  $('corr-btn-'+id).style.display = $('corr-'+id).classList.contains('show')?'inline-block':'none';
 }
-function askReject(id){
-  const r=prompt('Raison du refus :'); if(!r) return;
-  db.collection('submissions').doc(id).update({status:'REJECTED',reject_reason:r,updated_at:firebase.firestore.FieldValue.serverTimestamp()})
-    .then(()=>{ const i=allSubs.findIndex(s=>s.id===id); if(i>=0){allSubs[i].status='REJECTED';allSubs[i].reject_reason=r;} toast('❌ Refusée','ok'); renderSubs(); })
-    .catch(e=>toast('Erreur : '+e.message,'err'));
-}
-
-// DRIVERS
-async function loadDrivers(){
-  const sn=await db.collection('users').where('role','==','driver').get();
-  const d=sn.docs.map(x=>({id:x.id,...x.data()}));
-  $('drivers-table-body').innerHTML=d.length?d.map(x=>`
-    <tr><td><strong>${x.username}</strong></td><td>${x.full_name||'—'}</td><td>${x.vehicle_name||'—'}</td><td>${x.vehicle_plate||'—'}</td>
-    <td><span class="badge">✅ Actif</span></td></tr>`).join(''):
-    '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Aucun chauffeur</td></tr>';
-}
-
-$('btn-add-driver').addEventListener('click',()=>$('modal-add-driver').classList.add('open'));
-$('btn-cancel-add').addEventListener('click',()=>$('modal-add-driver').classList.remove('open'));
-
-$('btn-confirm-add').addEventListener('click', async()=>{
-  const username=$('new-username').value.trim().toLowerCase();
-  const pw=$('new-pw').value, name=$('new-fullname').value.trim();
-  const veh=$('new-veh-name').value.trim(), plate=$('new-plate').value.trim();
-  if(!username||!pw||pw.length<6){ $('add-err').textContent='Identifiant requis et mot de passe min. 6 caractères.'; $('add-err').style.display='block'; return; }
-  $('add-err').style.display='none'; $('btn-confirm-add').disabled=true;
-  const adminEmail=auth.currentUser.email;
-  const adminPw=prompt('Entre ton propre mot de passe admin pour confirmer la création :');
-  if(!adminPw){ $('btn-confirm-add').disabled=false; return; }
-  try{
-    const cred=await auth.createUserWithEmailAndPassword(username+EMAIL_DOMAIN,pw);
-    await db.collection('users').doc(cred.user.uid).set({
-      username,full_name:name,role:'driver',vehicle_id:username,vehicle_name:veh,vehicle_plate:plate,
-      created_at:firebase.firestore.FieldValue.serverTimestamp()
+async function validateSub(id, withCorrections){
+  let corrections = null, ownerNotes = '';
+  if(withCorrections){
+    corrections = {};
+    document.querySelectorAll('#corr-'+id+' input[data-field]').forEach(inp=>{
+      const v = inp.value.trim();
+      if(v!=='') {
+        if(inp.dataset.field==='owner_notes') ownerNotes = v;
+        else corrections[inp.dataset.field] = isNaN(+v)?v:+v;
+      }
     });
-    await auth.signInWithEmailAndPassword(adminEmail,adminPw);
-    $('modal-add-driver').classList.remove('open');
-    ['new-username','new-pw','new-fullname','new-veh-name','new-plate'].forEach(id=>$(id).value='');
-    toast('✅ Chauffeur '+username+' créé !','ok'); loadDrivers();
-  }catch(e){
-    $('add-err').textContent=e.message; $('add-err').style.display='block';
-    try{ await auth.signInWithEmailAndPassword(adminEmail,adminPw); }catch(_){}
   }
-  $('btn-confirm-add').disabled=false;
-});
-
-// CONFIG
-async function loadCfg(){
-  const sn=await db.collection('config').doc('app').get();
-  if(sn.exists){const d=sn.data(); if(d.comY) $('cfg-comY').value=d.comY; if(d.comP) $('cfg-comP').value=d.comP; if(d.wave_url) $('cfg-wave').value=d.wave_url;}
+  const r = await api('validate', { token:TOKEN, submission_id:id, corrections, owner_notes: ownerNotes });
+  if(r.error){ toast(r.error,'err'); return; }
+  toast('✓ Soumission validée','ok');
+  $('sub-'+id).style.display='none';
+  await refresh();
 }
-$('btn-save-config').addEventListener('click',async()=>{
-  try{ await db.collection('config').doc('app').set({comY:+$('cfg-comY').value||15,comP:+$('cfg-comP').value||0.75},{merge:true}); toast('✅ Config sauvegardée','ok'); }
-  catch(e){toast('Erreur : '+e.message,'err');}
-});
-$('btn-save-wave').addEventListener('click',async()=>{
-  try{ await db.collection('config').doc('app').set({wave_url:$('cfg-wave').value.trim()},{merge:true}); toast('✅ URL Wave mise à jour','ok'); }
-  catch(e){toast('Erreur : '+e.message,'err');}
-});
+async function rejectSub(id){
+  const reason = prompt('Motif du refus (sera envoyé au chauffeur) :','');
+  if(!reason) return;
+  const r = await api('reject', { token:TOKEN, submission_id:id, reason });
+  if(r.error){ toast(r.error,'err'); return; }
+  toast('Soumission refusée','ok');
+  $('sub-'+id).style.display='none';
+  await refresh();
+}
+function openPhoto(thumb, viewUrl){
+  $('photo-modal-img').src = thumb;
+  $('photo-modal').classList.add('show');
+}
+$('photo-modal').addEventListener('click',e=>{ if(e.target.id==='photo-modal') $('photo-modal').classList.remove('show'); });
+
+/* ═══ HISTO ═══ */
+function renderHisto(){
+  const tb = $('histo-tbl').querySelector('tbody');
+  const rows = [...JOURNAL].sort((a,b)=>b.date.localeCompare(a.date));
+  if(rows.length===0){ tb.innerHTML='<tr><td colspan="11" class="muted center">Aucune donnée</td></tr>'; return; }
+  tb.innerHTML = rows.map(d=>{
+    const c=compRow({...d,_kmP:0});
+    const tg = d.statut==='ACTIF'?'<span class="tag green">Actif</span>':d.statut==='SETUP'?'<span class="tag setup">Setup</span>':d.statut==='REPOS'?'<span class="tag orange">Repos</span>':'<span class="tag red">'+d.statut+'</span>';
+    return `<tr><td><strong>${frDateShort(d.date)}</strong></td><td>${tg}</td><td class="num mono">${d.km!=null?fmt(d.km):'—'}</td><td class="num mono">${d.nb_courses_yango||'—'}</td><td class="num mono">${c.brut?fmtX(c.brut):'—'}</td><td class="num mono">${c.net15?fmtX(c.net15):'—'}</td><td class="num mono">${c.ad?fmtX(c.ad):'—'}</td><td class="num mono">${c.vers?fmtX(c.vers):'—'}</td><td class="num mono">${c.walF!=null?fmtX(c.walF):'—'}</td><td class="num mono">${c.carbL>0?(fmt2(c.carbL)+' L'):'—'}</td><td class="num mono">${c.note!=null?fmt2(c.note):'—'}</td></tr>`;
+  }).join('');
+}
+
+/* ═══ USERS ═══ */
+async function loadUsers(){
+  const r = await api('users_list',{token:TOKEN});
+  if(r.error){ toast(r.error,'err'); return; }
+  const tb = $('users-tbl').querySelector('tbody');
+  tb.innerHTML = (r.users||[]).map(u=>`<tr>
+    <td><strong>${u.username}</strong></td><td>${u.full_name||''}</td><td><span class="tag ${u.role==='admin'?'red':'blue'}">${u.role}</span></td>
+    <td>${u.vehicle_id||'—'}</td><td>${u.email||'—'}</td><td>${u.phone||'—'}</td>
+    <td>${u.active=='1'?'<span class="tag green">Oui</span>':'<span class="tag setup">Non</span>'}</td>
+    <td><button class="btn-small btn-ghost" onclick="toggleUser('${u.username}')">${u.active=='1'?'Désactiver':'Activer'}</button></td></tr>`).join('');
+}
+function openAddUser(){ $('adduser-box').style.display='block'; }
+async function addUser(){
+  const body = {
+    token: TOKEN,
+    username: $('nu-user').value.trim(),
+    password: $('nu-pw').value,
+    role: $('nu-role').value,
+    full_name: $('nu-name').value.trim(),
+    phone: $('nu-phone').value.trim(),
+    vehicle_id: $('nu-veh').value.trim(),
+    email: $('nu-email').value.trim()
+  };
+  const r = await api('user_add', body);
+  if(r.error){ toast(r.error,'err'); return; }
+  toast('Utilisateur créé ✓','ok');
+  $('adduser-box').style.display='none';
+  ['nu-user','nu-pw','nu-name','nu-phone','nu-veh','nu-email'].forEach(id=>$(id).value='');
+  loadUsers();
+}
+async function toggleUser(u){
+  const r = await api('user_toggle',{token:TOKEN, username:u});
+  if(r.ok){ toast('Statut modifié','ok'); loadUsers(); }
+}
+
+/* ═══ CONFIG ═══ */
+function fillConfig(){
+  if(!CFG) return;
+  ['comY','comP','fixe','b1','bv1','b2','bv2','b3','bv3','jrs','cible','cibleJ','prixL','tank','conso','seuilW','noteMin'].forEach(k=>{ if($('c-'+k)) $('c-'+k).value = CFG[k]; });
+  $('c-nemail').value = CFG.notify_email;
+  $('c-nwa').value = CFG.notify_whatsapp;
+  $('c-wphone').value = CFG.whatsapp_phone;
+  $('c-wkey').value = CFG.whatsapp_apikey;
+}
+async function saveConfig(){
+  const upd = {};
+  ['comY','comP','fixe','b1','bv1','b2','bv2','b3','bv3','jrs','cible','cibleJ','prixL','tank','conso','seuilW','noteMin'].forEach(k=>upd[k] = $('c-'+k).value);
+  upd.notify_email = $('c-nemail').value;
+  upd.notify_whatsapp = $('c-nwa').value;
+  upd.whatsapp_phone = $('c-wphone').value;
+  upd.whatsapp_apikey = $('c-wkey').value;
+  const r = await api('config_set',{token:TOKEN, config:upd});
+  if(r.ok){ toast('Paramètres sauvegardés ✓','ok'); await loadConfig(); renderDash(); }
+}
+
+/* ═══ EXPORT ═══ */
+function exportExcel(){
+  const wb = XLSX.utils.book_new();
+  const head = ['Date','Statut','Chauffeur','Véhicule','Km','Courses','CA brut','CA NET 15%','Hors Yango','Versement','Wallet','Carburant L','Carburant XOF','Note','Incident','Remarques','Status'];
+  const rows = JOURNAL.map(d=>[d.date,d.statut,d.username,d.vehicle_label,d.km,d.nb_courses_yango,d.ca_yango_brut,(+d.ca_yango_brut||0)*(1-(+CFG.comY)/100),d.ca_hors_yango,d.vers_recu,d.wal_solde,d.carb_l,d.carb_xof,d.note_yango,d.incident,d.remarques,d.status]);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([head,...rows]),'Journal');
+  XLSX.writeFile(wb, 'M3A_Yango_Journal_'+todayISO()+'.xlsx');
+}
+function exportCSV(){
+  const head=['date','statut','km','courses','ca_brut','ca_net15','hors_yango','versement','wallet','carbL','carbM','note'];
+  const rows=JOURNAL.map(d=>{const c=compRow({...d,_kmP:0});return [d.date,d.statut,d.km||'',d.nb_courses_yango||0,c.brut,Math.round(c.net15),c.ad,c.vers,c.walF||'',c.carbL,c.carbM,c.note||''];});
+  const csv=[head,...rows].map(r=>r.join(';')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='M3A_Journal_'+todayISO()+'.csv'; a.click();
+}
+
+/* ═══ IMPORT LEGACY ═══ */
+function importLegacy(){
+  const f = $('legacy-file').files[0]; if(!f){ toast('Sélectionne un fichier .json','err'); return; }
+  const r = new FileReader();
+  r.onload = async ev=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data.days){ toast('Format invalide','err'); return; }
+      const resp = await api('import_legacy',{token:TOKEN, days:data.days});
+      if(resp.error){ toast(resp.error,'err'); return; }
+      toast('Importé : '+resp.imported+' jours','ok');
+      await refresh();
+    }catch(e){ toast('Erreur : '+e.message,'err'); }
+  };
+  r.readAsText(f);
+}
+
+/* ═══ INIT ═══ */
+$('lg-pw').addEventListener('keydown',e=>{if(e.key==='Enter') doLogin();});
+checkSession();
+// Refresh automatique pending toutes les 2 minutes
+setInterval(()=>{ if(TOKEN) api('pending',{token:TOKEN}).then(r=>{ if(r.ok){ PENDING=r.pending; renderPendingBadge(); }}); }, 120000);
+
+/* ═══ SAISIE MANUELLE ADMIN ═══════════════════════════════════════════════ */
+let ADM_VEHICLES = [];
+
+async function loadAdminVehicles(){
+  if(ADM_VEHICLES.length > 0) { return; }
+  const r = await api('users_list', { token: TOKEN });
+  if(r.error || !r.users) return;
+  const seen = {};
+  r.users.forEach(u => {
+    if(u.role === 'driver' && u.vehicle_id && !seen[u.vehicle_id]){
+      seen[u.vehicle_id] = true;
+      ADM_VEHICLES.push({ id: u.vehicle_id, label: u.vehicle_id + ' — ' + (u.full_name || u.username) });
+    }
+  });
+  const sel = $('adm-vehicle');
+  if(sel) sel.innerHTML = '<option value="">— choisir —</option>' + ADM_VEHICLES.map(v=>`<option value="${v.id}">${v.label}</option>`).join('');
+}
+
+function admSetSt(st, btn){
+  document.querySelectorAll('.adm-st-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  $('adm-fields-actif').style.display = (st==='ACTIF') ? '' : 'none';
+}
+
+/* Toggle saisie brut / net */
+let _admIsNet = false;
+function admToggleNet(){
+  _admIsNet = !_admIsNet;
+  const btn = $('adm-net-toggle');
+  const lbl = $('adm-ca-label');
+  const hint = $('adm-net-hint');
+  if(_admIsNet){
+    lbl.textContent = 'CA Yango NET (XOF)';
+    btn.textContent = 'Passer en saisie BRUT';
+    btn.style.borderColor = 'var(--vert)';
+    btn.style.color = 'var(--vert)';
+    btn.style.background = 'var(--vert-l)';
+    hint.style.display = 'inline';
+  } else {
+    lbl.textContent = 'CA Yango brut (XOF)';
+    btn.textContent = 'Passer en saisie NET';
+    btn.style.borderColor = 'var(--bleu)';
+    btn.style.color = 'var(--bleu)';
+    btn.style.background = 'transparent';
+    hint.style.display = 'none';
+  }
+}
+async function doAdminSubmit(){
+  const vehicle_id = $('adm-vehicle').value.trim();
+  const date = $('adm-date').value;
+  if(!vehicle_id){ toast('Sélectionne un véhicule','err'); return; }
+  if(!date){ toast('La date est obligatoire','err'); return; }
+  const statut = document.querySelector('.adm-st-btn.active')?.dataset.st || 'ACTIF';
+  const payload = {
+    vehicle_id, date, statut,
+    km:              $('adm-km').value   !== '' ? +$('adm-km').value   : null,
+    nb_courses_yango: +($('adm-nb').value  || 0),
+    ca_yango_brut:   +($('adm-ca').value  || 0),
+    ca_hors_yango:   +($('adm-ad').value  || 0),
+    vers_recu:       +($('adm-vers').value || 0),
+    wal_solde:       $('adm-wal').value  !== '' ? +$('adm-wal').value  : null,
+    carb_l:          +($('adm-cbl').value || 0),
+    carb_xof:        +($('adm-cbm').value || 0),
+    note_yango:      $('adm-note').value !== '' ? +$('adm-note').value : null,
+    incident:        $('adm-inc').value.trim(),
+    owner_notes:     ($('adm-notes').value.trim() || '[Saisie manuelle admin]'),
+    is_net_input:    _admIsNet
+  };
+  const btn = $('adm-btn-submit');
+  btn.innerHTML = '<span class="loader"></span> Envoi…'; btn.disabled = true;
+  $('adm-result').innerHTML = '';
+  try {
+    const r = await api('admin_submit', { token: TOKEN, payload });
+    if(r.error){ $('adm-result').innerHTML = '<div class="alert danger">Erreur : '+r.error+'</div>'; return; }
+    $('adm-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">✅ Journée du '+date+' saisie et validée (#'+r.submission_id+')</div>';
+    ['adm-km','adm-nb','adm-ca','adm-ad','adm-vers','adm-wal','adm-cbl','adm-cbm','adm-note','adm-inc','adm-notes'].forEach(id=>{ if($(id)) $(id).value=''; }); if(_admIsNet){ admToggleNet(); }
+    await refresh();
+    toast('✅ Saisie enregistrée','ok');
+  } catch(e) {
+    $('adm-result').innerHTML = '<div class="alert danger">Erreur réseau : '+e.message+'</div>';
+  } finally {
+    btn.innerHTML = '✓ Valider la saisie'; btn.disabled = false;
+  }
+}
+
+/* === PAIE CHAUFFEUR — FONCTIONS UTILITAIRES === */
+
+function copyPaySummary(){
+  const p = window._PAY_SUMMARY;
+  if(!p){ toast('Aucune donnee - charger le dashboard dabord','warn'); return; }
+  const txt = [
+    '=== RECAPITULATIF PAIE CHAUFFEUR ===',
+    'Mois : ' + p.mois,
+    '',
+    '+ Fixe mensuel       : ' + fmtX(p.fixe),
+    '+ Bonus (' + p.palier + ') : ' + fmtX(p.bonus),
+    '= Total brut du      : ' + fmtX(p.gross),
+    '- Versements recus   : ' + fmtX(p.vers),
+    '',
+    '=> NET A VERSER      : ' + fmtX(p.net),
+    '',
+    'Jours travailles : ' + p.actDays,
+    'CA NET Yango     : ' + fmtX(p.net15),
+    '==========================='
+  ].join('\n');
+  navigator.clipboard.writeText(txt).then(()=>toast('Recap copie !','ok')).catch(()=>toast('Erreur copie','warn'));
+}
+
+function markAsPaid(){
+  const p = window._PAY_SUMMARY;
+  if(!p || p.net<=0){ toast('Rien a marquer','warn'); return; }
+  if(!confirm('Confirmer : versement de ' + fmtX(p.net) + ' au chauffeur pour ' + p.mois + ' ?')) return;
+  // Log dans les notes (action locale - pas de backend pour l'instant)
+  const msg = 'Paiement marque le ' + new Date().toLocaleDateString('fr-FR') + ' : ' + fmtX(p.net);
+  $('pay-note').textContent = '\u2705 ' + msg;
+  const badge = $('pay-status-badge');
+  badge.textContent = '\u2705 Paye — ' + new Date().toLocaleDateString('fr-FR');
+  badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--vert);color:var(--vert);background:var(--vert-l)';
+  $('pay-btn-paid').disabled = true;
+  toast('Paiement enregistre localement','ok');
+  // Copier auto le recap
+  copyPaySummary();
+}
 </script>
 </body>
 </html>
+
+
+
+
