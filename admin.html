@@ -539,7 +539,7 @@ async function api(action, body){
 }
 
 /* ═══ AUTH ═══ */
-async function doLogin(){
+async async function doLogin(){
   const u=$('lg-user').value.trim(), p=$('lg-pw').value;
   if(!u||!p) return;
   $('btn-login').innerHTML='<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
@@ -1504,6 +1504,7 @@ function resetFacture(){
 </script>
 </body>
 </html>
+
 
 
 
