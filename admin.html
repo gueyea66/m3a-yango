@@ -700,7 +700,7 @@ function renderDash(){
   const chargesMois = evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).reduce((sum, ev) => sum + (+ev.montant||0), 0);
 
   // NET À VERSER = brut dû - versements déjà reçus - charges ponctuelles
-  const payNet = Math.max(0, payGross - payVers - chargesMois);
+  const payNet = Math.max(0, payGross - payVers);
 
   // KPIs top
   $('pay-f').textContent     = fmtX(payFixe);
@@ -727,10 +727,8 @@ function renderDash(){
       <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash reçus</td>
       <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--danger)" class="mono">- ${fmtX(payVers)}</td>
     </tr>
-    ${evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).map(ev => {
-      const EV_L={'carburant':'Carburant','peage':'Péage','controle_routier':'Contrôle routier','reparation':'Réparation','incident':'Incident','accident':'Accident','amende':'Amende','assurance':'Assurance','visite':'Visite tech.','autre':'Autre'};
-      return `<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 4px;color:var(--orange);font-size:12px">&#8722; ${EV_L[ev.type]||ev.type}${ev.description?' — '+ev.description:''} <span style="color:var(--muted);font-size:11px">${frDateShort(ev.date)}</span></td><td style="padding:6px 4px;text-align:right;font-weight:600;color:var(--orange);font-size:12px" class="mono">- ${fmtX(+ev.montant||0)}</td></tr>`;
-    }).join('')}
+    ${(function(){var evts=evMois.filter(function(ev){return CHARGES_TYPES.includes(ev.type);});if(!evts.length)return "";var EV_L={carburant:"Carburant",peage:"P\u00e9age",controle_routier:"Contr\u00f4le routier",reparation:"R\u00e9paration",incident:"Incident",accident:"Accident",amende:"Amende",assurance:"Assurance",visite:"Visite tech.",autre:"Autre"};var rows=evts.map(function(ev){return "<tr style=\"border-bottom:1px solid var(--border)\"><td style=\"padding:6px 4px;color:var(--muted);font-size:12px\">\u25cf "+(EV_L[ev.type]||ev.type)+(ev.description?" \u2014 "+ev.description:"")+" <span style=\"color:var(--muted);font-size:11px\">"+frDateShort(ev.date)+"</span></td><td style=\"padding:6px 4px;text-align:right;font-size:12px\" class=\"mono\">"+fmtX(+ev.montant||0)+"</td></tr>";}).join("");return "<tr><td colspan=\"2\" style=\"padding:8px 4px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)\">\u2139\ufe0f \u00c9v\u00e9nements ponctuels (pour info)</td></tr>"+rows;}())}
+
     <tr style="background:rgba(5,150,105,.07)">
       <td style="padding:10px 4px;font-weight:800;font-size:15px;color:var(--vert)">= NET À VERSER</td>
       <td style="padding:10px 4px;text-align:right;font-weight:900;font-size:18px;color:var(--vert)" class="mono">${fmtX(payNet)}</td>
@@ -750,7 +748,7 @@ function renderDash(){
   }
 
   // Note récap
-  $('pay-note').textContent = actDays + ' jours travaillés - Base bonus: CA NET ' + fmtX(net15) + ' - Palier: ' + b.tr + (chargesMois>0?' - Charges: '+fmtX(chargesMois):'');
+  $('pay-note').textContent = actDays + ' jours travaillés - Base bonus: CA NET ' + fmtX(net15) + ' - Palier: ' + b.tr + '';
 
   // Stocker pour copie
   window._PAY_SUMMARY = {
@@ -2347,6 +2345,7 @@ document.addEventListener('DOMContentLoaded',function(){var m=document.getElemen
 </script>
 </body>
 </html>
+
 
 
 

@@ -613,11 +613,9 @@ function updateCalc(){
   // Net Yango = brut - comY - comP + bonus
   const netYango = caBrut - cy - cp + bonus;
   const ad = +$('f-caAd').value || 0;
-  // Carburant = charge à déduire du montant à verser
+  // A verser = Net Yango + hors-Yango cash (charges ponctuelles independantes)
+  const verser = netYango + ad;
   const carb = carb_on ? (+$('f-cbM').value || 0) : 0;
-  const totalCharges = carb;
-  // A verser = Net Yango - total charges + hors-Yango cash
-  const verser = netYango - totalCharges + ad;
 
   $('r-km').textContent = (+$('f-km').value || 0) + ' km';
   $('r-brut').textContent = fmt(caBrut);
@@ -888,7 +886,7 @@ async function loadHistory(){
     var netY = brut - brut*comY - brut*comP + bonus;
     var carb = +(s.carb_xof||0);
     var ad = +(s.ca_hors_yango||0);
-    var verser = netY - carb + ad;
+    var verser = netY + ad;
     return '<div class="histo-card">' +
       '<div style="display:flex;justify-content:space-between;align-items:start;gap:10px">' +
         '<div><div class="h-date">' + dt + '</div>' + (statLbl ? '<span style="font-size:11px;color:var(--muted)">' + statLbl + '</span>' : '') + '</div>' +
@@ -900,7 +898,7 @@ async function loadHistory(){
         '<div class="k">CA brut Yango</div><div class="v">' + fmt(s.ca_yango_brut) + '</div>' +
         (bonus>0 ? '<div class="k">Bonus</div><div class="v" style="color:var(--vert)">+ ' + fmt(bonus) + '</div>' : '') +
         '<div class="k">Net Yango</div><div class="v" style="font-weight:700">' + fmt(netY) + '</div>' +
-        (carb>0 ? '<div class="k">Carburant</div><div class="v" style="color:var(--danger)">- ' + fmt(carb) + '</div>' : '') +
+        (carb>0 ? '<div class="k" style="color:var(--muted)">Carburant (info)</div><div class="v" style="color:var(--muted)">&#128200; ' + fmt(carb) + '</div>' : '') +
         (ad>0 ? '<div class="k">Hors Yango</div><div class="v" style="color:var(--vert)">+ ' + fmt(ad) + '</div>' : '') +
         '<div class="k" style="font-weight:700">\u00c0 verser</div><div class="v" style="font-weight:800;color:var(--navy)">' + fmt(verser) + '</div>' +
         '<div class="k">Vers. re\u00e7u</div><div class="v">' + fmt(s.vers_recu) + '</div>' +
@@ -1110,6 +1108,7 @@ checkSession();
 </script>
 </body>
 </html>
+
 
 
 
