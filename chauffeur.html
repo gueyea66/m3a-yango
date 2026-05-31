@@ -398,11 +398,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
           <div class="field"><label>Montant (XOF) &#8212; si applicable</label><input type="number" id="p-montant" inputmode="numeric" placeholder="ex: 15000"/></div>
           <div class="field"><label>Description / Motif</label><input type="text" id="p-desc" placeholder="ex: P&#233;age autoroute Dakar-Di&#233;mniadio"/></div>
           <div class="field" id="p-litres-row" style="display:none"><label>Litres (optionnel)</label><input type="number" id="p-litres" inputmode="decimal" step="0.1" placeholder="ex: 20.5"/></div>
-          <div class="photo-box" id="p-photo-box" data-name="ponct-doc" data-req="0" style="margin-top:4px">
-            <input type="file" accept="image/*,application/pdf"/><span class="icon">&#128247;</span>
-            <div class="photo-label">Photo / Document <span style="color:var(--muted);font-weight:400;font-size:11px">(facultatif)</span></div>
-            <div class="photo-sub">Re&#231;u, photo, PDF&#8230;</div>
+          <div class="field" id="p-km-row" style="display:none"><label>Compteur km (optionnel)</label><input type="number" id="p-km" inputmode="numeric" placeholder="ex: 134200"/><div class="hint" style="margin-top:4px">Lecture du tableau de bord au moment du plein</div></div>
+          <div id="p-photos-container" style="margin-top:8px"></div>
+          <div id="p-attach-menu" style="display:none;margin-top:8px;border:1.5px solid var(--border);border-radius:12px;overflow:hidden">
+            <button type="button" class="attach-opt" onclick="addPonctPhoto('photo')">&#128247; Photo</button>
+            <button type="button" class="attach-opt" style="border-top:1px solid var(--border)" onclick="addPonctPhoto('doc')">&#128196; Document (PDF)</button>
+            <button type="button" class="attach-opt" style="border-top:1px solid var(--border);color:var(--muted);font-size:12px" onclick="document.getElementById('p-attach-menu').style.display='none'">Annuler</button>
           </div>
+          <button type="button" class="btn-add-photo" onclick="togglePonctAttachMenu()" style="margin-top:8px">&#10010; Ajouter une pi&#232;ce jointe</button>
         </div>
         <div class="sticky-submit"><div class="wrap-inner"><button class="btn btn-gold" id="btn-submit-ponct" onclick="doSubmitPonct()">&#9889; Envoyer l&#8217;&#233;v&#233;nement</button></div></div>
       </div><!-- /sub-ponct -->
@@ -908,22 +911,7 @@ function switchSubtab(tab,btn){
   if(tab==='acomp'){var ad=document.getElementById('ac-date');if(ad&&!ad.value)ad.value=today;}
 }
 
-var PHOTO_PONCT=null;
-(function(){
-  var box=document.getElementById('p-photo-box');if(!box)return;
-  var inp=box.querySelector('input');
-  inp.addEventListener('change',function(ev){
-    var f=ev.target.files[0];if(!f)return;
-    var reader=new FileReader();
-    reader.onload=function(e){
-      var b64=e.target.result.split(',')[1];
-      PHOTO_PONCT={name:'ponct-doc',base64:b64,mime:f.type,filename:f.name};
-      box.classList.add('has-photo');
-      box.querySelector('.photo-label').textContent=f.name.length>30?f.name.slice(0,28)+'...':f.name;
-    };
-    reader.readAsDataURL(f);
-  });
-})();
+var PHOTOS_PONCT = [];
 
 
 
@@ -936,29 +924,67 @@ async function doSubmitPonct(){
   if(!desc&&!montant){toast('Renseigne un montant ou une description','err');return;}
   var btn=document.getElementById('btn-submit-ponct');
   btn.textContent='Envoi...';btn.disabled=true;
-  var photos=PHOTO_PONCT?[PHOTO_PONCT]:[];
+  var litres=+(document.getElementById('p-litres').value)||null;
+  var kmCpt=+(document.getElementById('p-km').value)||null;
   try{
-    var litres=+(document.getElementById('p-litres').value)||null;
-    var r=await api('submit_event',{token:TOKEN,payload:{date:date,type:type,montant:montant,litres:litres,description:desc},photos:photos});
+    var r=await api('submit_event',{token:TOKEN,payload:{date:date,type:type,montant:montant,litres:litres,compteur_km:kmCpt,description:desc},photos:PHOTOS_PONCT});
     if(r.error){toast('Erreur : '+r.error,'err');return;}
     toast('\u2705 \u00c9v\u00e9nement envoy\u00e9 au propri\u00e9taire','ok');
     document.getElementById('p-montant').value='';
     document.getElementById('p-desc').value='';
-    PHOTO_PONCT=null;
-    var bx=document.getElementById('p-photo-box');
-    if(bx){
-      bx.classList.remove('has-photo');
-      bx.querySelector('.photo-label').innerHTML='Photo / Document <span style="color:var(--muted);font-weight:400;font-size:11px">(facultatif)</span>';
-    }
+    document.getElementById('p-litres').value='';
+    document.getElementById('p-km').value='';
+    PHOTOS_PONCT=[];
+    document.getElementById('p-photos-container').innerHTML='';
+    document.getElementById('p-attach-menu').style.display='none';
   }catch(e){toast('Erreur r\u00e9seau : '+e.message,'err');}
-  finally{btn.innerHTML='&#9889; Enregistrer';btn.disabled=false;}
+  finally{btn.innerHTML='&#9889; Envoyer l\u0027&#233;v&#233;nement';btn.disabled=false;}
 }
 
 function onPTypeChange(){
   const type = document.getElementById('p-type').value;
+  const isCarb = type === 'carburant';
   const litresRow = document.getElementById('p-litres-row');
-  if(litresRow) litresRow.style.display = (type === 'carburant') ? 'block' : 'none';
+  const kmRow = document.getElementById('p-km-row');
+  if(litresRow) litresRow.style.display = isCarb ? 'block' : 'none';
+  if(kmRow) kmRow.style.display = isCarb ? 'block' : 'none';
 }
+function togglePonctAttachMenu(){var m=document.getElementById('p-attach-menu');m.style.display=m.style.display==='none'?'block':'none';}
+var _ponctIdx=0;
+function addPonctPhoto(kind){
+  document.getElementById('p-attach-menu').style.display='none';
+  var idx=_ponctIdx++;
+  var accept=kind==='doc'?'image/*,application/pdf':'image/*';
+  var container=document.getElementById('p-photos-container');
+  var wrap=document.createElement('div');
+  wrap.className='photo-box';wrap.id='p-ph-'+idx;wrap.style.cssText='margin-bottom:8px;position:relative';
+  var inp=document.createElement('input');inp.type='file';inp.accept=accept;inp.style.display='none';
+  var iconEl=document.createElement('span');iconEl.className='icon';iconEl.textContent=kind==='doc'?'\uD83D\uDCC4':'\uD83D\uDCF7';
+  var label=document.createElement('div');label.className='photo-label';label.textContent=kind==='doc'?'Document':'Photo';
+  var sub=document.createElement('div');sub.className='photo-sub';sub.textContent='Appuyer pour choisir';
+  var del=document.createElement('button');del.type='button';del.innerHTML='&#10005;';
+  del.style.cssText='position:absolute;top:6px;right:8px;background:none;border:none;font-size:16px;color:var(--muted);cursor:pointer;z-index:2';
+  del.onclick=function(e){e.stopPropagation();PHOTOS_PONCT=PHOTOS_PONCT.filter(function(p){return p.idx!==idx;});wrap.remove();};
+  wrap.onclick=function(e){if(e.target===del)return;inp.click();};
+  inp.addEventListener('change',function(ev){
+    var f=ev.target.files[0];if(!f)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var b64=e.target.result.split(',')[1];
+      var existing=PHOTOS_PONCT.findIndex(function(p){return p.idx===idx;});
+      var obj={idx:idx,name:'ponct-'+idx,base64:b64,mime:f.type,filename:f.name};
+      if(existing>=0)PHOTOS_PONCT[existing]=obj;else PHOTOS_PONCT.push(obj);
+      wrap.classList.add('has-photo');
+      label.textContent=f.name.length>30?f.name.slice(0,28)+'...':f.name;
+      sub.textContent='Appuyer pour changer';
+    };
+    reader.readAsDataURL(f);
+  });
+  wrap.appendChild(inp);wrap.appendChild(iconEl);wrap.appendChild(label);wrap.appendChild(sub);wrap.appendChild(del);
+  container.appendChild(wrap);
+  inp.click();
+}
+
 async function doSubmitAcomp(){
   var date=document.getElementById('ac-date').value;
   var montant=+(document.getElementById('ac-montant').value)||0;
