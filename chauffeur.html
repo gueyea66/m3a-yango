@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -119,7 +119,16 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 .extra-photo-box.has-photo{padding:0;border-style:solid;border-color:var(--vert)}
 .extra-photo-box.has-photo img{width:100%;max-height:200px;object-fit:cover;border-radius:11px}
 .extra-photo-rm{position:absolute;top:6px;right:6px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;font-weight:700}
-.extra-photo-label{font-size:12px;color:var(--muted);font-weight:600}</style>
+.extra-photo-label{font-size:12px;color:var(--muted);font-weight:600}
+/* Attach menu */
+.attach-opt{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:#fff;border:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--navy);cursor:pointer;text-align:left}
+.attach-opt:active{background:var(--bg)}
+.attach-opt span{font-size:22px}
+.extra-doc-box{width:100%;padding:14px 16px;border:1.5px dashed var(--border);border-radius:12px;background:#fff;display:flex;align-items:center;gap:12px;cursor:pointer;margin-top:10px}
+.extra-doc-box.has-doc{border-style:solid;border-color:var(--vert);background:var(--vert-l)}
+.extra-doc-name{font-size:13px;font-weight:600;color:var(--navy);word-break:break-all;flex:1}
+.extra-doc-size{font-size:11px;color:var(--muted)}
+</style>
 </head>
 <body>
 
@@ -284,26 +293,37 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       <div class="card">
         <h2><span class="icon">📷</span> Pièces jointes</h2>
         <div class="photo-box" data-name="compteur" data-req="1">
-          <input type="file" accept="image/*" capture="environment"/>
+          <input type="file" accept="image/*"/>
           <span class="icon">📷</span>
           <div class="photo-label">Photo compteur <span class="req">*</span></div>
           <div class="photo-sub">Tableau de bord, km lisibles</div>
         </div>
         <div class="photo-box" data-name="synthese" data-req="1">
-          <input type="file" accept="image/*" capture="environment"/>
+          <input type="file" accept="image/*"/>
           <span class="icon">📊</span>
           <div class="photo-label">Photo synthèse Yango <span class="req">*</span></div>
           <div class="photo-sub">Écran récap du jour de l'app Yango</div>
         </div>
         <div class="photo-box" data-name="carburant" id="ph-carb" style="display:none">
-          <input type="file" accept="image/*" capture="environment"/>
+          <input type="file" accept="image/*"/>
           <span class="icon">🧾</span>
           <div class="photo-label">Reçu carburant</div>
           <div class="photo-sub">Ticket de pompe</div>
         </div>
         <!-- Photos libres multiples -->
         <div id="extra-photos-container"></div>
-        <button type="button" class="btn-add-photo" onclick="addExtraPhoto()">
+        <div id="attach-menu" style="display:none;margin-top:10px;border:1.5px solid var(--border);border-radius:12px;overflow:hidden">
+          <button type="button" class="attach-opt" onclick="addExtraPhoto('photo')">
+            <span>&#128247;</span> Photo
+          </button>
+          <button type="button" class="attach-opt" style="border-top:1px solid var(--border)" onclick="addExtraPhoto('doc')">
+            <span>&#128196;</span> Document (PDF, Word&hellip;)
+          </button>
+          <button type="button" class="attach-opt" style="border-top:1px solid var(--border);color:var(--muted);font-size:12px" onclick="document.getElementById('attach-menu').style.display='none'">
+            Annuler
+          </button>
+        </div>
+        <button type="button" class="btn-add-photo" onclick="toggleAttachMenu()">
           <span>&#10010;</span> Ajouter une pi&#232;ce jointe
         </button>
       </div>
@@ -539,27 +559,81 @@ function updateCalc(){
 }
 
 
-/* ─── MULTI PHOTOS LIBRES ─── */
+/* MULTI PHOTOS LIBRES */
 let extraPhotoCount = 0;
 const EXTRA_PHOTOS = {};
 
-function addExtraPhoto(){
+function toggleAttachMenu(){
+  const m = document.getElementById('attach-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+function addExtraPhoto(type){
+  document.getElementById('attach-menu').style.display = 'none';
   extraPhotoCount++;
   const id = 'extra-' + extraPhotoCount;
   const wrap = document.createElement('div');
   wrap.className = 'extra-photo-wrap';
   wrap.id = 'wrap-' + id;
-  wrap.innerHTML = `
-    <div class="extra-photo-box" id="box-${id}" onclick="document.getElementById('inp-${id}').click()">
-      <input type="file" accept="image/*" capture="environment" id="inp-${id}" style="display:none" onchange="handleExtraPhoto('${id}',this)"/>
-      <span style="font-size:28px">&#128247;</span>
-      <div class="extra-photo-label">Photo libre ${extraPhotoCount}</div>
-      <div style="font-size:11px;color:var(--muted)">Cliquer pour prendre / choisir</div>
-    </div>
-    <button class="extra-photo-rm" onclick="removeExtraPhoto('${id}')" title="Supprimer">&#x2715;</button>
-  `;
-  document.getElementById('extra-photos-container').appendChild(wrap);
-  setTimeout(()=>document.getElementById('inp-'+id).click(), 150);
+
+  if(type === 'photo'){
+    wrap.innerHTML = `
+      <div class="extra-photo-box" id="box-${id}" onclick="document.getElementById('inp-${id}').click()">
+        <input type="file" accept="image/*" id="inp-${id}" style="display:none" onchange="handleExtraPhoto('${id}',this)"/>
+        <span style="font-size:28px">&#128247;</span>
+        <div class="extra-photo-label">Photo libre</div>
+        <div style="font-size:11px;color:var(--muted)">Cliquer pour choisir</div>
+      </div>
+      <button class="extra-photo-rm" onclick="removeExtraPhoto('${id}')" title="Supprimer">&#x2715;</button>
+    `;
+    document.getElementById('extra-photos-container').appendChild(wrap);
+    setTimeout(()=>document.getElementById('inp-'+id).click(), 150);
+
+  } else {
+    // Document — sélection multiple
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.multiple = true;
+    inp.accept = '.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv';
+    inp.style.display = 'none';
+    document.body.appendChild(inp);
+    inp.onchange = () => {
+      Array.from(inp.files).forEach(file => {
+        extraPhotoCount++;
+        const did = 'extra-' + extraPhotoCount;
+        const dwrap = document.createElement('div');
+        dwrap.className = 'extra-photo-wrap';
+        dwrap.id = 'wrap-' + did;
+        const sz = file.size < 1024*1024
+          ? (file.size/1024).toFixed(0) + ' Ko'
+          : (file.size/1024/1024).toFixed(1) + ' Mo';
+        dwrap.innerHTML = `
+          <div class="extra-doc-box has-doc" id="box-${did}">
+            <span style="font-size:28px">&#128196;</span>
+            <div style="flex:1;min-width:0">
+              <div class="extra-doc-name">${file.name}</div>
+              <div class="extra-doc-size">${sz}</div>
+            </div>
+          </div>
+          <button class="extra-photo-rm" onclick="removeExtraPhoto('${did}')" title="Supprimer">&#x2715;</button>
+        `;
+        document.getElementById('extra-photos-container').appendChild(dwrap);
+        const reader = new FileReader();
+        reader.onload = ev => {
+          EXTRA_PHOTOS[did] = {
+            name: file.name,
+            base64: ev.target.result,
+            mime: file.type || 'application/octet-stream'
+          };
+        };
+        reader.readAsDataURL(file);
+      });
+      document.body.removeChild(inp);
+    };
+    extraPhotoCount--;   // sera incrémenté par fichier
+    inp.click();
+    return;
+  }
 }
 
 function handleExtraPhoto(id, input){
@@ -575,7 +649,7 @@ function handleExtraPhoto(id, input){
       canvas.width=w; canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       const data=canvas.toDataURL('image/jpeg',0.72);
-      EXTRA_PHOTOS[id]={name:'libre_'+id,base64:data,mime:'image/jpeg'};
+      EXTRA_PHOTOS[id]={name:'photo_'+id+'.jpg',base64:data,mime:'image/jpeg'};
       const box=document.getElementById('box-'+id);
       box.classList.add('has-photo');
       box.innerHTML=`<img src="${data}"/><input type="file" accept="image/*" id="inp-${id}" style="display:none" onchange="handleExtraPhoto('${id}',this)"/>`;
@@ -630,7 +704,7 @@ function removePhoto(e, name){
   const req = box.dataset.req==='1';
   const labels = {compteur:['📷','Photo compteur','Tableau de bord, km lisibles'],synthese:['📊','Photo synthèse Yango','Écran récap du jour de l\'app Yango'],carburant:['🧾','Reçu carburant','Ticket de pompe'],libre:['➕','Photo libre (facultatif)','Incident, dommage, autre…']};
   const [ic,lb,sb] = labels[name];
-  box.innerHTML = `<input type="file" accept="image/*" capture="environment"/><span class="icon">${ic}</span><div class="photo-label">${lb}${req?' <span class="req">*</span>':''}</div><div class="photo-sub">${sb}</div>`;
+  box.innerHTML = `<input type="file" accept="image/*"/><span class="icon">${ic}</span><div class="photo-label">${lb}${req?' <span class="req">*</span>':''}</div><div class="photo-sub">${sb}</div>`;
   const inp = box.querySelector('input');
   inp.addEventListener('change',ev=>handlePhoto(box, ev.target.files[0]));
 }
