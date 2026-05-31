@@ -541,7 +541,7 @@ async function api(action, body){
 }
 
 /* ═══ AUTH ═══ */
-async async function doLogin(){
+async async async function doLogin(){
   const u=$('lg-user').value.trim(), p=$('lg-pw').value;
   if(!u||!p) return;
   $('btn-login').innerHTML='<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
@@ -2294,6 +2294,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
 </script>
 </body>
 </html>
+
 
 
 
