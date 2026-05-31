@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -196,7 +196,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
     <div class="user-chip">
       <strong id="u-name">—</strong>
       <span id="u-veh">—</span>
-      <button class="btn-small btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);margin-top:4px" onclick="doLogout()">Quitter</button>
+      <button class="btn-small btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);margin-top:4px;margin-right:4px" onclick="show('v-menu')">&#8592; Menu</button><button class="btn-small btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);margin-top:4px" onclick="doLogout()">Quitter</button>
     </div>
   </div>
 
@@ -859,8 +859,8 @@ async function doSubmit(){
     setNetMode(false, $('bt-net-no')); setAdHoc(false, $('ad-no')); setCarb(false, $('cb-no'));
     updateCalc();
     loadHistory();
-    // bascule onglet histo
-    document.querySelector('.tab[data-tab="histo"]').click();
+    // Retour menu: saisie ponctuelle reste accessible independamment
+    show('v-menu');
   }catch(e){
     toast('Erreur réseau : '+e.message,'err');
   }finally{
@@ -983,7 +983,7 @@ async function doSubmitPonct(){
   try{
     var r=await api('submit_event',{token:TOKEN,payload:{date:date,type:type,montant:montant,litres:litres,compteur_km:kmCpt,description:desc},photos:PHOTOS_PONCT});
     if(r.error){toast('Erreur : '+r.error,'err');return;}
-    toast('\u2705 \u00c9v\u00e9nement envoy\u00e9 au propri\u00e9taire','ok');
+    toast('\u2705 \u00c9v\u00e9nement envoy\u00e9 au propri\u00e9taire','ok'); setTimeout(function(){show('v-menu');},1800);
     document.getElementById('p-montant').value='';
     document.getElementById('p-desc').value='';
     document.getElementById('p-litres').value='';
