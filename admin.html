@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -329,7 +329,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       </div>
       <div class="card" style="overflow-x:auto">
         <table class="tbl" id="histo-tbl">
-          <thead><tr><th>Date</th><th>Statut</th><th>Km</th><th class="num">Courses</th><th class="num">CA brut</th><th class="num">CA NET 15%</th><th class="num">Hors Yango</th><th class="num">Versement</th><th class="num">Wallet</th><th class="num">Carb.</th><th class="num">Note</th></tr></thead>
+          <thead><tr><th>Date</th><th>Statut</th><th>Km</th><th class="num">Courses</th><th class="num">CA brut</th><th class="num">Bonus</th><th class="num">CA NET</th><th class="num">Hors Yango</th><th class="num">Versement</th><th class="num">Wallet</th><th class="num">Carb.</th><th class="num">Note</th><th>Actions</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -571,9 +571,12 @@ async function initApp(){
 async function loadConfig(){ const r = await api('config_get',{token:TOKEN}); if(r.ok) CFG = r.config; }
 async function refresh(){
   const j = await api('journal',{token:TOKEN});
-  if(j.ok){ JOURNAL = j.journal; CFG = j.config; renderDash(); renderHisto(); }
+  if(j.ok){ JOURNAL = j.journal; CFG = j.config; }
   const p = await api('pending',{token:TOKEN});
   if(p.ok){ PENDING = p.pending; renderPendingBadge(); renderPending(); }
+  const ev = await api('events_list',{token:TOKEN});
+  if(ev.ok||ev.events){ EVENTS_DATA = ev.events||[]; }
+  renderDash(); renderHisto();
 }
 
 /* ═══ TABS ═══ */
@@ -604,8 +607,10 @@ function bonusFor(net){
 function compRow(r){
   const cy = (+CFG.comY)/100, cp=(+CFG.comP)/100;
   const brut = +r.ca_yango_brut||0;
+  const bonus = +r.bonus_daily||+r.bonus_yango||0;
+  const netYango = brut*(1-cy-cp) + bonus;
   return {
-    brut, net15: brut*(1-cy), com:brut*(cy+cp), netP:brut*(1-cy-cp),
+    brut, net15: netYango, com:brut*(cy+cp), netP:brut*(1-cy-cp), bonus,
     ad:+r.ca_hors_yango||0, vers:+r.vers_recu||0,
     km: r._kmP || 0,
     carbL:+r.carb_l||0, carbM:+r.carb_xof||0,
@@ -683,12 +688,19 @@ function renderDash(){
   $('prog-rest').textContent = fmtX(reste/jrs); $('prog-rest-sub').textContent = jrs+' jours restants';
   $('dash-info').textContent = actDays+' / '+CFG.jrs+' jours travaillés • cible quotidienne NET '+fmtX(+CFG.cibleJ);
 
-  // === PAIE CHAUFFEUR — Bilan complet ===
+  // === PAIE CHAUFFEUR - Bilan complet ===
   const payFixe  = +CFG.fixe || 0;
   const payBonus = b.amt || 0;
   const payGross = payFixe + payBonus;
   const payVers  = vers; // versements cash reçus ce mois
-  const payNet   = Math.max(0, payGross - payVers);
+
+  // Charges ponctuelles du mois (péage, carburant, réparation, etc.)
+  const CHARGES_TYPES = ['carburant','peage','controle_routier','reparation','incident','accident','amende','assurance','visite','autre'];
+  const evMois = EVENTS_DATA.filter(ev => (monthKey(ev.date||'')||'') === m);
+  const chargesMois = evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).reduce((sum, ev) => sum + (+ev.montant||0), 0);
+
+  // NET À VERSER = brut dû - versements déjà reçus - charges ponctuelles
+  const payNet = Math.max(0, payGross - payVers - chargesMois);
 
   // KPIs top
   $('pay-f').textContent     = fmtX(payFixe);
@@ -696,18 +708,39 @@ function renderDash(){
   $('pay-b-tr').textContent  = b.tr;
   $('pay-gross').textContent = fmtX(payGross);
 
-  // Tableau détail
-  $('pd-fixe').textContent  = fmtX(payFixe);
-  $('pd-bonus').textContent = fmtX(payBonus);
-  $('pd-gross').textContent = fmtX(payGross);
-  $('pd-vers').textContent  = '- ' + fmtX(payVers);
-  $('pay-n').textContent    = fmtX(payNet);
+  // Tableau détail - rebuild pour inclure charges ponctuelles
+  const pdBody = $('pay-detail-tbl').querySelector('tbody');
+  pdBody.innerHTML = `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 4px;color:var(--muted)">&#43; Fixe mensuel</td>
+      <td style="padding:8px 4px;text-align:right;font-weight:600" class="mono">${fmtX(payFixe)}</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 4px;color:var(--muted)">&#43; Bonus performance</td>
+      <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--gold-d)" class="mono">${fmtX(payBonus)}</td>
+    </tr>
+    <tr style="border-bottom:2px solid var(--border);background:rgba(0,0,0,.03)">
+      <td style="padding:8px 4px;font-weight:700">= Total brut dû</td>
+      <td style="padding:8px 4px;text-align:right;font-weight:800" class="mono">${fmtX(payGross)}</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash reçus</td>
+      <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--danger)" class="mono">- ${fmtX(payVers)}</td>
+    </tr>
+    ${evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).map(ev => {
+      const EV_L={'carburant':'Carburant','peage':'Péage','controle_routier':'Contrôle routier','reparation':'Réparation','incident':'Incident','accident':'Accident','amende':'Amende','assurance':'Assurance','visite':'Visite tech.','autre':'Autre'};
+      return `<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 4px;color:var(--orange);font-size:12px">&#8722; ${EV_L[ev.type]||ev.type}${ev.description?' — '+ev.description:''} <span style="color:var(--muted);font-size:11px">${frDateShort(ev.date)}</span></td><td style="padding:6px 4px;text-align:right;font-weight:600;color:var(--orange);font-size:12px" class="mono">- ${fmtX(+ev.montant||0)}</td></tr>`;
+    }).join('')}
+    <tr style="background:rgba(5,150,105,.07)">
+      <td style="padding:10px 4px;font-weight:800;font-size:15px;color:var(--vert)">= NET À VERSER</td>
+      <td style="padding:10px 4px;text-align:right;font-weight:900;font-size:18px;color:var(--vert)" class="mono">${fmtX(payNet)}</td>
+    </tr>`;
 
   // Badge statut
   const badge = $('pay-status-badge');
   const payBtn = $('pay-btn-paid');
   if(payNet <= 0){
-    badge.textContent = '\u2705 Solde = 0 — Rien à verser';
+    badge.textContent = '\u2705 Solde = 0 - Rien à verser';
     badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--vert);color:var(--vert);background:var(--vert-l)';
     payBtn.disabled = true;
   } else {
@@ -717,13 +750,13 @@ function renderDash(){
   }
 
   // Note récap
-  $('pay-note').textContent = actDays + ' jours travaillés — Base bonus: CA NET ' + fmtX(net15) + ' — Palier: ' + b.tr;
+  $('pay-note').textContent = actDays + ' jours travaillés - Base bonus: CA NET ' + fmtX(net15) + ' - Palier: ' + b.tr + (chargesMois>0?' - Charges: '+fmtX(chargesMois):'');
 
   // Stocker pour copie
   window._PAY_SUMMARY = {
     mois: $('dash-period').textContent,
     fixe: payFixe, bonus: payBonus, gross: payGross,
-    vers: payVers, net: payNet, palier: b.tr,
+    vers: payVers, charges: chargesMois, net: payNet, palier: b.tr,
     net15, actDays
   };
 
@@ -868,7 +901,7 @@ function renderHisto(){
     const c=compRow({...d,_kmP:0});
     const tg = d.statut==='ACTIF'?'<span class="tag green">Actif</span>':d.statut==='SETUP'?'<span class="tag setup">Setup</span>':d.statut==='REPOS'?'<span class="tag orange">Repos</span>':'<span class="tag red">'+d.statut+'</span>';
     const rowId = d.id || (d.date+'_'+d.vehicle_id);
-    return `<tr data-entry-id="${rowId}"><td><strong>${frDateShort(d.date)}</strong></td><td>${tg}</td><td class="num mono">${d.km!=null?fmt(d.km):'-'}</td><td class="num mono">${d.nb_courses_yango||'-'}</td><td class="num mono">${c.brut?fmtX(c.brut):'-'}</td><td class="num mono">${c.net15?fmtX(c.net15):'-'}</td><td class="num mono">${c.ad?fmtX(c.ad):'-'}</td><td class="num mono">${c.vers?fmtX(c.vers):'-'}</td><td class="num mono">${c.walF!=null?fmtX(c.walF):'-'}</td><td class="num mono">${c.carbL>0?(fmt2(c.carbL)+' L'):'-'}</td><td class="num mono">${c.note!=null?fmt2(c.note):'-'}</td><td class="num"><button class="btn-small btn-ghost" style="font-size:11px;padding:3px 10px" onclick="openEditEntry('${rowId}')">&#9998; Modifier</button></td></tr>`;
+    return `<tr data-entry-id="${rowId}"><td><strong>${frDateShort(d.date)}</strong></td><td>${tg}</td><td class="num mono">${d.km!=null?fmt(d.km):'-'}</td><td class="num mono">${d.nb_courses_yango||'-'}</td><td class="num mono">${c.brut?fmtX(c.brut):'-'}</td><td class="num mono" style="color:var(--vert)">${c.bonus?fmtX(c.bonus):'-'}</td><td class="num mono">${c.net15?fmtX(c.net15):'-'}</td><td class="num mono">${c.ad?fmtX(c.ad):'-'}</td><td class="num mono">${c.vers?fmtX(c.vers):'-'}</td><td class="num mono">${c.walF!=null?fmtX(c.walF):'-'}</td><td class="num mono">${c.carbL>0?(fmt2(c.carbL)+' L'):'-'}</td><td class="num mono">${c.note!=null?fmt2(c.note):'-'}</td><td class="num"><button class="btn-small btn-ghost" style="font-size:11px;padding:3px 10px" onclick="openEditEntry('${rowId}')">&#9998; Modifier</button></td></tr>`;
   }).join('');
 }
 async function loadUsers(){
@@ -1942,7 +1975,7 @@ function renderEvents() {
   if (filterType) items = items.filter(e => e.type === filterType);
   const list = document.getElementById('events-list');
   if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun &#233;v&#233;nement</div>'; return; }
-  const typeLabels = { reparation:'R&#233;paration', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
+  const typeLabels = { versement:'Versement cash', carburant:'Carburant', peage:'P\u00e9age', controle_routier:'Contr\u00f4le routier', bonus:'Bonus/Prime', reparation:'R\u00e9paration', incident:'Incident', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
   list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(ev => {
     const photos = (() => { try { return JSON.parse(ev.photos||'[]'); } catch(e){ return []; } })();
     const photoHTML = photos.filter(p=>p.url).map(p => '<a href="'+p.url+'" target="_blank" class="btn-sec" style="font-size:11px;padding:4px 8px">&#128247; Photo</a>').join('');
@@ -1952,7 +1985,7 @@ function renderEvents() {
         '<div style="font-size:12px;color:var(--muted);margin-top:2px">'+ev.vehicle_label+'</div></div>' +
         '<span class="badge" style="background:var(--gold-l);color:var(--gold-d);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+(typeLabels[ev.type]||ev.type||'-')+'</span>' +
       '</div>' +
-      (ev.montant && +ev.montant ? '<div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--danger)">'+fmt(ev.montant)+'</div>' : '') +
+      (ev.montant && +ev.montant ? '<div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--danger)">'+fmt(ev.montant)+' XOF'+(ev.litres&&+ev.litres?' <span style="font-size:13px;color:var(--muted)">| '+ev.litres+' L</span>':'')+'</div>' : '') +
       (ev.description ? '<div style="font-size:13px;color:#334155;margin-top:6px">'+ev.description+'</div>' : '') +
       (photoHTML ? '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+photoHTML+'</div>' : '') +
       '<div style="font-size:11px;color:var(--muted);margin-top:8px">Par '+ev.username+'</div>' +
@@ -2208,6 +2241,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
 </script>
 </body>
 </html>
+
 
 
 
