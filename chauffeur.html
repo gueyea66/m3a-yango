@@ -877,23 +877,38 @@ async function loadHistory(){
   const items = r.history || [];
   if(items.length===0){ list.innerHTML='<div class="muted center" style="padding:30px 0">Aucune soumission</div>'; return; }
   list.innerHTML = items.map(s=>{
-    const dt = (function(d){ var x=parseISODate(d); return x ? x.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}) : String(d); })(s.date);
-    return `<div class="histo-card">
-      <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-        <div><div class="h-date">${dt}</div><span class="h-stat ${s.status}">${s.status}</span></div>
-        <div style="text-align:right;font-size:11px;color:#64748B">${s.statut||''}</div>
-      </div>
-      <div class="histo-grid">
-        <div class="k">Km déclaré</div><div class="v">${s.km || '—'}</div>
-        <div class="k">Courses Yango</div><div class="v">${s.nb_courses_yango || 0}</div>
-        <div class="k">CA Yango brut</div><div class="v">${fmt(s.ca_yango_brut)}</div>
-        <div class="k">Hors Yango</div><div class="v">${fmt(s.ca_hors_yango)}</div>
-        <div class="k">Versement</div><div class="v">${fmt(s.vers_recu)}</div>
-        <div class="k">Wallet</div><div class="v">${s.wal_solde!=null?fmt(s.wal_solde):'—'}</div>
-      </div>
-      ${s.reject_reason?'<div class="alert-warn" style="margin-top:10px"><strong>Refusé :</strong> '+s.reject_reason+'</div>':''}
-      ${s.owner_notes?'<div class="alert-info" style="margin-top:10px"><strong>Note du propriétaire :</strong> '+s.owner_notes+'</div>':''}
-    </div>`;
+    var dt = (function(d){ var x=parseISODate(d); return x ? x.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}) : String(d); })(s.date);
+    var statLbl = {ACTIF:'Travail',REPOS:'Repos',PANNE:'Panne'}[s.statut] || s.statut || '';
+    var stLbl = {PENDING:'En attente',APPROVED:'Valid\u00e9',REJECTED:'Refus\u00e9'}[s.status] || s.status || 'En attente';
+    var stCls = s.status || 'PENDING';
+    var brut = +(s.ca_yango_brut||0);
+    var comY = CFG ? (+CFG.comY||15)/100 : 0.15;
+    var comP = CFG ? (+CFG.comP||0.75)/100 : 0.0075;
+    var bonus = +(s.bonus_daily||0);
+    var netY = brut - brut*comY - brut*comP + bonus;
+    var carb = +(s.carb_xof||0);
+    var ad = +(s.ca_hors_yango||0);
+    var verser = netY - carb + ad;
+    return '<div class="histo-card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:10px">' +
+        '<div><div class="h-date">' + dt + '</div>' + (statLbl ? '<span style="font-size:11px;color:var(--muted)">' + statLbl + '</span>' : '') + '</div>' +
+        '<span class="h-stat ' + stCls + '">' + stLbl + '</span>' +
+      '</div>' +
+      '<div class="histo-grid" style="margin-top:10px">' +
+        '<div class="k">Km compteur</div><div class="v">' + (s.km||'-') + '</div>' +
+        '<div class="k">Courses Yango</div><div class="v">' + (s.nb_courses_yango||0) + '</div>' +
+        '<div class="k">CA brut Yango</div><div class="v">' + fmt(s.ca_yango_brut) + '</div>' +
+        (bonus>0 ? '<div class="k">Bonus</div><div class="v" style="color:var(--vert)">+ ' + fmt(bonus) + '</div>' : '') +
+        '<div class="k">Net Yango</div><div class="v" style="font-weight:700">' + fmt(netY) + '</div>' +
+        (carb>0 ? '<div class="k">Carburant</div><div class="v" style="color:var(--danger)">- ' + fmt(carb) + '</div>' : '') +
+        (ad>0 ? '<div class="k">Hors Yango</div><div class="v" style="color:var(--vert)">+ ' + fmt(ad) + '</div>' : '') +
+        '<div class="k" style="font-weight:700">\u00c0 verser</div><div class="v" style="font-weight:800;color:var(--navy)">' + fmt(verser) + '</div>' +
+        '<div class="k">Vers. re\u00e7u</div><div class="v">' + fmt(s.vers_recu) + '</div>' +
+        (s.wal_solde!=null ? '<div class="k">Wallet</div><div class="v">' + fmt(s.wal_solde) + '</div>' : '') +
+      '</div>' +
+      (s.reject_reason ? '<div class="alert-warn" style="margin-top:10px"><strong>Refus\u00e9 :</strong> ' + s.reject_reason + '</div>' : '') +
+      (s.owner_notes ? '<div class="alert-info" style="margin-top:10px"><strong>Note :</strong> ' + s.owner_notes + '</div>' : '') +
+    '</div>';
   }).join('');
 }
 
