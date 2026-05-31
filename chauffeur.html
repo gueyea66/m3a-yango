@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -147,7 +147,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div class="s">Transport VTC • Yango • Dakar</div>
       </div>
       <h1>Espace chauffeur</h1>
-      <div class="hello">Connecte-toi pour saisir ta journée.</div>
+      <div class="hello">Connecte-toi pour continuer.</div>
       <div id="login-err"></div>
       <div class="field">
         <label>Identifiant</label>
@@ -159,6 +159,29 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
       <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Se connecter</button>
       <div class="muted center" style="font-size:11px;margin-top:18px">Pour récupérer un accès, contacte le propriétaire.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MENU VIEW (après login) -->
+<div class="view" id="v-menu">
+  <div class="login-wrap">
+    <div class="login-card" style="max-width:400px">
+      <div class="login-logo">
+        <div class="b">M3A<span>SOLUTION</span></div>
+        <div class="s">Transport VTC · Yango · Dakar</div>
+      </div>
+      <h1 style="margin-bottom:6px">Que veux-tu faire ?</h1>
+      <div class="hello" id="menu-hello">Choisis le type de saisie.</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:26px">
+        <button class="btn btn-primary" onclick="goSaisie('journ')" style="font-size:16px;padding:20px;display:flex;align-items:center;justify-content:center;gap:10px">
+          📅 Saisie de la journée
+        </button>
+        <button class="btn" onclick="goSaisie('ponct')" style="background:var(--navy-m);color:#fff;border:1.5px solid rgba(255,255,255,.18);font-size:16px;padding:20px;display:flex;align-items:center;justify-content:center;gap:10px">
+          ⚡ Saisie ponctuelle
+        </button>
+      </div>
+      <button onclick="doLogout()" style="background:none;border:none;color:var(--muted);font-size:12px;margin-top:28px;cursor:pointer;text-decoration:underline;width:100%;text-align:center">Se déconnecter</button>
     </div>
   </div>
 </div>
@@ -525,7 +548,8 @@ function initApp(){
   $('brand-sub').textContent = (VEH && VEH.name) ? ('Saisie • '+VEH.name) : 'Saisie quotidienne';
   $('f-date').value = new Date().toISOString().slice(0,10);
   if(!CFG){ api('config_get',{token:TOKEN}).then(r=>{ if(r.ok) CFG=r.config; updateCalc();}); }
-  show('v-app');
+  var mh = $('menu-hello'); if(mh) mh.textContent = 'Bonjour ' + (ME.full_name || ME.username) + ' 👋';
+  show('v-menu');
   loadHistory();
   updateCalc();
 }
@@ -935,6 +959,21 @@ async function doSubmitAcomp(){
 }
 
 
+
+
+/* MENU → SAISIE */
+function goSaisie(type){
+  show('v-app');
+  document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+  var tabBtn = document.querySelector('.tab[data-tab="saisie"]');
+  if(tabBtn) tabBtn.classList.add('active');
+  var ids = ['t-saisie','t-histo','t-account'];
+  ids.forEach(function(id){ var el = $(id); if(el) el.style.display = 'none'; });
+  var ts = $('t-saisie'); if(ts) ts.style.display = 'block';
+  var stId = (type === 'journ') ? 'st-journ' : 'st-ponct';
+  var stBtn = document.getElementById(stId);
+  switchSubtab(type, stBtn);
+}
 
 /* ═══ TABS ═══ */
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
