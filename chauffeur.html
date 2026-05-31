@@ -422,7 +422,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div class="sticky-submit"><div class="wrap-inner"><button class="btn btn-gold" id="btn-submit-acomp" onclick="doSubmitAcomp()">&#128181; Envoyer la demande</button></div></div>
       </div><!-- /sub-acomp -->
 
-      <div class="sticky-submit">
+      <div class="sticky-submit" id="sticky-journ" style="display:none">
         <div class="wrap-inner">
           <button class="btn btn-gold" id="btn-submit" onclick="doSubmit()">📤 Envoyer ma journée</button>
         </div>
@@ -960,6 +960,9 @@ function switchSubtab(tab,btn){
     var bt=document.getElementById('st-'+t);
     if(bt) bt.classList.toggle('active',t===tab);
   });
+  // Bouton 'Envoyer ma journee' uniquement visible sur l'onglet journee
+  var sj=document.getElementById('sticky-journ');
+  if(sj) sj.style.display=tab==='journ'?'block':'none';
   var today=new Date().toISOString().slice(0,10);
   if(tab==='ponct'){var pd=document.getElementById('p-date');if(pd&&!pd.value)pd.value=today;}
   if(tab==='acomp'){var ad=document.getElementById('ac-date');if(ad&&!ad.value)ad.value=today;}
