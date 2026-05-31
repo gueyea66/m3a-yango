@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -118,6 +118,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 .extra-photo-box:active{opacity:.7}
 .extra-photo-box.has-photo{padding:0;border-style:solid;border-color:var(--vert)}
 .extra-photo-box.has-photo img{width:100%;max-height:200px;object-fit:cover;border-radius:11px}
+
+/* Sub-tabs saisie */
+.subtabs{display:flex;gap:6px;margin-bottom:16px}
+.subtab{flex:1;padding:10px 4px;font-size:11px;font-weight:700;text-align:center;color:var(--muted);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.4px;transition:.2s;background:#fff;border:1.5px solid var(--border)}
+.subtab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);box-shadow:0 3px 10px rgba(201,162,39,.3)}
+
 .extra-photo-rm{position:absolute;top:6px;right:6px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;font-weight:700}
 .extra-photo-label{font-size:12px;color:var(--muted);font-weight:600}
 /* Attach menu */
@@ -181,6 +187,15 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
     <!-- TAB SAISIE -->
     <div id="t-saisie">
       <div id="saisie-status"></div>
+
+      <!-- Sous-onglets de saisie -->
+      <div class="subtabs">
+        <button class="subtab active" id="st-journ" onclick="switchSubtab('journ',this)">&#128197; Journ&#233;e</button>
+        <button class="subtab" id="st-ponct" onclick="switchSubtab('ponct',this)">&#9889; Ponctuelle</button>
+        <button class="subtab" id="st-acomp" onclick="switchSubtab('acomp',this)">&#128181; Acompte</button>
+      </div>
+
+      <div id="sub-journ">
 
       <div class="card">
         <h2><span class="icon">📅</span> Date de la journée</h2>
@@ -348,6 +363,37 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         </a>
         <div style="color:rgba(255,255,255,0.5);font-size:10.5px;margin-top:8px;text-align:center">Ouvre directement l&#8217;app Wave avec le montant total collect&#233;</div>
       </div>
+
+      </div><!-- /sub-journ -->
+
+      <!-- SUB: PONCTUELLE -->
+      <div id="sub-ponct" style="display:none">
+        <div class="card">
+          <h2><span class="icon">&#9889;</span> Saisie ponctuelle</h2>
+          <div class="field"><label>Date</label><input type="date" id="p-date"/></div>
+          <div class="field"><label>Type</label><select id="p-type"><option value="versement">&#128176; Versement cash</option><option value="carburant">&#9981; Carburant</option><option value="bonus">&#127873; Bonus / Prime</option><option value="reparation">&#128295; R&#233;paration / Entretien</option><option value="incident">&#9888; Incident</option><option value="autre">&#128203; Autre</option></select></div>
+          <div class="field"><label>Montant (XOF) &#8212; si applicable</label><input type="number" id="p-montant" inputmode="numeric" placeholder="ex: 15000"/></div>
+          <div class="field"><label>Description / D&#233;tail</label><textarea id="p-desc" rows="2" placeholder="Pr&#233;cisions&#8230;"></textarea></div>
+          <div class="photo-box" id="p-photo-box" data-name="ponct-doc" data-req="0" style="margin-top:4px">
+            <input type="file" accept="image/*,application/pdf"/><span class="icon">&#128247;</span>
+            <div class="photo-label">Photo / Document <span style="color:var(--muted);font-weight:400;font-size:11px">(facultatif)</span></div>
+            <div class="photo-sub">Re&#231;u, photo, PDF&#8230;</div>
+          </div>
+        </div>
+        <div class="sticky-submit"><div class="wrap-inner"><button class="btn btn-gold" id="btn-submit-ponct" onclick="doSubmitPonct()">&#9889; Envoyer l&#8217;&#233;v&#233;nement</button></div></div>
+      </div><!-- /sub-ponct -->
+
+      <!-- SUB: ACOMPTE -->
+      <div id="sub-acomp" style="display:none">
+        <div class="card">
+          <h2><span class="icon">&#128181;</span> Demande d&#8217;acompte</h2>
+          <div class="alert-info" style="margin-bottom:16px">La demande sera transmise au propri&#233;taire pour validation.</div>
+          <div class="field"><label>Date souhait&#233;e</label><input type="date" id="ac-date"/></div>
+          <div class="field"><label>Montant demand&#233; (XOF)</label><input type="number" id="ac-montant" inputmode="numeric" placeholder="ex: 50000"/></div>
+          <div class="field"><label>Motif / Justification</label><textarea id="ac-motif" rows="3" placeholder="Raison de la demande&#8230;"></textarea></div>
+        </div>
+        <div class="sticky-submit"><div class="wrap-inner"><button class="btn btn-gold" id="btn-submit-acomp" onclick="doSubmitAcomp()">&#128181; Envoyer la demande</button></div></div>
+      </div><!-- /sub-acomp -->
 
       <div class="sticky-submit">
         <div class="wrap-inner">
@@ -812,6 +858,83 @@ async function changePw(){
   toast('Mot de passe mis à jour ✓','ok');
   $('pw-old').value=$('pw-new').value=$('pw-new2').value='';
 }
+
+/* === SOUS-ONGLETS SAISIE === */
+function switchSubtab(tab,btn){
+  ['journ','ponct','acomp'].forEach(function(t){
+    var el=document.getElementById('sub-'+t);
+    if(el) el.style.display=t===tab?'block':'none';
+    var bt=document.getElementById('st-'+t);
+    if(bt) bt.classList.toggle('active',t===tab);
+  });
+  var today=new Date().toISOString().slice(0,10);
+  if(tab==='ponct'){var pd=document.getElementById('p-date');if(pd&&!pd.value)pd.value=today;}
+  if(tab==='acomp'){var ad=document.getElementById('ac-date');if(ad&&!ad.value)ad.value=today;}
+}
+
+var PHOTO_PONCT=null;
+(function(){
+  var box=document.getElementById('p-photo-box');if(!box)return;
+  var inp=box.querySelector('input');
+  inp.addEventListener('change',function(ev){
+    var f=ev.target.files[0];if(!f)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var b64=e.target.result.split(',')[1];
+      PHOTO_PONCT={name:'ponct-doc',base64:b64,mime:f.type,filename:f.name};
+      box.classList.add('has-photo');
+      box.querySelector('.photo-label').textContent=f.name.length>30?f.name.slice(0,28)+'...':f.name;
+    };
+    reader.readAsDataURL(f);
+  });
+})();
+
+async function doSubmitPonct(){
+  var date=document.getElementById('p-date').value;
+  var type=document.getElementById('p-type').value;
+  var montant=+(document.getElementById('p-montant').value)||0;
+  var desc=document.getElementById('p-desc').value.trim();
+  if(!date){toast('Date manquante','err');return;}
+  if(!desc&&!montant){toast('Renseigne un montant ou une description','err');return;}
+  var btn=document.getElementById('btn-submit-ponct');
+  btn.textContent='Envoi...';btn.disabled=true;
+  var photos=PHOTO_PONCT?[PHOTO_PONCT]:[];
+  try{
+    var r=await api('submit_event',{token:TOKEN,payload:{date:date,type:type,montant:montant,description:desc},photos:photos});
+    if(r.error){toast('Erreur : '+r.error,'err');return;}
+    toast('\u2705 \u00c9v\u00e9nement envoy\u00e9 au propri\u00e9taire','ok');
+    document.getElementById('p-montant').value='';
+    document.getElementById('p-desc').value='';
+    PHOTO_PONCT=null;
+    var bx=document.getElementById('p-photo-box');
+    if(bx){
+      bx.classList.remove('has-photo');
+      bx.querySelector('.photo-label').innerHTML='Photo / Document <span style="color:var(--muted);font-weight:400;font-size:11px">(facultatif)</span>';
+    }
+  }catch(e){toast('Erreur r\u00e9seau : '+e.message,'err');}
+  finally{btn.innerHTML='&#9889; Envoyer l\u2019\u00e9v\u00e9nement';btn.disabled=false;}
+}
+
+async function doSubmitAcomp(){
+  var date=document.getElementById('ac-date').value;
+  var montant=+(document.getElementById('ac-montant').value)||0;
+  var motif=document.getElementById('ac-motif').value.trim();
+  if(!date){toast('Date manquante','err');return;}
+  if(!montant){toast('Montant requis','err');return;}
+  if(!motif){toast('Motif requis','err');return;}
+  var btn=document.getElementById('btn-submit-acomp');
+  btn.textContent='Envoi...';btn.disabled=true;
+  try{
+    var r=await api('request_advance',{token:TOKEN,payload:{date:date,montant:montant,motif:motif}});
+    if(r.error){toast('Erreur : '+r.error,'err');return;}
+    toast('\u2705 Demande d\u2019acompte envoy\u00e9e \u2014 en attente de validation','ok');
+    document.getElementById('ac-montant').value='';
+    document.getElementById('ac-motif').value='';
+  }catch(e){toast('Erreur r\u00e9seau : '+e.message,'err');}
+  finally{btn.innerHTML='&#128181; Envoyer la demande';btn.disabled=false;}
+}
+
+
 
 /* ═══ TABS ═══ */
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
