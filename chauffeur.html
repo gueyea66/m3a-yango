@@ -418,7 +418,7 @@ async function api(action, body){
 }
 
 /* ═══ LOGIN ═══ */
-async async function doLogin(){
+async function doLogin(){
   const user = $('lg-user').value.trim();
   const pw = $('lg-pw').value;
   if(!user||!pw){ $('login-err').innerHTML = '<div class="alert-err">Renseigne identifiant et mot de passe.</div>'; return; }
@@ -756,4 +756,6 @@ checkSession();
 </script>
 </body>
 </html>
+
+
 

@@ -539,7 +539,7 @@ async function api(action, body){
 }
 
 /* ═══ AUTH ═══ */
-async async function doLogin(){
+async function doLogin(){
   const u=$('lg-user').value.trim(), p=$('lg-pw').value;
   if(!u||!p) return;
   $('btn-login').innerHTML='<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
@@ -968,7 +968,7 @@ setInterval(()=>{ if(TOKEN) api('pending',{token:TOKEN}).then(r=>{ if(r.ok){ PEN
 /* ═══ SAISIE MANUELLE ADMIN ═══════════════════════════════════════════════ */
 let ADM_VEHICLES = [];
 
-async async function loadAdminVehicles(){
+async function loadAdminVehicles(){
   if(ADM_VEHICLES.length > 0) { return; }
   const r = await api('users_list', { token: TOKEN });
   if(r.error || !r.users) return;
@@ -1504,6 +1504,8 @@ function resetFacture(){
 </script>
 </body>
 </html>
+
+
 
 
 
