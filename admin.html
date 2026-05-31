@@ -863,15 +863,14 @@ $('photo-modal').addEventListener('click',e=>{ if(e.target.id==='photo-modal') $
 function renderHisto(){
   const tb = $('histo-tbl').querySelector('tbody');
   const rows = [...JOURNAL].sort((a,b)=>b.date.localeCompare(a.date));
-  if(rows.length===0){ tb.innerHTML='<tr><td colspan="11" class="muted center">Aucune donnée</td></tr>'; return; }
+  if(rows.length===0){ tb.innerHTML='<tr><td colspan="12" class="muted center">Aucune donn\u00e9e</td></tr>'; return; }
   tb.innerHTML = rows.map(d=>{
     const c=compRow({...d,_kmP:0});
     const tg = d.statut==='ACTIF'?'<span class="tag green">Actif</span>':d.statut==='SETUP'?'<span class="tag setup">Setup</span>':d.statut==='REPOS'?'<span class="tag orange">Repos</span>':'<span class="tag red">'+d.statut+'</span>';
-    return `<tr><td><strong>${frDateShort(d.date)}</strong></td><td>${tg}</td><td class="num mono">${d.km!=null?fmt(d.km):'—'}</td><td class="num mono">${d.nb_courses_yango||'—'}</td><td class="num mono">${c.brut?fmtX(c.brut):'—'}</td><td class="num mono">${c.net15?fmtX(c.net15):'—'}</td><td class="num mono">${c.ad?fmtX(c.ad):'—'}</td><td class="num mono">${c.vers?fmtX(c.vers):'—'}</td><td class="num mono">${c.walF!=null?fmtX(c.walF):'—'}</td><td class="num mono">${c.carbL>0?(fmt2(c.carbL)+' L'):'—'}</td><td class="num mono">${c.note!=null?fmt2(c.note):'—'}</td></tr>`;
+    const rowId = d.id || (d.date+'_'+d.vehicle_id);
+    return `<tr data-entry-id="${rowId}"><td><strong>${frDateShort(d.date)}</strong></td><td>${tg}</td><td class="num mono">${d.km!=null?fmt(d.km):'-'}</td><td class="num mono">${d.nb_courses_yango||'-'}</td><td class="num mono">${c.brut?fmtX(c.brut):'-'}</td><td class="num mono">${c.net15?fmtX(c.net15):'-'}</td><td class="num mono">${c.ad?fmtX(c.ad):'-'}</td><td class="num mono">${c.vers?fmtX(c.vers):'-'}</td><td class="num mono">${c.walF!=null?fmtX(c.walF):'-'}</td><td class="num mono">${c.carbL>0?(fmt2(c.carbL)+' L'):'-'}</td><td class="num mono">${c.note!=null?fmt2(c.note):'-'}</td><td class="num"><button class="btn-small btn-ghost" style="font-size:11px;padding:3px 10px" onclick="openEditEntry('${rowId}')">&#9998; Modifier</button></td></tr>`;
   }).join('');
 }
-
-/* ═══ USERS ═══ */
 async function loadUsers(){
   const r = await api('users_list',{token:TOKEN});
   if(r.error){ toast(r.error,'err'); return; }
@@ -1473,7 +1472,193 @@ function printFacture(){
   printZone.innerHTML = `<html><head><style>
     body{font-family:'Inter',sans-serif;margin:0;padding:20px;color:#0F172A}
     @page{margin:15mm}
-  </style></head><body>${preview}</body></html>`;
+  </style></head><body>${preview}
+<!-- ============================================================ -->
+<!-- MODAL EDITION ENTREE HISTORIQUE                              -->
+<!-- ============================================================ -->
+<div id="edit-entry-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:8000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+      </div>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+    </div>
+    <div style="padding:20px 24px">
+
+      <!-- Statut -->
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Statut</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <button type="button" class="adm-st-btn" data-est="ACTIF" onclick="editSetSt('ACTIF',this)">Travail</button>
+          <button type="button" class="adm-st-btn" data-est="REPOS" onclick="editSetSt('REPOS',this)">Repos</button>
+          <button type="button" class="adm-st-btn" data-est="PANNE" onclick="editSetSt('PANNE',this)">Panne</button>
+        </div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Km compteur</label><input type="number" id="edit-km" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="edit-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">CA Yango brut (XOF)</label><input type="number" id="edit-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">CA Hors Yango (XOF)</label><input type="number" id="edit-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Wallet Yango (solde XOF)</label><input type="number" id="edit-wal" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Note Yango (/5)</label><input type="number" id="edit-note" min="0" max="5" step="0.1" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Carburant (litres)</label><input type="number" id="edit-cbl" placeholder="0" step="0.01" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Carburant (XOF)</label><input type="number" id="edit-cbm" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Incident / Remarque</label>
+        <input type="text" id="edit-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <label class="cfg-label">Note admin (motif correction)</label>
+        <input type="text" id="edit-owner-notes" placeholder="Ex: correction saisie manuelle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div id="edit-entry-result" style="margin-bottom:12px"></div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeEditEntry()">Annuler</button>
+        <button class="btn btn-primary" id="edit-save-btn" onclick="saveEditEntry()">&#10003; Sauvegarder les corrections</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDITION ENTREES HISTORIQUE — ADMIN
+   ============================================================ */
+let _editEntryId = null;
+
+function openEditEntry(rowId){
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(rowId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+  _editEntryId = rowId;
+
+  // Sous-titre
+  $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
+
+  // Pré-remplir statut
+  document.querySelectorAll('[data-est]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
+  });
+
+  // Pré-remplir champs
+  const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
+  set('edit-km',   entry.km);
+  set('edit-nb',   entry.nb_courses_yango);
+  set('edit-ca',   entry.ca_yango_brut);
+  set('edit-ad',   entry.ca_hors_yango);
+  set('edit-vers', entry.vers_recu);
+  set('edit-bonus',entry.bonus_yango);
+  set('edit-wal',  entry.wal_solde);
+  set('edit-note', entry.note_yango);
+  set('edit-cbl',  entry.carb_l);
+  set('edit-cbm',  entry.carb_xof);
+  set('edit-inc',  entry.incident);
+  set('edit-owner-notes', '');
+
+  $('edit-entry-result').innerHTML = '';
+  $('edit-save-btn').disabled = false;
+  $('edit-save-btn').textContent = '\u2713 Sauvegarder les corrections';
+
+  $('edit-entry-modal').style.display='flex';
+}
+
+function closeEditEntry(){
+  $('edit-entry-modal').style.display='none';
+  _editEntryId = null;
+}
+
+function editSetSt(st, btn){
+  document.querySelectorAll('[data-est]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function saveEditEntry(){
+  if(!_editEntryId){ toast('Aucune entr\u00e9e s\u00e9lectionn\u00e9e','err'); return; }
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(_editEntryId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+
+  const statut = document.querySelector('[data-est].active')?.dataset.est || entry.statut || 'ACTIF';
+  const g = id => { const el=$(id); return el?el.value.trim():''; };
+
+  const corrections = {
+    statut,
+    km:               g('edit-km')    !== '' ? +g('edit-km')    : null,
+    nb_courses_yango: g('edit-nb')    !== '' ? +g('edit-nb')    : 0,
+    ca_yango_brut:    g('edit-ca')    !== '' ? +g('edit-ca')    : 0,
+    ca_hors_yango:    g('edit-ad')    !== '' ? +g('edit-ad')    : 0,
+    vers_recu:        g('edit-vers')  !== '' ? +g('edit-vers')  : 0,
+    bonus_yango:      g('edit-bonus') !== '' ? +g('edit-bonus') : null,
+    wal_solde:        g('edit-wal')   !== '' ? +g('edit-wal')   : null,
+    note_yango:       g('edit-note')  !== '' ? +g('edit-note')  : null,
+    carb_l:           g('edit-cbl')   !== '' ? +g('edit-cbl')   : 0,
+    carb_xof:         g('edit-cbm')   !== '' ? +g('edit-cbm')   : 0,
+    incident:         g('edit-inc'),
+    owner_notes:      g('edit-owner-notes') || '[Correction admin]'
+  };
+
+  const btn = $('edit-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+  $('edit-entry-result').innerHTML = '';
+
+  try {
+    // On envoie soit par journal_id (si dispo) soit date+vehicle_id
+    const payload = {
+      token: TOKEN,
+      journal_id: entry.id || null,
+      date: entry.date,
+      vehicle_id: entry.vehicle_id,
+      corrections
+    };
+    const r = await api('journal_edit', payload);
+    if(r.error){
+      $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur : '+r.error+'</div>';
+      return;
+    }
+    $('edit-entry-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">\u2713 Corrections enregistr\u00e9es</div>';
+    toast('\u2713 Entr\u00e9e corrig\u00e9e','ok');
+    setTimeout(()=>{ closeEditEntry(); refresh(); }, 1200);
+  } catch(e){
+    $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur r\u00e9seau : '+e.message+'</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2713 Sauvegarder les corrections';
+  }
+}
+
+// Fermer modal en cliquant dehors
+document.getElementById('edit-entry-modal').addEventListener('click', function(e){
+  if(e.target === this) closeEditEntry();
+});
+</script>
+</body></html>`;
   
   // Ouvrir dans nouvelle fenêtre pour impression
   const w = window.open('','_blank','width=800,height=1000');
@@ -1488,7 +1673,193 @@ function printFacture(){
   </head><body>
     ${preview}
     <script>window.onload=()=>{window.print();}<\/script>
-  </body></html>`);
+  
+<!-- ============================================================ -->
+<!-- MODAL EDITION ENTREE HISTORIQUE                              -->
+<!-- ============================================================ -->
+<div id="edit-entry-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:8000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+      </div>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+    </div>
+    <div style="padding:20px 24px">
+
+      <!-- Statut -->
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Statut</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <button type="button" class="adm-st-btn" data-est="ACTIF" onclick="editSetSt('ACTIF',this)">Travail</button>
+          <button type="button" class="adm-st-btn" data-est="REPOS" onclick="editSetSt('REPOS',this)">Repos</button>
+          <button type="button" class="adm-st-btn" data-est="PANNE" onclick="editSetSt('PANNE',this)">Panne</button>
+        </div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Km compteur</label><input type="number" id="edit-km" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="edit-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">CA Yango brut (XOF)</label><input type="number" id="edit-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">CA Hors Yango (XOF)</label><input type="number" id="edit-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Wallet Yango (solde XOF)</label><input type="number" id="edit-wal" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Note Yango (/5)</label><input type="number" id="edit-note" min="0" max="5" step="0.1" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Carburant (litres)</label><input type="number" id="edit-cbl" placeholder="0" step="0.01" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Carburant (XOF)</label><input type="number" id="edit-cbm" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Incident / Remarque</label>
+        <input type="text" id="edit-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <label class="cfg-label">Note admin (motif correction)</label>
+        <input type="text" id="edit-owner-notes" placeholder="Ex: correction saisie manuelle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div id="edit-entry-result" style="margin-bottom:12px"></div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeEditEntry()">Annuler</button>
+        <button class="btn btn-primary" id="edit-save-btn" onclick="saveEditEntry()">&#10003; Sauvegarder les corrections</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDITION ENTREES HISTORIQUE — ADMIN
+   ============================================================ */
+let _editEntryId = null;
+
+function openEditEntry(rowId){
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(rowId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+  _editEntryId = rowId;
+
+  // Sous-titre
+  $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
+
+  // Pré-remplir statut
+  document.querySelectorAll('[data-est]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
+  });
+
+  // Pré-remplir champs
+  const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
+  set('edit-km',   entry.km);
+  set('edit-nb',   entry.nb_courses_yango);
+  set('edit-ca',   entry.ca_yango_brut);
+  set('edit-ad',   entry.ca_hors_yango);
+  set('edit-vers', entry.vers_recu);
+  set('edit-bonus',entry.bonus_yango);
+  set('edit-wal',  entry.wal_solde);
+  set('edit-note', entry.note_yango);
+  set('edit-cbl',  entry.carb_l);
+  set('edit-cbm',  entry.carb_xof);
+  set('edit-inc',  entry.incident);
+  set('edit-owner-notes', '');
+
+  $('edit-entry-result').innerHTML = '';
+  $('edit-save-btn').disabled = false;
+  $('edit-save-btn').textContent = '\u2713 Sauvegarder les corrections';
+
+  $('edit-entry-modal').style.display='flex';
+}
+
+function closeEditEntry(){
+  $('edit-entry-modal').style.display='none';
+  _editEntryId = null;
+}
+
+function editSetSt(st, btn){
+  document.querySelectorAll('[data-est]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function saveEditEntry(){
+  if(!_editEntryId){ toast('Aucune entr\u00e9e s\u00e9lectionn\u00e9e','err'); return; }
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(_editEntryId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+
+  const statut = document.querySelector('[data-est].active')?.dataset.est || entry.statut || 'ACTIF';
+  const g = id => { const el=$(id); return el?el.value.trim():''; };
+
+  const corrections = {
+    statut,
+    km:               g('edit-km')    !== '' ? +g('edit-km')    : null,
+    nb_courses_yango: g('edit-nb')    !== '' ? +g('edit-nb')    : 0,
+    ca_yango_brut:    g('edit-ca')    !== '' ? +g('edit-ca')    : 0,
+    ca_hors_yango:    g('edit-ad')    !== '' ? +g('edit-ad')    : 0,
+    vers_recu:        g('edit-vers')  !== '' ? +g('edit-vers')  : 0,
+    bonus_yango:      g('edit-bonus') !== '' ? +g('edit-bonus') : null,
+    wal_solde:        g('edit-wal')   !== '' ? +g('edit-wal')   : null,
+    note_yango:       g('edit-note')  !== '' ? +g('edit-note')  : null,
+    carb_l:           g('edit-cbl')   !== '' ? +g('edit-cbl')   : 0,
+    carb_xof:         g('edit-cbm')   !== '' ? +g('edit-cbm')   : 0,
+    incident:         g('edit-inc'),
+    owner_notes:      g('edit-owner-notes') || '[Correction admin]'
+  };
+
+  const btn = $('edit-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+  $('edit-entry-result').innerHTML = '';
+
+  try {
+    // On envoie soit par journal_id (si dispo) soit date+vehicle_id
+    const payload = {
+      token: TOKEN,
+      journal_id: entry.id || null,
+      date: entry.date,
+      vehicle_id: entry.vehicle_id,
+      corrections
+    };
+    const r = await api('journal_edit', payload);
+    if(r.error){
+      $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur : '+r.error+'</div>';
+      return;
+    }
+    $('edit-entry-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">\u2713 Corrections enregistr\u00e9es</div>';
+    toast('\u2713 Entr\u00e9e corrig\u00e9e','ok');
+    setTimeout(()=>{ closeEditEntry(); refresh(); }, 1200);
+  } catch(e){
+    $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur r\u00e9seau : '+e.message+'</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2713 Sauvegarder les corrections';
+  }
+}
+
+// Fermer modal en cliquant dehors
+document.getElementById('edit-entry-modal').addEventListener('click', function(e){
+  if(e.target === this) closeEditEntry();
+});
+</script>
+</body></html>`);
   w.document.close();
 }
 
@@ -1648,6 +2019,192 @@ async function doRejectAdvance(id) {
   loadAdvances();
 }
 // ===== FIN MODULE EVENTS & ADVANCES =====
+</script>
+
+<!-- ============================================================ -->
+<!-- MODAL EDITION ENTREE HISTORIQUE                              -->
+<!-- ============================================================ -->
+<div id="edit-entry-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:8000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+      </div>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+    </div>
+    <div style="padding:20px 24px">
+
+      <!-- Statut -->
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Statut</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <button type="button" class="adm-st-btn" data-est="ACTIF" onclick="editSetSt('ACTIF',this)">Travail</button>
+          <button type="button" class="adm-st-btn" data-est="REPOS" onclick="editSetSt('REPOS',this)">Repos</button>
+          <button type="button" class="adm-st-btn" data-est="PANNE" onclick="editSetSt('PANNE',this)">Panne</button>
+        </div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Km compteur</label><input type="number" id="edit-km" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Nb courses Yango</label><input type="number" id="edit-nb" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">CA Yango brut (XOF)</label><input type="number" id="edit-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">CA Hors Yango (XOF)</label><input type="number" id="edit-ad" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Wallet Yango (solde XOF)</label><input type="number" id="edit-wal" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Note Yango (/5)</label><input type="number" id="edit-note" min="0" max="5" step="0.1" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div class="row cols-2" style="gap:12px;margin-bottom:12px">
+        <div><label class="cfg-label">Carburant (litres)</label><input type="number" id="edit-cbl" placeholder="0" step="0.01" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Carburant (XOF)</label><input type="number" id="edit-cbm" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label class="cfg-label">Incident / Remarque</label>
+        <input type="text" id="edit-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <label class="cfg-label">Note admin (motif correction)</label>
+        <input type="text" id="edit-owner-notes" placeholder="Ex: correction saisie manuelle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
+      </div>
+
+      <div id="edit-entry-result" style="margin-bottom:12px"></div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeEditEntry()">Annuler</button>
+        <button class="btn btn-primary" id="edit-save-btn" onclick="saveEditEntry()">&#10003; Sauvegarder les corrections</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EDITION ENTREES HISTORIQUE — ADMIN
+   ============================================================ */
+let _editEntryId = null;
+
+function openEditEntry(rowId){
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(rowId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+  _editEntryId = rowId;
+
+  // Sous-titre
+  $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
+
+  // Pré-remplir statut
+  document.querySelectorAll('[data-est]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
+  });
+
+  // Pré-remplir champs
+  const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
+  set('edit-km',   entry.km);
+  set('edit-nb',   entry.nb_courses_yango);
+  set('edit-ca',   entry.ca_yango_brut);
+  set('edit-ad',   entry.ca_hors_yango);
+  set('edit-vers', entry.vers_recu);
+  set('edit-bonus',entry.bonus_yango);
+  set('edit-wal',  entry.wal_solde);
+  set('edit-note', entry.note_yango);
+  set('edit-cbl',  entry.carb_l);
+  set('edit-cbm',  entry.carb_xof);
+  set('edit-inc',  entry.incident);
+  set('edit-owner-notes', '');
+
+  $('edit-entry-result').innerHTML = '';
+  $('edit-save-btn').disabled = false;
+  $('edit-save-btn').textContent = '\u2713 Sauvegarder les corrections';
+
+  $('edit-entry-modal').style.display='flex';
+}
+
+function closeEditEntry(){
+  $('edit-entry-modal').style.display='none';
+  _editEntryId = null;
+}
+
+function editSetSt(st, btn){
+  document.querySelectorAll('[data-est]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function saveEditEntry(){
+  if(!_editEntryId){ toast('Aucune entr\u00e9e s\u00e9lectionn\u00e9e','err'); return; }
+  const entry = JOURNAL.find(d => {
+    const id = d.id || (d.date+'_'+d.vehicle_id);
+    return String(id) === String(_editEntryId);
+  });
+  if(!entry){ toast('Entr\u00e9e introuvable','err'); return; }
+
+  const statut = document.querySelector('[data-est].active')?.dataset.est || entry.statut || 'ACTIF';
+  const g = id => { const el=$(id); return el?el.value.trim():''; };
+
+  const corrections = {
+    statut,
+    km:               g('edit-km')    !== '' ? +g('edit-km')    : null,
+    nb_courses_yango: g('edit-nb')    !== '' ? +g('edit-nb')    : 0,
+    ca_yango_brut:    g('edit-ca')    !== '' ? +g('edit-ca')    : 0,
+    ca_hors_yango:    g('edit-ad')    !== '' ? +g('edit-ad')    : 0,
+    vers_recu:        g('edit-vers')  !== '' ? +g('edit-vers')  : 0,
+    bonus_yango:      g('edit-bonus') !== '' ? +g('edit-bonus') : null,
+    wal_solde:        g('edit-wal')   !== '' ? +g('edit-wal')   : null,
+    note_yango:       g('edit-note')  !== '' ? +g('edit-note')  : null,
+    carb_l:           g('edit-cbl')   !== '' ? +g('edit-cbl')   : 0,
+    carb_xof:         g('edit-cbm')   !== '' ? +g('edit-cbm')   : 0,
+    incident:         g('edit-inc'),
+    owner_notes:      g('edit-owner-notes') || '[Correction admin]'
+  };
+
+  const btn = $('edit-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+  $('edit-entry-result').innerHTML = '';
+
+  try {
+    // On envoie soit par journal_id (si dispo) soit date+vehicle_id
+    const payload = {
+      token: TOKEN,
+      journal_id: entry.id || null,
+      date: entry.date,
+      vehicle_id: entry.vehicle_id,
+      corrections
+    };
+    const r = await api('journal_edit', payload);
+    if(r.error){
+      $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur : '+r.error+'</div>';
+      return;
+    }
+    $('edit-entry-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">\u2713 Corrections enregistr\u00e9es</div>';
+    toast('\u2713 Entr\u00e9e corrig\u00e9e','ok');
+    setTimeout(()=>{ closeEditEntry(); refresh(); }, 1200);
+  } catch(e){
+    $('edit-entry-result').innerHTML = '<div class="alert danger" style="padding:10px 14px;border-radius:8px;background:var(--danger-l);color:var(--danger);font-size:13px">Erreur r\u00e9seau : '+e.message+'</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2713 Sauvegarder les corrections';
+  }
+}
+
+// Fermer modal en cliquant dehors
+document.getElementById('edit-entry-modal').addEventListener('click', function(e){
+  if(e.target === this) closeEditEntry();
+});
 </script>
 </body>
 </html>
