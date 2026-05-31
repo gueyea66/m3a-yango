@@ -249,12 +249,17 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         </div>
         <div class="field">
           <label>CA Yango affiché dans l'app (XOF)</label>
-          <input type="number" id="f-caY" inputmode="numeric" placeholder="ex: 28500"/>
+          <input type="number" id="f-caY" inputmode="numeric" placeholder="ex: 28500" oninput="updateCalc()"/>
           <div class="hint">Le montant en bas de la synthèse Yango</div>
         </div>
         <div class="toggle">
           <button type="button" id="bt-net-no" class="active" onclick="setNetMode(false,this)">Brut affiché</button>
           <button type="button" id="bt-net-yes" onclick="setNetMode(true,this)">Montant NET (après commission)</button>
+        </div>
+        <div class="field" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+          <label>&#127873; Bonus Yango du jour (XOF)</label>
+          <input type="number" id="f-bonus" inputmode="numeric" placeholder="0" value="0" oninput="updateCalc()"/>
+          <div class="hint">Bonus Yango ou prime journalière — s’ajoute au net. 0 par défaut.</div>
         </div>
       </div>
 
@@ -267,7 +272,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div id="ad-block" style="display:none">
           <div class="field">
             <label>Montant cash hors Yango (XOF)</label>
-            <input type="number" id="f-caAd" inputmode="numeric" placeholder="ex: 15000"/>
+            <input type="number" id="f-caAd" inputmode="numeric" placeholder="ex: 15000" oninput="updateCalc()"/>
           </div>
         </div>
       </div>
@@ -287,14 +292,6 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 
       
       <div class="card">
-        <h2><span class="icon">&#127873;</span> Bonus journalier</h2>
-        <div class="field">
-          <label>Bonus du jour (XOF) <span style="color:var(--muted);font-weight:400;font-size:11px">&#8212; modifiable</span></label>
-          <input type="number" id="f-bonus" inputmode="numeric" placeholder="0" value="0"/>
-          <div class="hint">Bonus Yango, prime journali&#232;re ou autre &#8212; impact direct sur le net. 0 par d&#233;faut.</div>
-        </div>
-      </div>
-<div class="card">
         <h2><span class="icon">⛽</span> Carburant</h2>
         <div class="toggle">
           <button type="button" id="cb-no" class="active" onclick="setCarb(false,this)">Pas de plein</button>
@@ -307,7 +304,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
           </div>
           <div class="field">
             <label>Montant total (XOF)</label>
-            <input type="number" id="f-cbM" inputmode="numeric" placeholder="ex: 26180"/>
+            <input type="number" id="f-cbM" inputmode="numeric" placeholder="ex: 26180" oninput="updateCalc()"/>
           </div>
         </div>
       </div>
@@ -374,8 +371,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div class="calc-row"><span class="muted">- Commission Yango (15 %)</span><span class="v" id="r-cy">—</span></div>
         <div class="calc-row"><span class="muted">- Commission partenaire (0,75 %)</span><span class="v" id="r-cp">—</span></div>
         <div class="calc-row"><span class="muted">+ Hors Yango (cash)</span><span class="v" id="r-ad">—</span></div>
-        <div class="calc-row" style="color:var(--vert)"><span class="muted" style="color:var(--vert)">+ Bonus journalier</span><span class="v" style="color:var(--vert)" id="r-bonus">+ 0 XOF</span></div>
-        <div class="calc-row" style="border-top:2px solid var(--border);margin-top:6px;padding-top:8px"><span style="font-weight:700">TOTAL collect&#233; du jour</span><span class="v" style="font-weight:800;font-size:17px" id="r-tot">-</span></div>
+        <div class="calc-row" style="color:var(--vert)"><span class="muted" style="color:var(--vert)">+ Bonus Yango</span><span class="v" style="color:var(--vert)" id="r-bonus">+ 0 XOF</span></div>
+        <div class="calc-row" style="border-top:2px solid var(--border);margin-top:6px;padding-top:8px"><span style="font-weight:700">Total collecté du jour</span><span class="v" style="font-weight:800;font-size:15px" id="r-tot">-</span></div>
+        <div class="calc-row" style="color:var(--danger)"><span class="muted" style="color:var(--danger)">− Carburant</span><span class="v" style="color:var(--danger)" id="r-carb">0 XOF</span></div>
+        <div class="calc-row" style="background:var(--vert-l);border-radius:8px;padding:10px 8px;margin-top:6px"><span style="font-weight:800;color:var(--vert)">&#128176; Montant à verser</span><span class="v" style="font-weight:900;font-size:18px;color:var(--vert)" id="r-verser">-</span></div>
       </div>
 
       <div class="card" style="background:linear-gradient(135deg,#003087,#1565C0);border:none;padding:18px;margin-bottom:12px">
@@ -578,6 +577,7 @@ function setCarb(v, btn){
   $('cb-block').style.display = v?'block':'none';
   $('ph-carb').style.display = v?'block':'none';
   if(!v){ $('f-cbL').value=''; $('f-cbM').value=''; }
+  updateCalc();
 }
 function setNetMode(v, btn){
   document.querySelectorAll('#bt-net-no,#bt-net-yes').forEach(b=>b.classList.remove('active'));
@@ -596,6 +596,10 @@ function updateCalc(){
   const ad = +$('f-caAd').value || 0;
   const bonus = +$('f-bonus').value || 0;
   const total = net + ad + bonus;
+  // Carburant = charge à déduire du montant à verser
+  const carb = carb_on ? (+$('f-cbM').value || 0) : 0;
+  const verser = total - carb;
+
   $('r-km').textContent = (+$('f-km').value || 0) + ' km';
   $('r-brut').textContent = fmt(caBrut);
   $('r-cy').textContent = '- '+fmt(cy);
@@ -603,11 +607,14 @@ function updateCalc(){
   $('r-ad').textContent = '+ '+fmt(ad);
   $('r-bonus').textContent = '+ '+fmt(bonus);
   $('r-tot').textContent = fmt(total);
-  // Bouton Wave dynamique
+  if($('r-carb')) $('r-carb').textContent = carb > 0 ? '- '+fmt(carb) : '0 XOF';
+  if($('r-verser')) $('r-verser').textContent = fmt(verser);
+
+  // Bouton Wave dynamique — utilise le MONTANT À VERSER
   const waveBtn = $('btn-wave');
   if(waveBtn){
     const waveNum = (CFG && CFG.wave_number) ? CFG.wave_number.trim() : '';
-    const amt = Math.round(total);
+    const amt = Math.round(verser);
     if(amt > 0){
       let waveUrl;
       if(waveNum){
