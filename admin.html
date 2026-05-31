@@ -184,6 +184,8 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       <button class="tab" data-view="config">⚙ Paramètres</button>
       <button class="tab" data-view="saisie">&#9998; Saisie</button>
       <button class="tab" data-view="factures">&#128203; Factures</button>
+      <button class="tab" data-view="events">&#9889; &#201;v&#233;nements</button>
+      <button class="tab" data-view="advances">&#128181; Acomptes</button>
     </div>
     <div class="actions">
       <button class="btn-ico" onclick="refresh()">↻ Rafraîchir</button>
@@ -579,12 +581,14 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   const v = t.dataset.view;
-  ['dash','valid','histo','users','config','saisie','factures'].forEach(x=>$('pane-'+x).style.display='none');
+  ['dash','valid','histo','users','config','saisie','factures','events','advances'].forEach(x=>$('pane-'+x).style.display='none');
   $('pane-'+v).style.display='block';
   if(v==='users') loadUsers();
   if(v==='config') fillConfig();
   if(v==='saisie'){ $('adm-date').value=todayISO(); loadAdminVehicles(); }
   if(v==='factures') initFactures();
+  if(v==='events') loadEvents();
+  if(v==='advances') loadAdvances();
   
   if(v==='valid') loadPending();
 }));
@@ -1500,7 +1504,150 @@ function resetFacture(){
   initFactures();
   toast('Formulaire réinitialisé','ok');
 }
+
+    <!-- VIEW EVENTS -->
+    <div class="view-pane" id="pane-events" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <div><h1>&#9889; &#201;v&#233;nements ponctuels</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">D&#233;clarations des chauffeurs</div></div>
+        <button class="btn-sec" onclick="loadEvents()">&#8635; Rafra&#238;chir</button>
+      </div>
+      <div id="events-filter" style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <select id="ev-filter-user" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderEvents()">
+          <option value="">Tous les chauffeurs</option>
+        </select>
+        <select id="ev-filter-type" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderEvents()">
+          <option value="">Tous les types</option>
+          <option value="reparation">R&#233;paration</option>
+          <option value="accident">Accident</option>
+          <option value="amende">Amende</option>
+          <option value="assurance">Assurance</option>
+          <option value="visite">Visite technique</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div id="events-list"><div class="muted center" style="padding:40px 0">Chargement...</div></div>
+    </div>
+
+    <!-- VIEW ADVANCES -->
+    <div class="view-pane" id="pane-advances" style="display:none">
+      <div class="flex-between" style="margin:4px 0 14px">
+        <div><h1>&#128181; Demandes d'acompte</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">Validation des avances chauffeur</div></div>
+        <button class="btn-sec" onclick="loadAdvances()">&#8635; Rafra&#238;chir</button>
+      </div>
+      <div id="adv-filter" style="margin-bottom:12px">
+        <select id="adv-filter-st" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderAdvances()">
+          <option value="">Tous les statuts</option>
+          <option value="PENDING">En attente</option>
+          <option value="APPROVED">Approuv&#233;</option>
+          <option value="REJECTED">Refus&#233;</option>
+        </select>
+      </div>
+      <div id="advances-list"><div class="muted center" style="padding:40px 0">Chargement...</div></div>
+    </div>
 // ===== FIN MODULE FACTURES =====
+
+// ===== MODULE EVENTS & ADVANCES =====
+let EVENTS_DATA = [];
+let ADVANCES_DATA = [];
+
+async function loadEvents() {
+  document.getElementById('events-list').innerHTML = '<div class="muted center" style="padding:30px 0">Chargement...</div>';
+  const r = await api('events_list', { token: TOKEN });
+  if (r.error) { document.getElementById('events-list').innerHTML = '<div class="alert-err">' + r.error + '</div>'; return; }
+  EVENTS_DATA = r.events || [];
+  const sel = document.getElementById('ev-filter-user');
+  const users = [...new Set(EVENTS_DATA.map(e => e.username))].filter(Boolean);
+  sel.innerHTML = '<option value="">Tous les chauffeurs</option>' + users.map(u => '<option value="'+u+'">'+u+'</option>').join('');
+  renderEvents();
+}
+
+function renderEvents() {
+  const filterUser = document.getElementById('ev-filter-user').value;
+  const filterType = document.getElementById('ev-filter-type').value;
+  let items = EVENTS_DATA;
+  if (filterUser) items = items.filter(e => e.username === filterUser);
+  if (filterType) items = items.filter(e => e.type === filterType);
+  const list = document.getElementById('events-list');
+  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun &#233;v&#233;nement</div>'; return; }
+  const typeLabels = { reparation:'R&#233;paration', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
+  list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(ev => {
+    const photos = (() => { try { return JSON.parse(ev.photos||'[]'); } catch(e){ return []; } })();
+    const photoHTML = photos.filter(p=>p.url).map(p => '<a href="'+p.url+'" target="_blank" class="btn-sec" style="font-size:11px;padding:4px 8px">&#128247; Photo</a>').join('');
+    return '<div class="card" style="margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">' +
+        '<div><div style="font-weight:700;font-size:14px">'+fmtDate(ev.date)+'</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin-top:2px">'+ev.vehicle_label+'</div></div>' +
+        '<span class="badge" style="background:var(--gold-l);color:var(--gold-d);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+(typeLabels[ev.type]||ev.type||'-')+'</span>' +
+      '</div>' +
+      (ev.montant && +ev.montant ? '<div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--danger)">'+fmt(ev.montant)+'</div>' : '') +
+      (ev.description ? '<div style="font-size:13px;color:#334155;margin-top:6px">'+ev.description+'</div>' : '') +
+      (photoHTML ? '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+photoHTML+'</div>' : '') +
+      '<div style="font-size:11px;color:var(--muted);margin-top:8px">Par '+ev.username+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function loadAdvances() {
+  document.getElementById('advances-list').innerHTML = '<div class="muted center" style="padding:30px 0">Chargement...</div>';
+  const r = await api('advances_list', { token: TOKEN });
+  if (r.error) { document.getElementById('advances-list').innerHTML = '<div class="alert-err">' + r.error + '</div>'; return; }
+  ADVANCES_DATA = r.advances || [];
+  renderAdvances();
+}
+
+function renderAdvances() {
+  const filterSt = document.getElementById('adv-filter-st').value;
+  let items = ADVANCES_DATA;
+  if (filterSt) items = items.filter(a => a.status === filterSt);
+  const list = document.getElementById('advances-list');
+  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucune demande</div>'; return; }
+  const stBadge = {
+    PENDING: '<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">EN ATTENTE</span>',
+    APPROVED: '<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">APPROUV&#201;</span>',
+    REJECTED: '<span style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">REFUS&#201;</span>'
+  };
+  list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(adv => {
+    const isPending = adv.status === 'PENDING';
+    return '<div class="card" style="margin-bottom:10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">' +
+        '<div><div style="font-weight:700;font-size:14px">'+fmtDate(adv.date)+'</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin-top:2px">'+adv.vehicle_label+'</div></div>' +
+        (stBadge[adv.status]||adv.status) +
+      '</div>' +
+      '<div style="font-size:20px;font-weight:800;margin:10px 0;color:var(--navy)">'+fmt(adv.montant)+'</div>' +
+      '<div style="font-size:13px;color:#334155"><strong>Motif :</strong> '+adv.motif+'</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:4px">Par '+adv.username+'</div>' +
+      (adv.admin_note ? '<div style="font-size:12px;color:var(--muted);margin-top:6px;font-style:italic">Note admin : '+adv.admin_note+'</div>' : '') +
+      (isPending ? '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">' +
+        '<input id="adv-note-'+adv.id+'" placeholder="Note (obligatoire pour refus)" style="flex:1;min-width:140px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px"/>' +
+        '<button onclick="doValidateAdvance(\''+adv.id+'\')" style="background:#059669;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:700;font-size:13px">&#10003; Approuver</button>' +
+        '<button onclick="doRejectAdvance(\''+adv.id+'\')" style="background:#DC2626;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:700;font-size:13px">&#10007; Refuser</button>' +
+      '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+async function doValidateAdvance(id) {
+  const noteEl = document.getElementById('adv-note-'+id);
+  const note = noteEl ? noteEl.value : '';
+  const r = await api('validate_advance', { token: TOKEN, advance_id: id, admin_note: note });
+  if (r.error) { toast(r.error, 'err'); return; }
+  toast('Acompte approuv\u00e9 \u2713', 'ok');
+  loadAdvances();
+}
+
+async function doRejectAdvance(id) {
+  const noteEl = document.getElementById('adv-note-'+id);
+  const note = noteEl ? noteEl.value : '';
+  if (!note) { toast('Renseigne une note de refus', 'err'); return; }
+  const r = await api('reject_advance', { token: TOKEN, advance_id: id, admin_note: note });
+  if (r.error) { toast(r.error, 'err'); return; }
+  toast('Demande refus\u00e9e', 'ok');
+  loadAdvances();
+}
+// ===== FIN MODULE EVENTS & ADVANCES =====
 </script>
 </body>
 </html>
