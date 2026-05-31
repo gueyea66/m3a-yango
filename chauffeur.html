@@ -393,9 +393,11 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <div class="card">
           <h2><span class="icon">&#9889;</span> Saisie ponctuelle</h2>
           <div class="field"><label>Date</label><input type="date" id="p-date"/></div>
-          <div class="field"><label>Type</label><select id="p-type"><option value="versement">&#128176; Versement cash</option><option value="carburant">&#9981; Carburant</option><option value="bonus">&#127873; Bonus / Prime</option><option value="reparation">&#128295; R&#233;paration / Entretien</option><option value="incident">&#9888; Incident</option><option value="autre">&#128203; Autre</option></select></div>
+          
+          <div class="field"><label>Type</label><select id="p-type" onchange="onPTypeChange()"><option value="versement">&#128176; Versement cash</option><option value="carburant">&#9981; Carburant</option><option value="peage">&#128739; P&#233;age</option><option value="controle_routier">&#128682; Contr&#244;le routier</option><option value="bonus">&#127873; Bonus / Prime</option><option value="reparation">&#128295; R&#233;paration / Entretien</option><option value="incident">&#9888; Incident</option><option value="autre">&#128203; Autre</option></select></div>
           <div class="field"><label>Montant (XOF) &#8212; si applicable</label><input type="number" id="p-montant" inputmode="numeric" placeholder="ex: 15000"/></div>
-          <div class="field"><label>Description / D&#233;tail</label><textarea id="p-desc" rows="2" placeholder="Pr&#233;cisions&#8230;"></textarea></div>
+          <div class="field"><label>Description / Motif</label><input type="text" id="p-desc" placeholder="ex: P&#233;age autoroute Dakar-Di&#233;mniadio"/></div>
+          <div class="field" id="p-litres-row" style="display:none"><label>Litres (optionnel)</label><input type="number" id="p-litres" inputmode="decimal" step="0.1" placeholder="ex: 20.5"/></div>
           <div class="photo-box" id="p-photo-box" data-name="ponct-doc" data-req="0" style="margin-top:4px">
             <input type="file" accept="image/*,application/pdf"/><span class="icon">&#128247;</span>
             <div class="photo-label">Photo / Document <span style="color:var(--muted);font-weight:400;font-size:11px">(facultatif)</span></div>
@@ -923,12 +925,9 @@ var PHOTO_PONCT=null;
   });
 })();
 
-async function onPonctTypeChange(){
-  var t=document.getElementById('p-type').value;
-  document.getElementById('p-litres-wrap').style.display=(t==='carburant')?'block':'none';
-}
 
-function doSubmitPonct(){
+
+async function doSubmitPonct(){
   var date=document.getElementById('p-date').value;
   var type=document.getElementById('p-type').value;
   var montant=+(document.getElementById('p-montant').value)||0;
@@ -955,6 +954,11 @@ function doSubmitPonct(){
   finally{btn.innerHTML='&#9889; Enregistrer';btn.disabled=false;}
 }
 
+function onPTypeChange(){
+  const type = document.getElementById('p-type').value;
+  const litresRow = document.getElementById('p-litres-row');
+  if(litresRow) litresRow.style.display = (type === 'carburant') ? 'block' : 'none';
+}
 async function doSubmitAcomp(){
   var date=document.getElementById('ac-date').value;
   var montant=+(document.getElementById('ac-montant').value)||0;
@@ -1008,6 +1012,8 @@ checkSession();
 </script>
 </body>
 </html>
+
+
 
 
 
