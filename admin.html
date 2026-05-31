@@ -2001,12 +2001,14 @@ function renderEvents() {
     const photoHTML = photos.filter(p=>p.url).map(p => '<a href="'+p.url+'" target="_blank" class="btn-sec" style="font-size:11px;padding:4px 8px">&#128247; Photo</a>').join('');
     const st = ev.status || 'PENDING';
     const borderCol = st==='APPROVED' ? 'var(--vert)' : st==='REJECTED' ? 'var(--danger)' : 'var(--orange)';
+    const editBtn = '<button class="btn-sec" style="padding:5px 12px;font-size:11px" onclick="editEvent(' + "'" + '+ev.id+' + "'" + ')">' + '&#9998; Modifier</button>';
     const actionBtns = st === 'PENDING' ? (
-      '<div style="display:flex;gap:6px;margin-top:10px">' +
-        '<button class="btn btn-vert" style="padding:6px 14px;font-size:12px" onclick="approveEvent(\''+ev.id+'\')">&#10003; Valider</button>' +
-        '<button class="btn btn-danger" style="padding:6px 14px;font-size:12px" onclick="rejectEventFn(\''+ev.id+'\')">&#10005; Rejeter</button>' +
+      '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">' +
+        '<button class="btn btn-vert" style="padding:6px 14px;font-size:12px" onclick="approveEvent(' + "'" + '+ev.id+' + "'" + ')">&#10003; Valider</button>' +
+        '<button class="btn btn-danger" style="padding:6px 14px;font-size:12px" onclick="rejectEventFn(' + "'" + '+ev.id+' + "'" + ')">&#10005; Rejeter</button>' +
+        editBtn +
       '</div>'
-    ) : (ev.reject_reason ? '<div style="font-size:11px;color:var(--danger);margin-top:6px">Motif: '+ev.reject_reason+'</div>' : '');
+    ) : ('<div style="margin-top:8px">'+(ev.reject_reason?'<div style="font-size:11px;color:var(--danger);margin-bottom:6px">Motif: '+ev.reject_reason+'</div>':'')+editBtn+'</div>');
     return '<div class="card" style="margin-bottom:10px;border-left:3px solid '+borderCol+'">' +
       '<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">' +
         '<div>' +
@@ -2291,6 +2293,57 @@ async function saveEditEntry(){
 document.getElementById('edit-entry-modal').addEventListener('click', function(e){
   if(e.target === this) closeEditEntry();
 });
+</script>
+
+<!-- MODAL Edit Event -->
+<div id="modal-edit-ev" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:9000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;padding:24px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:16px;font-weight:700">&#9998; Modifier l&rsquo;&eacute;v&eacute;nement</h2>
+      <button onclick="closeEditEvent()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748B">&times;</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748B;font-weight:700;margin-bottom:6px">Date</label>
+      <input type="date" id="ev-edit-date" style="width:100%;padding:12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:15px;font-family:inherit"/>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748B;font-weight:700;margin-bottom:6px">Type</label>
+      <select id="ev-edit-type" style="width:100%;padding:12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:15px;font-family:inherit;-webkit-appearance:none">
+        <option value="versement">Versement cash</option>
+        <option value="carburant">Carburant</option>
+        <option value="peage">Peage</option>
+        <option value="controle_routier">Controle routier</option>
+        <option value="bonus">Bonus / Prime</option>
+        <option value="reparation">Reparation / Entretien</option>
+        <option value="incident">Incident</option>
+        <option value="accident">Accident</option>
+        <option value="amende">Amende</option>
+        <option value="assurance">Assurance</option>
+        <option value="visite">Visite technique</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748B;font-weight:700;margin-bottom:6px">Montant (XOF)</label>
+      <input type="number" id="ev-edit-montant" style="width:100%;padding:12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:15px;font-family:inherit" placeholder="0" inputmode="numeric"/>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748B;font-weight:700;margin-bottom:6px">Description</label>
+      <textarea id="ev-edit-desc" rows="3" style="width:100%;padding:12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:15px;font-family:inherit;resize:vertical" placeholder="Description..."></textarea>
+    </div>
+    <div id="ev-edit-err" style="display:none;margin-bottom:12px;padding:10px;background:#FEE2E2;color:#991B1B;border-radius:8px;font-size:13px"></div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeEditEvent()" style="flex:1;padding:12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit">Annuler</button>
+      <button id="ev-edit-save-btn" onclick="saveEventEdit()" style="flex:2;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#C9A227,#B8861E);color:#0F172A;font-family:inherit">&#10003; Enregistrer</button>
+    </div>
+  </div>
+</div>
+<script>
+var _editEventId=null;
+function editEvent(id){var ev=EVENTS_DATA.find(function(e){return e.id===id;});if(!ev)return;_editEventId=id;document.getElementById('ev-edit-date').value=ev.date||'';document.getElementById('ev-edit-type').value=ev.type||'autre';document.getElementById('ev-edit-montant').value=ev.montant||'';document.getElementById('ev-edit-desc').value=ev.description||'';document.getElementById('ev-edit-err').style.display='none';document.getElementById('modal-edit-ev').style.display='flex';}
+function closeEditEvent(){document.getElementById('modal-edit-ev').style.display='none';_editEventId=null;}
+async function saveEventEdit(){var date=document.getElementById('ev-edit-date').value;var type=document.getElementById('ev-edit-type').value;var montant=+(document.getElementById('ev-edit-montant').value)||0;var desc=document.getElementById('ev-edit-desc').value.trim();var errEl=document.getElementById('ev-edit-err');var btn=document.getElementById('ev-edit-save-btn');if(!date){errEl.textContent='Date obligatoire';errEl.style.display='block';return;}btn.textContent='Enregistrement...';btn.disabled=true;errEl.style.display='none';try{var r=await api('update_event',{token:TOKEN,event_id:_editEventId,date:date,type:type,montant:montant,description:desc});if(r.error){errEl.textContent='Erreur : '+r.error;errEl.style.display='block';return;}var ev=EVENTS_DATA.find(function(e){return e.id===_editEventId;});if(ev){ev.date=date;ev.type=type;ev.montant=montant;ev.description=desc;}closeEditEvent();renderEvents();}catch(e){errEl.textContent='Erreur reseau : '+e.message;errEl.style.display='block';}finally{btn.textContent='Enregistrer';btn.disabled=false;}}
+document.addEventListener('DOMContentLoaded',function(){var m=document.getElementById('modal-edit-ev');if(m)m.addEventListener('click',function(e){if(e.target===this)closeEditEvent();});});
 </script>
 </body>
 </html>
