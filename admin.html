@@ -541,7 +541,7 @@ async function api(action, body){
 }
 
 /* ═══ AUTH ═══ */
-async function doLogin(){
+async async function doLogin(){
   const u=$('lg-user').value.trim(), p=$('lg-pw').value;
   if(!u||!p) return;
   $('btn-login').innerHTML='<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
@@ -1935,6 +1935,12 @@ function resetFacture(){
           <option value="visite">Visite technique</option>
           <option value="autre">Autre</option>
         </select>
+      <select id="ev-filter-stat" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderEvents()">
+        <option value="">Tous les statuts</option>
+        <option value="PENDING">En attente</option>
+        <option value="APPROVED">Valid&eacute;s</option>
+        <option value="REJECTED">Refus&eacute;s</option>
+      </select>
       </div>
       <div id="events-list"><div class="muted center" style="padding:40px 0">Chargement...</div></div>
     </div>
@@ -1976,27 +1982,68 @@ async function loadEvents() {
 function renderEvents() {
   const filterUser = document.getElementById('ev-filter-user').value;
   const filterType = document.getElementById('ev-filter-type').value;
+  const evStatEl = document.getElementById('ev-filter-stat');
+  const filterStat = evStatEl ? evStatEl.value : '';
   let items = EVENTS_DATA;
   if (filterUser) items = items.filter(e => e.username === filterUser);
   if (filterType) items = items.filter(e => e.type === filterType);
+  if (filterStat) items = items.filter(e => (e.status||'PENDING') === filterStat);
   const list = document.getElementById('events-list');
-  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun evenement</div>'; return; }
-  const typeLabels = { versement:'Versement cash', carburant:'Carburant', peage:'P\u00e9age', controle_routier:'Contr\u00f4le routier', bonus:'Bonus/Prime', reparation:'R\u00e9paration', incident:'Incident', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
-  list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(ev => {
-    const photos = (() => { try { return JSON.parse(ev.photos||'[]'); } catch(e){ return []; } })();
+  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun &eacute;v&eacute;nement</div>'; return; }
+  const typeLabels = { versement:'Versement cash', carburant:'Carburant', peage:'P&eacute;age', controle_routier:'Contr&ocirc;le routier', bonus:'Bonus/Prime', reparation:'R&eacute;paration', incident:'Incident', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
+  const stBadge = {
+    PENDING:'<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">EN ATTENTE</span>',
+    APPROVED:'<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">&#10003; VALID&Eacute;</span>',
+    REJECTED:'<span style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">&#10005; REFUS&Eacute;</span>'
+  };
+  list.innerHTML = items.sort((a,b) => (b.timestamp||b.date||'').localeCompare(a.timestamp||a.date||'')).map(ev => {
+    const photos = (() => { try { return JSON.parse(ev.photo_json||ev.photos||'[]'); } catch(e){ return []; } })();
     const photoHTML = photos.filter(p=>p.url).map(p => '<a href="'+p.url+'" target="_blank" class="btn-sec" style="font-size:11px;padding:4px 8px">&#128247; Photo</a>').join('');
-    return '<div class="card" style="margin-bottom:10px">' +
+    const st = ev.status || 'PENDING';
+    const borderCol = st==='APPROVED' ? 'var(--vert)' : st==='REJECTED' ? 'var(--danger)' : 'var(--orange)';
+    const actionBtns = st === 'PENDING' ? (
+      '<div style="display:flex;gap:6px;margin-top:10px">' +
+        '<button class="btn btn-vert" style="padding:6px 14px;font-size:12px" onclick="approveEvent(\''+ev.id+'\')">&#10003; Valider</button>' +
+        '<button class="btn btn-danger" style="padding:6px 14px;font-size:12px" onclick="rejectEventFn(\''+ev.id+'\')">&#10005; Rejeter</button>' +
+      '</div>'
+    ) : (ev.reject_reason ? '<div style="font-size:11px;color:var(--danger);margin-top:6px">Motif: '+ev.reject_reason+'</div>' : '');
+    return '<div class="card" style="margin-bottom:10px;border-left:3px solid '+borderCol+'">' +
       '<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:6px">' +
-        '<div><div style="font-weight:700;font-size:14px">'+fmtDate(ev.date)+'</div>' +
-        '<div style="font-size:12px;color:var(--muted);margin-top:2px">'+ev.vehicle_label+'</div></div>' +
-        '<span class="badge" style="background:var(--gold-l);color:var(--gold-d);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+(typeLabels[ev.type]||ev.type||'-')+'</span>' +
+        '<div>' +
+          '<div style="font-weight:700;font-size:14px">'+fmtDate(ev.date)+'</div>' +
+          '<div style="font-size:12px;color:var(--muted);margin-top:1px">'+ev.vehicle_label+' &mdash; '+ev.username+'</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+          '<span style="background:var(--gold-l);color:var(--gold-d);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+(typeLabels[ev.type]||ev.type||'-')+'</span>' +
+          (stBadge[st]||'') +
+        '</div>' +
       '</div>' +
-      (ev.montant && +ev.montant ? '<div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--danger)">'+fmt(ev.montant)+' XOF'+(ev.litres&&+ev.litres?' <span style="font-size:13px;color:var(--muted)">| '+ev.litres+' L</span>':'')+'</div>' : '') +
+      (ev.montant&&+ev.montant ? '<div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--danger)">'+fmt(ev.montant)+' XOF'+(ev.litres&&+ev.litres?' <span style="font-size:13px;color:var(--muted)">| '+ev.litres+' L</span>':'')+'</div>' : '') +
       (ev.description ? '<div style="font-size:13px;color:#334155;margin-top:6px">'+ev.description+'</div>' : '') +
+      (ev.compteur_km ? '<div style="font-size:12px;color:var(--muted);margin-top:4px">Compteur: '+ev.compteur_km+' km</div>' : '') +
       (photoHTML ? '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+photoHTML+'</div>' : '') +
-      '<div style="font-size:11px;color:var(--muted);margin-top:8px">Par '+ev.username+'</div>' +
+      actionBtns +
+      '<div style="font-size:10px;color:var(--muted);margin-top:8px">'+(ev.timestamp?new Date(ev.timestamp).toLocaleString('fr-FR'):fmtDate(ev.date))+'</div>' +
     '</div>';
   }).join('');
+}
+
+async function approveEvent(id) {
+  if (!confirm('Valider cet \u00e9v\u00e9nement ?')) return;
+  const r = await api('validate_event', { token: TOKEN, event_id: id });
+  if (r.error) { alert('Erreur : ' + r.error); return; }
+  const ev = EVENTS_DATA.find(e => e.id === id);
+  if (ev) ev.status = 'APPROVED';
+  renderEvents();
+}
+
+async function rejectEventFn(id) {
+  const reason = prompt('Motif du rejet (optionnel) :') || '';
+  const r = await api('reject_event', { token: TOKEN, event_id: id, reason });
+  if (r.error) { alert('Erreur : ' + r.error); return; }
+  const ev = EVENTS_DATA.find(e => e.id === id);
+  if (ev) { ev.status = 'REJECTED'; ev.reject_reason = reason; }
+  renderEvents();
 }
 
 async function loadAdvances() {
@@ -2247,6 +2294,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
 </script>
 </body>
 </html>
+
 
 
 
