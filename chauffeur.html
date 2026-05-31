@@ -1,11 +1,11 @@
-ï»¿ï»¿ï»¿ï»¿<!DOCTYPE html>
+???<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#0F172A"/>
-<title>M3A â€” Saisie Chauffeur</title>
+<title>M3A — Saisie Chauffeur</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -144,7 +144,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
     <div class="login-card">
       <div class="login-logo">
         <div class="b">M3A<span>SOLUTION</span></div>
-        <div class="s">Transport VTC â€¢ Yango â€¢ Dakar</div>
+        <div class="s">Transport VTC • Yango • Dakar</div>
       </div>
       <h1>Espace chauffeur</h1>
       <div class="hello">Connecte-toi pour continuer.</div>
@@ -155,33 +155,33 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
       <div class="field">
         <label>Mot de passe</label>
-        <input type="password" id="lg-pw" autocomplete="current-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"/>
+        <input type="password" id="lg-pw" autocomplete="current-password" placeholder="••••••••"/>
       </div>
       <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Se connecter</button>
-      <div class="muted center" style="font-size:11px;margin-top:18px">Pour rÃ©cupÃ©rer un accÃ¨s, contacte le propriÃ©taire.</div>
+      <div class="muted center" style="font-size:11px;margin-top:18px">Pour récupérer un accès, contacte le propriétaire.</div>
     </div>
   </div>
 </div>
 
-<!-- MENU VIEW (aprÃ¨s login) -->
+<!-- MENU VIEW (après login) -->
 <div class="view" id="v-menu">
   <div class="login-wrap">
     <div class="login-card" style="max-width:400px">
       <div class="login-logo">
         <div class="b">M3A<span>SOLUTION</span></div>
-        <div class="s">Transport VTC Â· Yango Â· Dakar</div>
+        <div class="s">Transport VTC · Yango · Dakar</div>
       </div>
       <h1 style="margin-bottom:6px">Que veux-tu faire ?</h1>
       <div class="hello" id="menu-hello">Choisis le type de saisie.</div>
       <div style="display:flex;flex-direction:column;gap:14px;margin-top:26px">
         <button class="btn btn-primary" onclick="goSaisie('journ')" style="font-size:16px;padding:20px;display:flex;align-items:center;justify-content:center;gap:10px">
-          ğŸ“… Saisie de la journÃ©e
+          ?? Saisie de la journée
         </button>
         <button class="btn" onclick="goSaisie('ponct')" style="background:var(--navy-m);color:#fff;border:1.5px solid rgba(255,255,255,.18);font-size:16px;padding:20px;display:flex;align-items:center;justify-content:center;gap:10px">
-          âš¡ Saisie ponctuelle
+          ? Saisie ponctuelle
         </button>
       </div>
-      <button onclick="doLogout()" style="background:none;border:none;color:var(--muted);font-size:12px;margin-top:28px;cursor:pointer;text-decoration:underline;width:100%;text-align:center">Se dÃ©connecter</button>
+      <button onclick="doLogout()" style="background:none;border:none;color:var(--muted);font-size:12px;margin-top:28px;cursor:pointer;text-decoration:underline;width:100%;text-align:center">Se déconnecter</button>
     </div>
   </div>
 </div>
@@ -191,20 +191,20 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
   <div class="bar">
     <div>
       <div class="brand">M3A<span>SOLUTION</span></div>
-      <span class="brand-sub" id="brand-sub">â€”</span>
+      <span class="brand-sub" id="brand-sub">—</span>
     </div>
     <div class="user-chip">
-      <strong id="u-name">â€”</strong>
-      <span id="u-veh">â€”</span>
+      <strong id="u-name">—</strong>
+      <span id="u-veh">—</span>
       <button class="btn-small btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);margin-top:4px;margin-right:4px" onclick="show('v-menu')">&#8592; Menu</button><button class="btn-small btn-ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);margin-top:4px" onclick="doLogout()">Quitter</button>
     </div>
   </div>
 
   <div class="wrap">
     <div class="tabs">
-      <button class="tab active" data-tab="saisie">ğŸ“ Saisir</button>
-      <button class="tab" data-tab="histo">ğŸ“‹ Historique</button>
-      <button class="tab" data-tab="account">âš™ Compte</button>
+      <button class="tab active" data-tab="saisie">?? Saisir</button>
+      <button class="tab" data-tab="histo">?? Historique</button>
+      <button class="tab" data-tab="account">? Compte</button>
     </div>
 
     <!-- TAB SAISIE -->
@@ -221,7 +221,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       <div id="sub-journ">
 
       <div class="card">
-        <h2><span class="icon">ğŸ“…</span> Date de la journÃ©e</h2>
+        <h2><span class="icon">??</span> Date de la journée</h2>
         <div class="field">
           <input type="date" id="f-date"/>
         </div>
@@ -233,7 +233,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card" id="card-saisie">
-        <h2><span class="icon">ğŸš—</span> KilomÃ¨tres</h2>
+        <h2><span class="icon">??</span> Kilomètres</h2>
         <div class="field">
           <label>Km actuel au compteur</label>
           <input type="number" id="f-km" inputmode="numeric" placeholder="ex: 133745"/>
@@ -242,29 +242,29 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card">
-        <h2><span class="icon">ğŸ“²</span> Courses Yango</h2>
+        <h2><span class="icon">??</span> Courses Yango</h2>
         <div class="field">
           <label>Nombre de courses Yango aujourd'hui</label>
           <input type="number" id="f-nbY" inputmode="numeric" placeholder="ex: 14"/>
         </div>
         <div class="field">
-          <label>CA Yango affichÃ© dans l'app (XOF)</label>
+          <label>CA Yango affiché dans l'app (XOF)</label>
           <input type="number" id="f-caY" inputmode="numeric" placeholder="ex: 28500" oninput="updateCalc()"/>
-          <div class="hint">Le montant en bas de la synthÃ¨se Yango</div>
+          <div class="hint">Le montant en bas de la synthèse Yango</div>
         </div>
         <div class="toggle">
-          <button type="button" id="bt-net-no" class="active" onclick="setNetMode(false,this)">Brut affichÃ©</button>
-          <button type="button" id="bt-net-yes" onclick="setNetMode(true,this)">Montant NET (aprÃ¨s commission)</button>
+          <button type="button" id="bt-net-no" class="active" onclick="setNetMode(false,this)">Brut affiché</button>
+          <button type="button" id="bt-net-yes" onclick="setNetMode(true,this)">Montant NET (après commission)</button>
         </div>
         <div class="field" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
           <label>&#127873; Bonus Yango du jour (XOF)</label>
           <input type="number" id="f-bonus" inputmode="numeric" placeholder="0" value="0" oninput="updateCalc()"/>
-          <div class="hint">Bonus Yango ou prime journaliÃ¨re â€” sâ€™ajoute au net. 0 par dÃ©faut.</div>
+          <div class="hint">Bonus Yango ou prime journalière — s’ajoute au net. 0 par défaut.</div>
         </div>
       </div>
 
       <div class="card">
-        <h2><span class="icon">ğŸ’µ</span> Hors-Yango (cash direct)</h2>
+        <h2><span class="icon">??</span> Hors-Yango (cash direct)</h2>
         <div class="toggle">
           <button type="button" id="ad-no" class="active" onclick="setAdHoc(false,this)">Non</button>
           <button type="button" id="ad-yes" onclick="setAdHoc(true,this)">Oui</button>
@@ -278,28 +278,28 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card">
-        <h2><span class="icon">ğŸ’°</span> Versement & wallet</h2>
+        <h2><span class="icon">??</span> Versement & wallet</h2>
         <div class="field">
-          <label>Versement cash remis au propriÃ©taire (XOF)</label>
+          <label>Versement cash remis au propriétaire (XOF)</label>
           <input type="number" id="f-vers" inputmode="numeric" placeholder="ex: 25000"/>
         </div>
         <div class="field">
           <label>Solde wallet Yango actuel (XOF)</label>
           <input type="number" id="f-wal" inputmode="numeric" placeholder="ex: 22500"/>
-          <div class="hint">Solde affichÃ© dans l'app en fin de journÃ©e</div>
+          <div class="hint">Solde affiché dans l'app en fin de journée</div>
         </div>
       </div>
 
       
       <div class="card">
-        <h2><span class="icon">â›½</span> Carburant</h2>
+        <h2><span class="icon">?</span> Carburant</h2>
         <div class="toggle">
           <button type="button" id="cb-no" class="active" onclick="setCarb(false,this)">Pas de plein</button>
           <button type="button" id="cb-yes" onclick="setCarb(true,this)">Plein fait</button>
         </div>
         <div id="cb-block" style="display:none">
           <div class="field">
-            <label>Litres ajoutÃ©s</label>
+            <label>Litres ajoutés</label>
             <input type="number" id="f-cbL" inputmode="decimal" step="0.01" placeholder="ex: 38.5"/>
           </div>
           <div class="field">
@@ -310,13 +310,13 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card">
-        <h2><span class="icon">â­</span> Note Yango & remarques</h2>
+        <h2><span class="icon">?</span> Note Yango & remarques</h2>
         <div class="field">
           <label>Note Yango actuelle (sur 5)</label>
           <input type="number" id="f-note" inputmode="decimal" step="0.01" max="5" placeholder="ex: 4.78"/>
         </div>
         <div class="field">
-          <label>Incident ou problÃ¨me</label>
+          <label>Incident ou problème</label>
           <input type="text" id="f-inc" placeholder="(facultatif)"/>
         </div>
         <div class="field">
@@ -326,23 +326,23 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card">
-        <h2><span class="icon">ğŸ“·</span> PiÃ¨ces jointes</h2>
+        <h2><span class="icon">??</span> Pièces jointes</h2>
         <div class="photo-box" data-name="compteur" data-req="1">
           <input type="file" accept="image/*"/>
-          <span class="icon">ğŸ“·</span>
+          <span class="icon">??</span>
           <div class="photo-label">Photo compteur <span class="req">*</span></div>
           <div class="photo-sub">Tableau de bord, km lisibles</div>
         </div>
         <div class="photo-box" data-name="synthese" data-req="1">
           <input type="file" accept="image/*"/>
-          <span class="icon">ğŸ“Š</span>
-          <div class="photo-label">Photo synthÃ¨se Yango <span class="req">*</span></div>
-          <div class="photo-sub">Ã‰cran rÃ©cap du jour de l'app Yango</div>
+          <span class="icon">??</span>
+          <div class="photo-label">Photo synthèse Yango <span class="req">*</span></div>
+          <div class="photo-sub">Écran récap du jour de l'app Yango</div>
         </div>
         <div class="photo-box" data-name="carburant" id="ph-carb" style="display:none">
           <input type="file" accept="image/*"/>
-          <span class="icon">ğŸ§¾</span>
-          <div class="photo-label">ReÃ§u carburant</div>
+          <span class="icon">??</span>
+          <div class="photo-label">Reçu carburant</div>
           <div class="photo-sub">Ticket de pompe</div>
         </div>
         <!-- Photos libres multiples -->
@@ -365,16 +365,16 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
 
       <div class="card">
-        <h2><span class="icon">ğŸ“‹</span> RÃ©cap automatique</h2>
-        <div class="calc-row"><span class="muted">Km dÃ©clarÃ©s</span><span class="v" id="r-km">â€”</span></div>
-        <div class="calc-row"><span class="muted">CA brut Yango (recalculÃ©)</span><span class="v" id="r-brut">â€”</span></div>
-        <div class="calc-row"><span class="muted">- Commission Yango (15 %)</span><span class="v" id="r-cy">â€”</span></div>
-        <div class="calc-row"><span class="muted">- Commission partenaire (0,75 %)</span><span class="v" id="r-cp">â€”</span></div>
+        <h2><span class="icon">??</span> Récap automatique</h2>
+        <div class="calc-row"><span class="muted">Km déclarés</span><span class="v" id="r-km">—</span></div>
+        <div class="calc-row"><span class="muted">CA brut Yango (recalculé)</span><span class="v" id="r-brut">—</span></div>
+        <div class="calc-row"><span class="muted">- Commission Yango (15 %)</span><span class="v" id="r-cy">—</span></div>
+        <div class="calc-row"><span class="muted">- Commission partenaire (0,75 %)</span><span class="v" id="r-cp">—</span></div>
         <div class="calc-row" style="color:var(--vert)"><span class="muted" style="color:var(--vert)">+ Bonus Yango</span><span class="v" style="color:var(--vert)" id="r-bonus">+ 0 XOF</span></div>
-        <div class="calc-row" style="border-top:2px solid var(--border);margin-top:8px;padding-top:10px;background:var(--navy);border-radius:8px;padding:10px 8px;margin-bottom:2px"><span style="font-weight:700;color:#fff">&#127919; Net Yango</span><span class="v" style="font-weight:800;font-size:15px;color:var(--gold)" id="r-net">â€”</span></div>
-        <div class="calc-row" style="margin-top:4px"><span class="muted">+ Hors Yango (cash)</span><span class="v" id="r-ad">â€”</span></div>
-        <div class="calc-row" style="color:var(--danger)"><span class="muted" style="color:var(--danger)">âˆ’ Charges du jour (carburant)</span><span class="v" style="color:var(--danger)" id="r-carb">0 XOF</span></div>
-        <div class="calc-row" style="background:var(--vert-l);border-radius:8px;padding:10px 8px;margin-top:6px"><span style="font-weight:800;color:var(--vert)">&#128176; Montant Ã  verser</span><span class="v" style="font-weight:900;font-size:18px;color:var(--vert)" id="r-verser">-</span></div>
+        <div class="calc-row" style="border-top:2px solid var(--border);margin-top:8px;padding-top:10px;background:var(--navy);border-radius:8px;padding:10px 8px;margin-bottom:2px"><span style="font-weight:700;color:#fff">&#127919; Net Yango</span><span class="v" style="font-weight:800;font-size:15px;color:var(--gold)" id="r-net">—</span></div>
+        <div class="calc-row" style="margin-top:4px"><span class="muted">+ Hors Yango (cash)</span><span class="v" id="r-ad">—</span></div>
+        <div class="calc-row" style="color:var(--danger)"><span class="muted" style="color:var(--danger)">- Charges du jour (carburant)</span><span class="v" style="color:var(--danger)" id="r-carb">0 XOF</span></div>
+        <div class="calc-row" style="background:var(--vert-l);border-radius:8px;padding:10px 8px;margin-top:6px"><span style="font-weight:800;color:var(--vert)">&#128176; Montant à verser</span><span class="v" style="font-weight:900;font-size:18px;color:var(--vert)" id="r-verser">-</span></div>
       </div>
 
       <div class="card" style="background:linear-gradient(135deg,#003087,#1565C0);border:none;padding:18px;margin-bottom:12px">
@@ -424,7 +424,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 
       <div class="sticky-submit" id="sticky-journ" style="display:none">
         <div class="wrap-inner">
-          <button class="btn btn-gold" id="btn-submit" onclick="doSubmit()">ğŸ“¤ Envoyer ma journÃ©e</button>
+          <button class="btn btn-gold" id="btn-submit" onclick="doSubmit()">?? Envoyer ma journée</button>
         </div>
       </div>
     </div>
@@ -437,12 +437,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
       </div>
       <div id="histo-journees">
         <div id="histo-list">
-          <div class="muted center" style="padding:30px 0">Chargementâ€¦</div>
+          <div class="muted center" style="padding:30px 0">Chargement…</div>
         </div>
       </div>
       <div id="histo-events" style="display:none">
         <div id="histo-events-list">
-          <div class="muted center" style="padding:30px 0">Chargementâ€¦</div>
+          <div class="muted center" style="padding:30px 0">Chargement…</div>
         </div>
       </div>
     </div>
@@ -450,7 +450,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
     <!-- TAB COMPTE -->
     <div id="t-account" style="display:none">
       <div class="card">
-        <h2><span class="icon">ğŸ”</span> Changer mon mot de passe</h2>
+        <h2><span class="icon">??</span> Changer mon mot de passe</h2>
         <div class="field">
           <label>Mot de passe actuel</label>
           <input type="password" id="pw-old"/>
@@ -463,17 +463,17 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
           <label>Confirmer</label>
           <input type="password" id="pw-new2"/>
         </div>
-        <button class="btn btn-primary" onclick="changePw()">Mettre Ã  jour</button>
+        <button class="btn btn-primary" onclick="changePw()">Mettre à jour</button>
       </div>
 
       <div class="card">
-        <h2><span class="icon">â„¹</span> Aide rapide</h2>
+        <h2><span class="icon">?</span> Aide rapide</h2>
         <div class="alert-info">
           <strong>Routine du soir :</strong><br/>
-          1. Prends en photo le compteur, l'Ã©cran synthÃ¨se Yango, le reÃ§u carburant si tu as fait le plein.<br/>
-          2. Saisis les chiffres clÃ©s (km, courses, CA, versement).<br/>
-          3. Appuie sur <strong>Envoyer ma journÃ©e</strong>.<br/>
-          Le propriÃ©taire est notifiÃ© immÃ©diatement.
+          1. Prends en photo le compteur, l'écran synthèse Yango, le reçu carburant si tu as fait le plein.<br/>
+          2. Saisis les chiffres clés (km, courses, CA, versement).<br/>
+          3. Appuie sur <strong>Envoyer ma journée</strong>.<br/>
+          Le propriétaire est notifié immédiatement.
         </div>
       </div>
     </div>
@@ -481,13 +481,13 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 </div>
 
 <script>
-/* â•â•â• AUTH STATE â•â•â• */
+/* --- AUTH STATE --- */
 let TOKEN = localStorage.getItem('m3a_token') || null;
 let ME = null;
 let VEH = null;
 let CFG = null;
 let ad_hoc=false, carb_on=false, is_net=false;
-let PHOTOS = {}; // name â†’ {base64, mime}
+let PHOTOS = {}; // name ? {base64, mime}
 
 function parseISODate(d){
   if(!d) return null;
@@ -501,10 +501,10 @@ function parseISODate(d){
 function $(id){ return document.getElementById(id); }
 function show(viewId){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(viewId).classList.add('active'); }
 function toast(msg, kind){ const t=document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3500); }
-function fmt(n){ return (n==null||isNaN(n))?'â€”':new Intl.NumberFormat('fr-FR').format(Math.round(n))+' XOF'; }
+function fmt(n){ return (n==null||isNaN(n))?'—':new Intl.NumberFormat('fr-FR').format(Math.round(n))+' XOF'; }
 
-/* â•â•â• API helper â€” fetch CORS vers backend Apps Script â•â•â• */
-const M3A_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyCr1QUqofrrxFHUeamWUtQrRKhmEIpBcgQ2srNsxxKZm_A2PyCJI-_7eW3-sgRYjVDIA/exec';
+/* --- API helper — fetch CORS vers backend Apps Script --- */
+const M3A_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz8f9ZWhOkKKBuYQCO8CkT_Ixyb8RkPrbsNCkvn9BHw1tAhEDC5h8IHTAwy_g9peBIAoQ/exec';
 async function api(action, body){
   body = body || {};
   try {
@@ -517,23 +517,23 @@ async function api(action, body){
     if (!r.ok) return { error: 'HTTP ' + r.status };
     return await r.json();
   } catch(e) {
-    return { error: 'Erreur rÃ©seau : ' + e.message };
+    return { error: 'Erreur réseau : ' + e.message };
   }
 }
 
-/* â•â•â• LOGIN â•â•â• */
+/* --- LOGIN --- */
 async function doLogin(){
   const user = $('lg-user').value.trim();
   const pw = $('lg-pw').value;
   if(!user||!pw){ $('login-err').innerHTML = '<div class="alert-err">Renseigne identifiant et mot de passe.</div>'; return; }
-  $('btn-login').innerHTML = '<span class="loader"></span> Connexionâ€¦'; $('btn-login').disabled=true;
+  $('btn-login').innerHTML = '<span class="loader"></span> Connexion…'; $('btn-login').disabled=true;
   try{
     const r = await api('login', { username:user, password:pw });
     if(r.error){ $('login-err').innerHTML = '<div class="alert-err">'+r.error+'</div>'; return; }
     TOKEN = r.token; localStorage.setItem('m3a_token', TOKEN);
     ME = r.user; VEH = r.vehicle;
     initApp();
-  }catch(e){ $('login-err').innerHTML='<div class="alert-err">Erreur rÃ©seau : '+e.message+'</div>'; }
+  }catch(e){ $('login-err').innerHTML='<div class="alert-err">Erreur réseau : '+e.message+'</div>'; }
   finally{ $('btn-login').innerHTML='Se connecter'; $('btn-login').disabled=false; }
 }
 
@@ -551,7 +551,7 @@ async function checkSession(){
     ME = r.user;
     const c = await api('config_get', { token: TOKEN });
     CFG = c.config;
-    // rÃ©cup vÃ©hicule via meta
+    // récup véhicule via meta
     VEH = { id: ME.vehicle_id, plate: '', name: '' };
     initApp();
   }catch(e){ TOKEN=null; localStorage.removeItem('m3a_token'); }
@@ -559,24 +559,24 @@ async function checkSession(){
 
 function initApp(){
   $('u-name').textContent = ME.full_name || ME.username;
-  $('u-veh').textContent = VEH && VEH.name ? (VEH.name + (VEH.plate?(' â€¢ '+VEH.plate):'')) : '';
-  $('brand-sub').textContent = (VEH && VEH.name) ? ('Saisie â€¢ '+VEH.name) : 'Saisie quotidienne';
+  $('u-veh').textContent = VEH && VEH.name ? (VEH.name + (VEH.plate?(' • '+VEH.plate):'')) : '';
+  $('brand-sub').textContent = (VEH && VEH.name) ? ('Saisie • '+VEH.name) : 'Saisie quotidienne';
   $('f-date').value = new Date().toISOString().slice(0,10);
   if(!CFG){ api('config_get',{token:TOKEN}).then(r=>{ if(r.ok) CFG=r.config; updateCalc();}); }
-  var mh = $('menu-hello'); if(mh) mh.textContent = 'Bonjour ' + (ME.full_name || ME.username) + ' ğŸ‘‹';
+  var mh = $('menu-hello'); if(mh) mh.textContent = 'Bonjour ' + (ME.full_name || ME.username) + ' ??';
   show('v-menu');
   loadHistory();
   updateCalc();
 }
 
-/* â•â•â• FORM HELPERS â•â•â• */
+/* --- FORM HELPERS --- */
 function setStatut(st, btn){
   document.querySelectorAll('[data-st]').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   $('card-saisie').dataset.statut = st;
   // mode REPOS ou PANNE : on cache les sections inutiles
   const blocs = document.querySelectorAll('#t-saisie .card');
-  if(st!=='ACTIF'){ /* on laisse tout visible pour flexibilitÃ© */ }
+  if(st!=='ACTIF'){ /* on laisse tout visible pour flexibilité */ }
 }
 function setAdHoc(v, btn){
   document.querySelectorAll('#ad-no,#ad-yes').forEach(b=>b.classList.remove('active'));
@@ -627,7 +627,7 @@ function updateCalc(){
   if($('r-carb')) $('r-carb').textContent = carb > 0 ? '- '+fmt(carb) : '0 XOF';
   if($('r-verser')) $('r-verser').textContent = fmt(verser);
 
-  // Bouton Wave dynamique â€” utilise le MONTANT Ã€ VERSER
+  // Bouton Wave dynamique — utilise le MONTANT À VERSER
   const waveBtn = $('btn-wave');
   if(waveBtn){
     const waveNum = (CFG && CFG.wave_number) ? CFG.wave_number.trim() : '';
@@ -684,7 +684,7 @@ function addExtraPhoto(type){
     setTimeout(()=>document.getElementById('inp-'+id).click(), 150);
 
   } else {
-    // Document â€” sÃ©lection multiple
+    // Document — sélection multiple
     const inp = document.createElement('input');
     inp.type = 'file';
     inp.multiple = true;
@@ -724,7 +724,7 @@ function addExtraPhoto(type){
       });
       document.body.removeChild(inp);
     };
-    extraPhotoCount--;   // sera incrÃ©mentÃ© par fichier
+    extraPhotoCount--;   // sera incrémenté par fichier
     inp.click();
     return;
   }
@@ -758,7 +758,7 @@ function removeExtraPhoto(id){
   const wrap=document.getElementById('wrap-'+id);
   if(wrap) wrap.remove();
 }
-/* â•â•â• PHOTOS â•â•â• */
+/* --- PHOTOS --- */
 document.querySelectorAll('.photo-box').forEach(box=>{
   const input = box.querySelector('input');
   box.addEventListener('click',()=>input.click());
@@ -768,7 +768,7 @@ document.querySelectorAll('.photo-box').forEach(box=>{
 function handlePhoto(box, file){
   if(!file) return;
   const name = box.dataset.name;
-  // Compresser Ã  max 1000px, JPEG quality 0.72
+  // Compresser à max 1000px, JPEG quality 0.72
   const reader = new FileReader();
   reader.onload = ev=>{
     const img = new Image();
@@ -783,7 +783,7 @@ function handlePhoto(box, file){
       PHOTOS[name] = { name, base64: data, mime: 'image/jpeg' };
       // Affichage
       box.classList.add('has-photo');
-      box.innerHTML = `<img src="${data}"/><button class="photo-rm" onclick="removePhoto(event,'${name}')">Ã—</button>`;
+      box.innerHTML = `<img src="${data}"/><button class="photo-rm" onclick="removePhoto(event,'${name}')">×</button>`;
     };
     img.src = ev.target.result;
   };
@@ -796,14 +796,14 @@ function removePhoto(e, name){
   const box = document.querySelector('.photo-box[data-name="'+name+'"]');
   box.classList.remove('has-photo');
   const req = box.dataset.req==='1';
-  const labels = {compteur:['ğŸ“·','Photo compteur','Tableau de bord, km lisibles'],synthese:['ğŸ“Š','Photo synthÃ¨se Yango','Ã‰cran rÃ©cap du jour de l\'app Yango'],carburant:['ğŸ§¾','ReÃ§u carburant','Ticket de pompe'],libre:['â•','Photo libre (facultatif)','Incident, dommage, autreâ€¦']};
+  const labels = {compteur:['??','Photo compteur','Tableau de bord, km lisibles'],synthese:['??','Photo synthèse Yango','Écran récap du jour de l\'app Yango'],carburant:['??','Reçu carburant','Ticket de pompe'],libre:['?','Photo libre (facultatif)','Incident, dommage, autre…']};
   const [ic,lb,sb] = labels[name];
   box.innerHTML = `<input type="file" accept="image/*"/><span class="icon">${ic}</span><div class="photo-label">${lb}${req?' <span class="req">*</span>':''}</div><div class="photo-sub">${sb}</div>`;
   const inp = box.querySelector('input');
   inp.addEventListener('change',ev=>handlePhoto(box, ev.target.files[0]));
 }
 
-/* â•â•â• SUBMIT â•â•â• */
+/* --- SUBMIT --- */
 async function doSubmit(){
   const statut = $('card-saisie').dataset.statut || 'ACTIF';
   const date = $('f-date').value;
@@ -812,8 +812,8 @@ async function doSubmit(){
   // Photos obligatoires uniquement si ACTIF
   if(statut==='ACTIF'){
     if(!PHOTOS.compteur){ toast('Photo du compteur obligatoire','err'); return; }
-    if(!PHOTOS.synthese){ toast('Photo synthÃ¨se Yango obligatoire','err'); return; }
-    if(carb_on && !PHOTOS.carburant){ if(!confirm('Plein dÃ©clarÃ© sans reÃ§u â€” envoyer quand mÃªme ?')) return; }
+    if(!PHOTOS.synthese){ toast('Photo synthèse Yango obligatoire','err'); return; }
+    if(carb_on && !PHOTOS.carburant){ if(!confirm('Plein déclaré sans reçu — envoyer quand même ?')) return; }
   }
 
   let caBrut = +$('f-caY').value || 0;
@@ -837,13 +837,13 @@ async function doSubmit(){
 
   const photos = [...Object.values(PHOTOS), ...Object.values(EXTRA_PHOTOS)];
 
-  $('btn-submit').innerHTML = '<span class="loader"></span> Envoi en coursâ€¦';
+  $('btn-submit').innerHTML = '<span class="loader"></span> Envoi en cours…';
   $('btn-submit').disabled = true;
 
   try{
     const r = await api('submit', { token: TOKEN, payload, photos });
     if(r.error){ toast('Erreur : '+r.error,'err'); return; }
-    toast('âœ“ JournÃ©e envoyÃ©e â€” le propriÃ©taire est notifiÃ©','ok');
+    toast('? Journée envoyée — le propriétaire est notifié','ok');
     // reset
     PHOTOS={};
       document.getElementById('extra-photos-container').innerHTML='';
@@ -860,14 +860,14 @@ async function doSubmit(){
     // Retour menu: saisie ponctuelle reste accessible independamment
     show('v-menu');
   }catch(e){
-    toast('Erreur rÃ©seau : '+e.message,'err');
+    toast('Erreur réseau : '+e.message,'err');
   }finally{
-    $('btn-submit').innerHTML = 'ğŸ“¤ Envoyer ma journÃ©e';
+    $('btn-submit').innerHTML = '?? Envoyer ma journée';
     $('btn-submit').disabled = false;
   }
 }
 
-/* â•â•â• HISTORIQUE â•â•â• */
+/* --- HISTORIQUE --- */
 async function loadHistory(){
   const r = await api('my_history', { token: TOKEN });
   const list = $('histo-list');
@@ -910,15 +910,15 @@ async function loadHistory(){
   }).join('');
 }
 
-/* â•â•â• PASSWORD â•â•â• */
+/* --- PASSWORD --- */
 async function changePw(){
   const o = $('pw-old').value, n = $('pw-new').value, n2 = $('pw-new2').value;
   if(!o||!n){ toast('Champs requis','err'); return; }
-  if(n!==n2){ toast('Confirmation diffÃ©rente','err'); return; }
-  if(n.length<6){ toast('Min 6 caractÃ¨res','err'); return; }
+  if(n!==n2){ toast('Confirmation différente','err'); return; }
+  if(n.length<6){ toast('Min 6 caractères','err'); return; }
   const r = await api('change_password', { token:TOKEN, old_password:o, new_password:n });
   if(r.error){ toast(r.error,'err'); return; }
-  toast('Mot de passe mis Ã  jour âœ“','ok');
+  toast('Mot de passe mis à jour ?','ok');
   $('pw-old').value=$('pw-new').value=$('pw-new2').value='';
 }
 
@@ -1077,7 +1077,7 @@ async function doSubmitAcomp(){
 
 
 
-/* MENU â†’ SAISIE */
+/* MENU ? SAISIE */
 function goSaisie(type){
   show('v-app');
   document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
@@ -1091,7 +1091,7 @@ function goSaisie(type){
   switchSubtab(type, stBtn);
 }
 
-/* â•â•â• TABS â•â•â• */
+/* --- TABS --- */
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
@@ -1102,7 +1102,7 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   if(tab==='histo') loadHistory();
 }));
 
-/* â•â•â• INIT â•â•â• */
+/* --- INIT --- */
 $('lg-pw').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 checkSession();
 </script>
