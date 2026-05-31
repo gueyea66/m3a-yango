@@ -184,7 +184,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       <button class="tab" data-view="config">⚙ Paramètres</button>
       <button class="tab" data-view="saisie">&#9998; Saisie</button>
       <button class="tab" data-view="factures">&#128203; Factures</button>
-      <button class="tab" data-view="events">&#9889; &#201;v&#233;nements</button>
+      <button class="tab" data-view="events">&#9889; Evenements</button>
       <button class="tab" data-view="advances">&#128181; Acomptes</button>
     </div>
     <div class="actions">
@@ -250,7 +250,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       <div class="section-label">Alertes</div>
       <div class="card" id="alerts-box"><div class="muted">Aucune alerte.</div></div>
 
-      <div class="section-label">&#128176; Paie chauffeur &mdash; Bilan du mois</div>
+      <div class="section-label">&#128176; Paie chauffeur - Bilan du mois</div>
       <div class="card" id="pay-card">
 
         <!-- TOP ROW : 3 gros KPIs -->
@@ -265,7 +265,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
             <div class="kpi-sub" id="pay-b-tr">-</div>
           </div>
           <div class="kpi accent" style="text-align:center">
-            <div class="kpi-lbl">Total brut d&#251;</div>
+            <div class="kpi-lbl">Total brut du</div>
             <div class="kpi-val mono" id="pay-gross">-</div>
           </div>
         </div>
@@ -282,11 +282,11 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
               <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--gold-d)" class="mono" id="pd-bonus">-</td>
             </tr>
             <tr style="border-bottom:2px solid var(--border);background:rgba(0,0,0,.03)">
-              <td style="padding:8px 4px;font-weight:700">= Total brut d&#251;</td>
+              <td style="padding:8px 4px;font-weight:700">= Total brut du</td>
               <td style="padding:8px 4px;text-align:right;font-weight:800" class="mono" id="pd-gross">-</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border)">
-              <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash re&#231;us (mois)</td>
+              <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash recus (mois)</td>
               <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--danger)" class="mono" id="pd-vers">-</td>
             </tr>
             <tr style="background:rgba(5,150,105,.07);border-radius:8px">
@@ -408,9 +408,9 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
           <div class="cfg-row"><label>Identifiant Wave (slug business)</label><input id="c-waveNum" placeholder="ex: m3a-group"/></div>
           <div class="cfg-row"><label>Lien Wave complet (optionnel)</label><input id="c-waveLink" placeholder="https://pay.wave.com/m/..."/></div>
           <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5">
-            L&#8217;identifiant est le slug de ton compte Wave Business.<br>
+            L'identifiant est le slug de ton compte Wave Business.<br>
             <strong>Exemple :</strong> si ton lien est <code>pay.wave.com/m/abc123</code>, mets <code>abc123</code>.<br>
-            Le chauffeur verra un bouton Wave avec le montant total collect&#233; du jour.
+            Le chauffeur verra un bouton Wave avec le montant total collecte du jour.
           </p>
         </div>
 
@@ -431,19 +431,19 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
     <div class="view-pane" id="pane-saisie" style="display:none">
       <div class="flex-between" style="margin:4px 0 14px">
         <h1>&#9998; Saisie manuelle</h1>
-        <span class="tag blue" style="font-size:11px;padding:4px 10px">Admin only &mdash; Bypass champs obligatoires</span>
+        <span class="tag blue" style="font-size:11px;padding:4px 10px">Admin only - Bypass champs obligatoires</span>
       </div>
       <div class="card" style="max-width:640px;margin:0 auto">
-        <div class="alert info" style="margin-bottom:16px">&#128221; Combler une journ&eacute;e manquante ou saisir des donn&eacute;es incompl&egrave;tes. Aucune photo requise. Saisie <strong>directement valid&eacute;e</strong> dans le journal.</div>
+        <div class="alert info" style="margin-bottom:16px">&#128221; Combler une journee manquante ou saisir des donnees incompletes. Aucune photo requise. Saisie <strong>directement validee</strong> dans le journal.</div>
         <div class="row cols-2" style="gap:12px;margin-bottom:12px">
           <div>
-            <label class="cfg-label">V&eacute;hicule *</label>
+            <label class="cfg-label">Vehicule *</label>
             <select id="adm-vehicle" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:#fff">
-              <option value="">&#8212; choisir &#8212;</option>
+              <option value="">- choisir -</option>
             </select>
           </div>
           <div>
-            <label class="cfg-label">Date de la journ&eacute;e *</label>
+            <label class="cfg-label">Date de la journee *</label>
             <input type="date" id="adm-date" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
           </div>
         </div>
@@ -484,7 +484,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
             <div><label class="cfg-label">Incident</label><input type="text" id="adm-inc" placeholder="optionnel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
           </div>
           <div style="margin-bottom:14px">
-            <label class="cfg-label">Notes propri&eacute;taire</label>
+            <label class="cfg-label">Notes proprietaire</label>
             <textarea id="adm-notes" rows="2" placeholder="Notes internes..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;resize:vertical"></textarea>
           </div>
         </div>
@@ -1513,10 +1513,10 @@ function printFacture(){
   <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
       <div>
-        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entree</div>
         <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
       </div>
-      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">x</button>
     </div>
     <div style="padding:20px 24px">
 
@@ -1541,7 +1541,7 @@ function printFacture(){
       </div>
 
       <div class="row cols-2" style="gap:12px;margin-bottom:12px">
-        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Versement recu (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
         <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
       </div>
 
@@ -1714,10 +1714,10 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
   <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
       <div>
-        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entree</div>
         <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
       </div>
-      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">x</button>
     </div>
     <div style="padding:20px 24px">
 
@@ -1742,7 +1742,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
       </div>
 
       <div class="row cols-2" style="gap:12px;margin-bottom:12px">
-        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Versement recu (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
         <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
       </div>
 
@@ -1912,9 +1912,9 @@ function resetFacture(){
     <!-- VIEW EVENTS -->
     <div class="view-pane" id="pane-events" style="display:none">
       <div class="flex-between" style="margin:4px 0 14px">
-        <div><h1>&#9889; &#201;v&#233;nements ponctuels</h1>
-          <div class="muted" style="font-size:12px;margin-top:2px">D&#233;clarations des chauffeurs</div></div>
-        <button class="btn-sec" onclick="loadEvents()">&#8635; Rafra&#238;chir</button>
+        <div><h1>&#9889; Evenements ponctuels</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">Declarations des chauffeurs</div></div>
+        <button class="btn-sec" onclick="loadEvents()">&#8635; Rafraichir</button>
       </div>
       <div id="events-filter" style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
         <select id="ev-filter-user" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderEvents()">
@@ -1922,7 +1922,7 @@ function resetFacture(){
         </select>
         <select id="ev-filter-type" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderEvents()">
           <option value="">Tous les types</option>
-          <option value="reparation">R&#233;paration</option>
+          <option value="reparation">Reparation</option>
           <option value="accident">Accident</option>
           <option value="amende">Amende</option>
           <option value="assurance">Assurance</option>
@@ -1938,14 +1938,14 @@ function resetFacture(){
       <div class="flex-between" style="margin:4px 0 14px">
         <div><h1>&#128181; Demandes d'acompte</h1>
           <div class="muted" style="font-size:12px;margin-top:2px">Validation des avances chauffeur</div></div>
-        <button class="btn-sec" onclick="loadAdvances()">&#8635; Rafra&#238;chir</button>
+        <button class="btn-sec" onclick="loadAdvances()">&#8635; Rafraichir</button>
       </div>
       <div id="adv-filter" style="margin-bottom:12px">
         <select id="adv-filter-st" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px" onchange="renderAdvances()">
           <option value="">Tous les statuts</option>
           <option value="PENDING">En attente</option>
-          <option value="APPROVED">Approuv&#233;</option>
-          <option value="REJECTED">Refus&#233;</option>
+          <option value="APPROVED">Approuve</option>
+          <option value="REJECTED">Refuse</option>
         </select>
       </div>
       <div id="advances-list"><div class="muted center" style="padding:40px 0">Chargement...</div></div>
@@ -1974,7 +1974,7 @@ function renderEvents() {
   if (filterUser) items = items.filter(e => e.username === filterUser);
   if (filterType) items = items.filter(e => e.type === filterType);
   const list = document.getElementById('events-list');
-  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun &#233;v&#233;nement</div>'; return; }
+  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun evenement</div>'; return; }
   const typeLabels = { versement:'Versement cash', carburant:'Carburant', peage:'P\u00e9age', controle_routier:'Contr\u00f4le routier', bonus:'Bonus/Prime', reparation:'R\u00e9paration', incident:'Incident', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
   list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(ev => {
     const photos = (() => { try { return JSON.parse(ev.photos||'[]'); } catch(e){ return []; } })();
@@ -2009,8 +2009,8 @@ function renderAdvances() {
   if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucune demande</div>'; return; }
   const stBadge = {
     PENDING: '<span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">EN ATTENTE</span>',
-    APPROVED: '<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">APPROUV&#201;</span>',
-    REJECTED: '<span style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">REFUS&#201;</span>'
+    APPROVED: '<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">APPROUVE</span>',
+    REJECTED: '<span style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">REFUSE</span>'
   };
   list.innerHTML = items.sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(adv => {
     const isPending = adv.status === 'PENDING';
@@ -2061,10 +2061,10 @@ async function doRejectAdvance(id) {
   <div style="background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)">
       <div>
-        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entr&eacute;e</div>
+        <div style="font-size:16px;font-weight:700">&#9998; Corriger une entree</div>
         <div id="edit-entry-subtitle" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
       </div>
-      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">&times;</button>
+      <button onclick="closeEditEntry()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">x</button>
     </div>
     <div style="padding:20px 24px">
 
@@ -2089,7 +2089,7 @@ async function doRejectAdvance(id) {
       </div>
 
       <div class="row cols-2" style="gap:12px;margin-bottom:12px">
-        <div><label class="cfg-label">Versement re&ccedil;u (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
+        <div><label class="cfg-label">Versement recu (XOF)</label><input type="number" id="edit-vers" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
         <div><label class="cfg-label">Bonus Yango (XOF)</label><input type="number" id="edit-bonus" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/></div>
       </div>
 
