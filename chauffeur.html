@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -90,7 +90,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 .histo-card .h-stat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:4px;display:inline-block;margin-top:4px}
 .h-stat.PENDING{background:var(--orange-l);color:var(--orange)}
 .h-stat.VALIDATED{background:var(--vert-l);color:var(--vert)}
-.h-stat.REJECTED{background:var(--danger-l);color:var(--danger)}
+.h-stat.REJECTED{background:var(--danger-l);color:var(--danger)}.h-stat.APPROVED{background:var(--vert-l);color:var(--vert)}
 .histo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;font-size:11px}
 .histo-grid .k{color:var(--muted)}
 .histo-grid .v{font-weight:700;text-align:right}
@@ -431,8 +431,19 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
 
     <!-- TAB HISTO -->
     <div id="t-histo" style="display:none">
-      <div id="histo-list">
-        <div class="muted center" style="padding:30px 0">Chargement…</div>
+      <div class="subtabs" style="margin-bottom:12px">
+        <button class="subtab active" id="ht-journees" onclick="switchHistoTab('journees',this)">&#128197; Journ&#233;es</button>
+        <button class="subtab" id="ht-events" onclick="switchHistoTab('events',this)">&#9889; &#201;v&#233;nements</button>
+      </div>
+      <div id="histo-journees">
+        <div id="histo-list">
+          <div class="muted center" style="padding:30px 0">Chargement…</div>
+        </div>
+      </div>
+      <div id="histo-events" style="display:none">
+        <div id="histo-events-list">
+          <div class="muted center" style="padding:30px 0">Chargement…</div>
+        </div>
       </div>
     </div>
 
@@ -898,6 +909,49 @@ async function changePw(){
   $('pw-old').value=$('pw-new').value=$('pw-new2').value='';
 }
 
+
+/* === SOUS-ONGLETS HISTORIQUE === */
+function switchHistoTab(tab, btn) {
+  ['journees','events'].forEach(function(t) {
+    var el = document.getElementById('histo-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+    var bt = document.getElementById('ht-' + t);
+    if (bt) bt.classList.toggle('active', t === tab);
+  });
+  if (tab === 'events') loadMyEvents();
+}
+
+async function loadMyEvents() {
+  var list = document.getElementById('histo-events-list');
+  list.innerHTML = '<div class="muted center" style="padding:30px 0">Chargement&#x2026;</div>';
+  var r = await api('my_events', { token: TOKEN });
+  if (r.error) { list.innerHTML = '<div class="alert-err">' + r.error + '</div>'; return; }
+  var items = (r.events || []).sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+  if (!items.length) { list.innerHTML = '<div class="muted center" style="padding:30px 0">Aucun &#233;v&#233;nement ponctuel</div>'; return; }
+  var typeLabels = { versement:'Versement cash', carburant:'Carburant', peage:'P&#233;age', controle_routier:'Contr&#244;le routier', bonus:'Bonus/Prime', reparation:'R&#233;paration', incident:'Incident', accident:'Accident', amende:'Amende', assurance:'Assurance', visite:'Visite tech.', autre:'Autre' };
+  var statusLabel = { PENDING:'En attente', APPROVED:'Valid&#233;', REJECTED:'Refus&#233;' };
+  list.innerHTML = items.map(function(ev) {
+    var dt = (function(d){ var x=parseISODate(d); return x ? x.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'}) : String(d||''); })(ev.date);
+    var lbl = typeLabels[ev.type] || ev.type || '-';
+    var stCls = ev.status || 'PENDING';
+    var stLbl = statusLabel[ev.status] || ev.status || 'En attente';
+    var photos = [];
+    try { photos = JSON.parse(ev.photo_json || ev.photos || '[]'); } catch(e) {}
+    var photoHTML = photos.filter(function(p){return p.url;}).map(function(p){
+      return '<a href="'+p.url+'" target="_blank" class="btn-small btn-ghost" style="font-size:11px;padding:3px 8px">&#128247;</a>';
+    }).join('');
+    return '<div class="histo-card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start;gap:8px">' +
+        '<div><div class="h-date">' + dt + '</div>' +
+        '<span style="font-size:12px;font-weight:700;color:var(--gold-d)">' + lbl + '</span></div>' +
+        '<span class="h-stat ' + stCls + '">' + stLbl + '</span>' +
+      '</div>' +
+      (ev.montant && +ev.montant ? '<div style="font-size:15px;font-weight:700;margin-top:6px;color:var(--danger)">' + fmt(ev.montant) + '</div>' : '') +
+      (ev.description ? '<div style="font-size:12px;color:#475569;margin-top:4px">' + ev.description + '</div>' : '') +
+      (photoHTML ? '<div style="margin-top:6px;display:flex;gap:4px">' + photoHTML + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
 /* === SOUS-ONGLETS SAISIE === */
 function switchSubtab(tab,btn){
   ['journ','ponct','acomp'].forEach(function(t){
