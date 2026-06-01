@@ -81,11 +81,13 @@ export default function AdminPage() {
     if (editForm.net_after_expenses === undefined) return;
     try {
       const supabase = createClient();
-      const { error } = await supabase
-        .from("daily_reports")
-        .update({
-          net_after_expenses: editForm.net_after_expenses,
-        })
+      const updates: Record<string, any> = {};
+      if (editForm.net_after_expenses !== undefined) {
+        updates.net_after_expenses = editForm.net_after_expenses;
+      }
+      const { error } = await (supabase
+        .from("daily_reports") as any)
+        .update(updates as any)
         .eq("id", reportId);
 
       if (error) {
@@ -397,8 +399,8 @@ export default function AdminPage() {
                             cx="50%"
                             cy="50%"
                             labelLine={false}
-                            label={({ type, percent }) =>
-                              `${type} ${(percent * 100).toFixed(0)}%`
+                            label={(entry: any) =>
+                              `${entry.name || entry.type} ${((entry.percent || 0) * 100).toFixed(0)}%`
                             }
                             outerRadius={80}
                             fill="#8884d8"
