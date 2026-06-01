@@ -78,16 +78,11 @@ export default function AdminPage() {
   };
 
   const handleSaveEdit = async (reportId: string) => {
-    if (editForm.net_after_expenses === undefined) return;
     try {
       const supabase = createClient();
-      const updates: Record<string, any> = {};
-      if (editForm.net_after_expenses !== undefined) {
-        updates.net_after_expenses = editForm.net_after_expenses;
-      }
-      const { error } = await (supabase
-        .from("daily_reports") as any)
-        .update(updates as any)
+      const { error } = await supabase
+        .from("daily_reports")
+        .update({ status: "approved" })
         .eq("id", reportId);
 
       if (error) {
@@ -97,7 +92,7 @@ export default function AdminPage() {
         setEditingId(null);
         setEditForm({});
         loadReports();
-        alert("Rapport mis à jour ✓");
+        alert("Rapport approuvé ✓");
       }
     } catch (err) {
       console.error("Error saving edit:", err);
