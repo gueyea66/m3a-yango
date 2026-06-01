@@ -168,13 +168,6 @@ export default function DriverDashboard() {
         return;
       }
 
-      // Mark all events as submitted
-      await (supabase
-        .from("expenses")
-        .update({ status: "submitted" } as any)
-        .eq("driver_id", profile.id)
-        .eq("date", todayDate) as any);
-
       setEvents([]);
       setTodayEarnings(0);
       alert("Fin de journée enregistrée ✓");
