@@ -80,9 +80,9 @@ export default function AdminPage() {
   const handleSaveEdit = async (reportId: string) => {
     try {
       const supabase = createClient();
-      const { error } = await supabase
-        .from("daily_reports")
-        .update({ status: "approved" })
+      const { error } = await (supabase
+        .from("daily_reports") as any)
+        .update({ status: "approved" } as any)
         .eq("id", reportId);
 
       if (error) {
