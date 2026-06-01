@@ -148,7 +148,7 @@ export default function DriverDashboard() {
       }, 0);
 
       // Insert daily report with calculated totals
-      const { error: reportError } = await (supabase.from("daily_reports").insert({
+      const { error: reportError } = await (supabase.from("daily_reports") as any).insert({
         driver_id: profile.id,
         vehicle_id: "", // placeholder
         date: todayDate,
@@ -160,7 +160,7 @@ export default function DriverDashboard() {
         net_after_expenses: todayEarnings * 0.88,
         expense_count: events_list.length,
         status: "submitted",
-      } as any) as any);
+      } as any);
 
       if (reportError) {
         console.error("Error saving daily report:", reportError);

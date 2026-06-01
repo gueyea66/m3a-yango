@@ -98,26 +98,26 @@ export function useDashboardKPIs() {
         .from("daily_reports")
         .select("*");
 
-      const { data: todayReports } = await supabase
-        .from("daily_reports")
+      const { data: todayReports } = await (supabase
+        .from("daily_reports") as any)
         .select("*")
         .eq("date", today);
 
-      const { data: weekReports } = await supabase
-        .from("daily_reports")
+      const { data: weekReports } = await (supabase
+        .from("daily_reports") as any)
         .select("*")
         .gte("date", weekAgo)
         .lte("date", today);
 
-      const { data: monthReports } = await supabase
-        .from("daily_reports")
+      const { data: monthReports } = await (supabase
+        .from("daily_reports") as any)
         .select("*")
         .gte("date", monthAgo)
         .lte("date", today);
 
       // Get event entries for breakdown
-      const { data: eventEntries } = await supabase
-        .from("event_entries")
+      const { data: eventEntries } = await (supabase
+        .from("event_entries") as any)
         .select("*");
 
       const reports_list = allReports || [];
