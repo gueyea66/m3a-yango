@@ -1,4 +1,4 @@
-???<!DOCTYPE html>
+﻿???<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -608,10 +608,12 @@ function updateCalc(){
   const comY = (CFG?+CFG.comY:15)/100, comP = (CFG?+CFG.comP:0.75)/100;
   let caBrut = +$('f-caY').value || 0;
   if(is_net && caBrut>0) caBrut = caBrut/(1-comY);
-  const cy = caBrut*comY, cp = caBrut*comP;
   const bonus = +$('f-bonus').value || 0;
-  // Net Yango = brut - comY - comP + bonus
-  const netYango = caBrut - cy - cp + bonus;
+  // Nouveau calcul : bonus s ajout au brut avant application des commissions
+  const bruteEffectif = caBrut + bonus;
+  const cy = bruteEffectif*comY, cp = bruteEffectif*comP;
+  // Net Yango = (brut + bonus) - commissions Yango - commissions partenaire
+  const netYango = bruteEffectif - cy - cp;
   const ad = +$('f-caAd').value || 0;
   // A verser = Net Yango + hors-Yango cash (charges ponctuelles independantes)
   const verser = netYango + ad;
@@ -883,7 +885,9 @@ async function loadHistory(){
     var comY = CFG ? (+CFG.comY||15)/100 : 0.15;
     var comP = CFG ? (+CFG.comP||0.75)/100 : 0.0075;
     var bonus = +(s.bonus_daily||0);
-    var netY = brut - brut*comY - brut*comP + bonus;
+    // Nouveau calcul : bonus s ajout au brut avant application des commissions
+    var brutEffectif = brut + bonus;
+    var netY = brutEffectif - brutEffectif*comY - brutEffectif*comP;
     var carb = +(s.carb_xof||0);
     var ad = +(s.ca_hors_yango||0);
     var verser = netY + ad;
@@ -1108,6 +1112,7 @@ checkSession();
 </script>
 </body>
 </html>
+
 
 
 

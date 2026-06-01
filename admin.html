@@ -1,4 +1,4 @@
-???<!DOCTYPE html>
+﻿???<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -608,9 +608,11 @@ function compRow(r){
   const cy = (+CFG.comY)/100, cp=(+CFG.comP)/100;
   const brut = +r.ca_yango_brut||0;
   const bonus = +r.bonus_daily||+r.bonus_yango||0;
-  const netYango = brut*(1-cy-cp) + bonus;
+  // Nouveau calcul : bonus s ajout au brut avant application des commissions
+  const brutEffectif = brut + bonus;
+  const netYango = brutEffectif*(1-cy-cp);
   return {
-    brut, net15: netYango, com:brut*(cy+cp), netP:brut*(1-cy-cp), bonus,
+    brut, net15: netYango, com:brutEffectif*(cy+cp), netP:netYango, bonus,
     ad:+r.ca_hors_yango||0, vers:+r.vers_recu||0,
     km: r._kmP || 0,
     carbL:+r.carb_l||0, carbM:+r.carb_xof||0,
@@ -2345,6 +2347,7 @@ document.addEventListener('DOMContentLoaded',function(){var m=document.getElemen
 </script>
 </body>
 </html>
+
 
 
 
