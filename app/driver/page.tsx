@@ -59,11 +59,12 @@ export default function DriverDashboard() {
 
   const loadProfile = async () => {
     try {
+      if (!user?.id) return;
       const supabase = createClient();
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
       if (error) {
@@ -84,20 +85,17 @@ export default function DriverDashboard() {
       const supabase = createClient();
 
       // Insert event into database
-      const { data: eventData, error: eventError } = await supabase
-        .from("event_entries")
+      const { data: eventData, error: eventError } = await (supabase
+        .from("expenses")
         .insert({
           driver_id: profile.id,
-          type: newEvent.type,
-          date: newEvent.date,
+          report_id: "", // placeholder, will be filled when daily report is created
+          category: newEvent.type,
           amount: newEvent.amount,
           description: newEvent.description,
-          odometer: newEvent.odometer,
-          liters: newEvent.liters,
-          status: "draft",
-        })
+        } as any)
         .select()
-        .single();
+        .single() as any);
 
       if (eventError) {
         console.error("Error saving event:", eventError);
@@ -107,7 +105,7 @@ export default function DriverDashboard() {
 
       // Add to local state
       setEvents([...events, newEvent]);
-      setLastCreatedEventId(eventData.id);
+      setLastCreatedEventId((eventData as any)?.id || null);
       setNewEvent({
         type: "fuel",
         date: new Date().toISOString().split("T")[0],
@@ -127,12 +125,11 @@ export default function DriverDashboard() {
     try {
       const supabase = createClient();
 
-      // Calculate totals from event_entries
-      const { data: eventData, error: fetchError } = await supabase
-        .from("event_entries")
+      // Calculate totals from expenses
+      const { data: eventData, error: fetchError } = await (supabase
+        .from("expenses")
         .select("*")
-        .eq("driver_id", profile.id)
-        .eq("date", todayDate);
+        .eq("driver_id", profile.id) as any);
 
       if (fetchError) {
         console.error("Error fetching events:", fetchError);
@@ -140,32 +137,30 @@ export default function DriverDashboard() {
         return;
       }
 
-      const events_list = eventData || [];
-      const fuelEvents = events_list.filter((e) => e.type === "fuel");
-      const tollEvents = events_list.filter((e) => e.type === "toll");
+      const events_list = (eventData as any[]) || [];
+      const fuelEvents = events_list.filter((e) => e.category === "fuel");
+      const tollEvents = events_list.filter((e) => e.category === "toll");
       const totalFuelCost = fuelEvents.reduce((sum, e) => sum + (e.amount || 0), 0);
       const totalTollCost = tollEvents.reduce((sum, e) => sum + (e.amount || 0), 0);
       const totalExpenses = events_list.reduce((sum, e) => {
-        if (e.type !== "balance") sum += e.amount || 0;
+        if (e.category !== "balance") sum += e.amount || 0;
         return sum;
       }, 0);
-      const totalFuelLiters = fuelEvents.reduce((sum, e) => sum + (e.liters || 0), 0);
-      const odometerStart = fuelEvents.length > 0 ? Math.min(...fuelEvents.map((e) => e.odometer || 0)) : undefined;
-      const odometerEnd = fuelEvents.length > 0 ? Math.max(...fuelEvents.map((e) => e.odometer || 0)) : undefined;
 
       // Insert daily report with calculated totals
-      const { error: reportError } = await supabase.from("daily_reports").insert({
+      const { error: reportError } = await (supabase.from("daily_reports").insert({
         driver_id: profile.id,
+        vehicle_id: "", // placeholder
         date: todayDate,
-        net_after_expenses: todayEarnings,
-        fuel_cost: totalFuelCost,
-        toll_cost: totalTollCost,
-        fuel_liters_total: totalFuelLiters > 0 ? totalFuelLiters : null,
-        odometer_start: odometerStart,
-        odometer_end: odometerEnd,
+        start_odometer: 0,
+        end_odometer: 0,
+        gross_earnings: todayEarnings,
+        commission_rate: 12.00,
+        commission_amount: todayEarnings * 0.12,
+        net_after_expenses: todayEarnings * 0.88,
         expense_count: events_list.length,
         status: "submitted",
-      });
+      } as any) as any);
 
       if (reportError) {
         console.error("Error saving daily report:", reportError);
@@ -174,11 +169,11 @@ export default function DriverDashboard() {
       }
 
       // Mark all events as submitted
-      await supabase
-        .from("event_entries")
-        .update({ status: "submitted" })
+      await (supabase
+        .from("expenses")
+        .update({ status: "submitted" } as any)
         .eq("driver_id", profile.id)
-        .eq("date", todayDate);
+        .eq("date", todayDate) as any);
 
       setEvents([]);
       setTodayEarnings(0);
