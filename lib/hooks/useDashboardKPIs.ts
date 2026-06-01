@@ -115,9 +115,9 @@ export function useDashboardKPIs() {
         .gte("date", monthAgo)
         .lte("date", today);
 
-      // Get event entries for breakdown
+      // Get expense entries for breakdown
       const { data: eventEntries } = await (supabase
-        .from("event_entries") as any)
+        .from("expenses") as any)
         .select("*");
 
       const reports_list = allReports || [];
@@ -243,7 +243,7 @@ export function useDashboardKPIs() {
         .slice(0, 5);
 
       // Expense breakdown
-      const fuelEvents = events_list.filter((e) => e.type === "fuel" &&
+      const fuelEvents = events_list.filter((e) => e.category === "fuel" &&
         new Date(e.date) >= new Date(monthAgo) &&
         new Date(e.date) <= new Date(today)
       );
