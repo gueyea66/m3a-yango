@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>M3A ó Pilotage Yango</title>
+<title>M3A ‚Äì Pilotage Yango</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -102,7 +102,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
 
 .chart-box{position:relative;height:260px}
 
-/* ¿ valider ó submission card */
+/* √† valider ‚Äì submission card */
 .sub-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
 .sub-head{display:flex;justify-content:space-between;align-items:start;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:14px}
 .sub-head .left{font-size:11px;color:var(--muted)}
@@ -159,7 +159,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
     <div class="login-card">
       <div class="login-logo">
         <div class="b">M3A<span>SOLUTION</span></div>
-        <div class="s">Pilotage Yango ó Espace propriÈtaire</div>
+        <div class="s">Pilotage Yango ‚Äì Espace propri√©taire</div>
       </div>
       <h1>Connexion administrateur</h1>
       <div id="login-err" style="margin:10px 0"></div>
@@ -174,21 +174,21 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
 <div class="view" id="v-app">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="logo">M3A<span>SOLUTION</span> <span class="logo-sub">Pilotage Yango ï <span id="adm-name">ó</span></span></div>
+      <div class="logo">M3A<span>SOLUTION</span> <span class="logo-sub">Pilotage Yango ‚Äì <span id="adm-name">‚Äì</span></span></div>
     </div>
     <div class="tabs">
       <button class="tab active" data-view="dash">?? Dashboard</button>
-      <button class="tab" data-view="valid">? ¿ valider <span class="bdg" id="bdg-pending" style="display:none">0</span></button>
-      <button class="tab" data-view="histo">?? Historique</button>
+      <button class="tab" data-view="valid">? ‚Äì valider <span class="bdg" id="bdg-pending" style="display:none">0</span></button>
+      <button class="tab" data-view="histo">üìú Historique</button>
       <button class="tab" data-view="users">?? Utilisateurs</button>
-      <button class="tab" data-view="config">? ParamËtres</button>
+      <button class="tab" data-view="config">‚öôÔ∏è Param√®tres</button>
       <button class="tab" data-view="saisie">&#9998; Saisie</button>
       <button class="tab" data-view="factures">&#128203; Factures</button>
       <button class="tab" data-view="events">&#9889; Evenements</button>
       <button class="tab" data-view="advances">&#128181; Acomptes</button>
     </div>
     <div class="actions">
-      <button class="btn-ico" onclick="refresh()">? RafraÓchir</button>
+      <button class="btn-ico" onclick="refresh()">üîÑ Rafra√Æchir</button>
       <button class="btn-ico" onclick="exportExcel()">? Excel</button>
       <button class="btn-ico" onclick="doLogout()">Sortir</button>
     </div>
@@ -200,45 +200,45 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
     <div class="view-pane" id="pane-dash">
       <div class="flex-between" style="margin:4px 0 12px">
         <div>
-          <h1>Dashboard ó <span id="dash-period">ó</span></h1>
-          <div class="muted" style="font-size:12px;margin-top:2px" id="dash-info">ó</div>
+          <h1>Dashboard ‚Äì <span id="dash-period">‚Äì</span></h1>
+          <div class="muted" style="font-size:12px;margin-top:2px" id="dash-info">‚Äì</div>
         </div>
         <select id="dash-month" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px"></select>
       </div>
 
-      <div class="section-label">Performance financiËre</div>
+      <div class="section-label">Performance financi√®re</div>
       <div class="row cols-4">
-        <div class="kpi accent"><div class="kpi-lbl">CA TOTAL mois</div><div class="kpi-val mono" id="k-tot">ó</div><div class="kpi-sub">Yango NET + hors-Yango</div></div>
-        <div class="kpi"><div class="kpi-lbl">CA Yango BRUT</div><div class="kpi-val mono" id="k-brut">ó</div><div class="kpi-sub">Avant commissions</div></div>
-        <div class="kpi"><div class="kpi-lbl">CA Yango NET (Bonus)</div><div class="kpi-val mono" id="k-net">ó</div><div class="kpi-sub">Base bonus contractuel</div></div>
-        <div class="kpi gold"><div class="kpi-lbl">Hors-Yango (cash)</div><div class="kpi-val mono" id="k-ad">ó</div><div class="kpi-sub">100 % propriÈtaire</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">CA TOTAL mois</div><div class="kpi-val mono" id="k-tot">‚Äì</div><div class="kpi-sub">Yango NET + hors-Yango</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA Yango BRUT</div><div class="kpi-val mono" id="k-brut">‚Äì</div><div class="kpi-sub">Avant commissions</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA Yango NET (Bonus)</div><div class="kpi-val mono" id="k-net">‚Äì</div><div class="kpi-sub">Base bonus contractuel</div></div>
+        <div class="kpi gold"><div class="kpi-lbl">Hors-Yango (cash)</div><div class="kpi-val mono" id="k-ad">‚Äì</div><div class="kpi-sub">100 % propri√©taire</div></div>
       </div>
 
       <div class="row cols-4" style="margin-top:14px">
-        <div class="kpi"><div class="kpi-lbl">Commissions cumul</div><div class="kpi-val mono" id="k-com">ó</div><div class="kpi-sub">Yango + partenaire</div></div>
-        <div class="kpi"><div class="kpi-lbl">Versements cash reÁus</div><div class="kpi-val mono" id="k-vers">ó</div><div class="kpi-sub">Cumul mensuel</div></div>
-        <div class="kpi"><div class="kpi-lbl">Solde wallet</div><div class="kpi-val mono" id="k-wal">ó</div><div class="kpi-sub" id="k-wal-sub">ó</div></div>
-        <div class="kpi"><div class="kpi-lbl">Note Yango moy.</div><div class="kpi-val mono" id="k-note">ó</div><div class="kpi-sub" id="k-note-sub">ó</div></div>
+        <div class="kpi"><div class="kpi-lbl">Commissions cumul</div><div class="kpi-val mono" id="k-com">‚Äì</div><div class="kpi-sub">Yango + partenaire</div></div>
+        <div class="kpi"><div class="kpi-lbl">Versements cash re√ßus</div><div class="kpi-val mono" id="k-vers">‚Äì</div><div class="kpi-sub">Cumul mensuel</div></div>
+        <div class="kpi"><div class="kpi-lbl">Solde wallet</div><div class="kpi-val mono" id="k-wal">‚Äì</div><div class="kpi-sub" id="k-wal-sub">‚Äì</div></div>
+        <div class="kpi"><div class="kpi-lbl">Note Yango moy.</div><div class="kpi-val mono" id="k-note">‚Äì</div><div class="kpi-sub" id="k-note-sub">‚Äì</div></div>
       </div>
 
-      <div class="section-label">OpÈrations vÈhicule</div>
+      <div class="section-label">Op√©rations v√©hicule</div>
       <div class="row cols-4">
-        <div class="kpi"><div class="kpi-lbl">Km parcourus</div><div class="kpi-val mono" id="k-km">ó</div><div class="kpi-sub" id="k-km-sub">ó</div></div>
-        <div class="kpi"><div class="kpi-lbl">CA NET / km</div><div class="kpi-val mono" id="k-ckm">ó</div><div class="kpi-sub">ProductivitÈ</div></div>
-        <div class="kpi"><div class="kpi-lbl">Carburant</div><div class="kpi-val mono" id="k-carb">ó</div><div class="kpi-sub" id="k-carb-sub">ó</div></div>
-        <div class="kpi"><div class="kpi-lbl">Conso L/100km</div><div class="kpi-val mono" id="k-conso">ó</div><div class="kpi-sub" id="k-conso-sub">ó</div></div>
+        <div class="kpi"><div class="kpi-lbl">Km parcourus</div><div class="kpi-val mono" id="k-km">‚Äì</div><div class="kpi-sub" id="k-km-sub">‚Äì</div></div>
+        <div class="kpi"><div class="kpi-lbl">CA NET / km</div><div class="kpi-val mono" id="k-ckm">‚Äì</div><div class="kpi-sub">Productivit√©</div></div>
+        <div class="kpi"><div class="kpi-lbl">Carburant</div><div class="kpi-val mono" id="k-carb">‚Äì</div><div class="kpi-sub" id="k-carb-sub">‚Äì</div></div>
+        <div class="kpi"><div class="kpi-lbl">Conso L/100km</div><div class="kpi-val mono" id="k-conso">‚Äì</div><div class="kpi-sub" id="k-conso-sub">‚Äì</div></div>
       </div>
 
       <div class="card" style="margin-top:18px">
-        <div class="flex-between"><h2 style="margin:0">?? Progression CA Yango NET ó Cible bonus 100k</h2><div id="prog-pct" style="font-weight:700">ó</div></div>
+        <div class="flex-between"><h2 style="margin:0">üìà Progression CA Yango NET ‚Äì Cible bonus 100k</h2><div id="prog-pct" style="font-weight:700">‚Äì</div></div>
         <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px">
           <span>0</span><span>1 000 000</span><span>1 150 000</span><span>1 300 000 (cible)</span>
         </div>
         <div class="row cols-3" style="margin-top:16px">
-          <div class="kpi"><div class="kpi-lbl">Bonus actuel</div><div class="kpi-val mono" id="prog-bonus">ó</div><div class="kpi-sub" id="prog-tranche">ó</div></div>
-          <div class="kpi"><div class="kpi-lbl">Projection fin mois</div><div class="kpi-val mono" id="prog-proj">ó</div><div class="kpi-sub" id="prog-proj-sub">ó</div></div>
-          <div class="kpi"><div class="kpi-lbl">Reste ‡ faire / jour</div><div class="kpi-val mono" id="prog-rest">ó</div><div class="kpi-sub" id="prog-rest-sub">ó</div></div>
+          <div class="kpi"><div class="kpi-lbl">Bonus actuel</div><div class="kpi-val mono" id="prog-bonus">‚Äì</div><div class="kpi-sub" id="prog-tranche">‚Äì</div></div>
+          <div class="kpi"><div class="kpi-lbl">Projection fin mois</div><div class="kpi-val mono" id="prog-proj">‚Äì</div><div class="kpi-sub" id="prog-proj-sub">‚Äì</div></div>
+          <div class="kpi"><div class="kpi-lbl">Reste ‚Äì faire / jour</div><div class="kpi-val mono" id="prog-rest">‚Äì</div><div class="kpi-sub" id="prog-rest-sub">‚Äì</div></div>
         </div>
       </div>
 
@@ -315,16 +315,16 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
     </div><!-- VIEW VALID -->
     <div class="view-pane" id="pane-valid" style="display:none">
       <div class="flex-between" style="margin:4px 0 14px">
-        <h1>Soumissions ‡ valider</h1>
-        <button class="btn btn-ghost" onclick="loadPending()">? RafraÓchir</button>
+        <h1>Soumissions ‚Äì valider</h1>
+        <button class="btn btn-ghost" onclick="loadPending()">üîÑ Rafra√Æchir</button>
       </div>
-      <div id="pending-list"><div class="muted center" style="padding:40px 0">ChargementÖ</div></div>
+      <div id="pending-list"><div class="muted center" style="padding:40px 0">Chargement‚Äì</div></div>
     </div>
 
     <!-- VIEW HISTO -->
     <div class="view-pane" id="pane-histo" style="display:none">
       <div class="flex-between" style="margin:4px 0 14px">
-        <h1>Historique Journal (donnÈes validÈes)</h1>
+        <h1>Historique Journal (donn√©es valid√©es)</h1>
         <button class="btn btn-ghost" onclick="exportCSV()">? CSV</button>
       </div>
       <div class="card" style="overflow-x:auto">
@@ -343,7 +343,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
       </div>
       <div class="card">
         <table class="tbl" id="users-tbl">
-          <thead><tr><th>Identifiant</th><th>Nom</th><th>RÙle</th><th>VÈhicule</th><th>Email</th><th>Tel</th><th>Actif</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Identifiant</th><th>Nom</th><th>R‚Äìle</th><th>V√©hicule</th><th>Email</th><th>Tel</th><th>Actif</th><th>Actions</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -353,18 +353,18 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
           <div class="field"><label>Identifiant *</label><input id="nu-user"/></div>
           <div class="field"><label>Mot de passe *</label><input id="nu-pw"/></div>
           <div class="field"><label>Nom complet</label><input id="nu-name"/></div>
-          <div class="field"><label>RÙle *</label><select id="nu-role"><option value="driver">Chauffeur</option><option value="admin">Admin</option></select></div>
-          <div class="field"><label>TÈlÈphone</label><input id="nu-phone" placeholder="+221..."/></div>
-          <div class="field"><label>VÈhicule (id)</label><input id="nu-veh" placeholder="k3"/></div>
+          <div class="field"><label>R‚Äìle *</label><select id="nu-role"><option value="driver">Chauffeur</option><option value="admin">Admin</option></select></div>
+          <div class="field"><label>T‚Äìl‚Äìphone</label><input id="nu-phone" placeholder="+221..."/></div>
+          <div class="field"><label>V√©hicule (id)</label><input id="nu-veh" placeholder="k3"/></div>
           <div class="field"><label>Email</label><input id="nu-email" type="email"/></div>
         </div>
-        <div style="text-align:right"><button class="btn btn-ghost" onclick="$('adduser-box').style.display='none'">Annuler</button> <button class="btn btn-gold" onclick="addUser()">CrÈer</button></div>
+        <div style="text-align:right"><button class="btn btn-ghost" onclick="$('adduser-box').style.display='none'">Annuler</button> <button class="btn btn-gold" onclick="addUser()">Cr‚Äìer</button></div>
       </div>
     </div>
 
     <!-- VIEW CONFIG -->
     <div class="view-pane" id="pane-config" style="display:none">
-      <div class="flex-between" style="margin:4px 0 14px"><h1>ParamËtres</h1><button class="btn btn-gold" onclick="saveConfig()">Sauvegarder</button></div>
+      <div class="flex-between" style="margin:4px 0 14px"><h1>Param√®tres</h1><button class="btn btn-gold" onclick="saveConfig()">Sauvegarder</button></div>
       <div class="row cols-2">
         <div class="card">
           <h2>Commissions & paie</h2>
@@ -374,32 +374,32 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
         </div>
         <div class="card">
           <h2>Paliers bonus</h2>
-          <div class="cfg-row"><label>Palier 1 ó seuil</label><input id="c-b1"/></div>
-          <div class="cfg-row"><label>Palier 1 ó bonus</label><input id="c-bv1"/></div>
-          <div class="cfg-row"><label>Palier 2 ó seuil</label><input id="c-b2"/></div>
-          <div class="cfg-row"><label>Palier 2 ó bonus</label><input id="c-bv2"/></div>
-          <div class="cfg-row"><label>Palier 3 ó seuil</label><input id="c-b3"/></div>
-          <div class="cfg-row"><label>Palier 3 ó bonus</label><input id="c-bv3"/></div>
+          <div class="cfg-row"><label>Palier 1 ‚Äì seuil</label><input id="c-b1"/></div>
+          <div class="cfg-row"><label>Palier 1 ‚Äì bonus</label><input id="c-bv1"/></div>
+          <div class="cfg-row"><label>Palier 2 ‚Äì seuil</label><input id="c-b2"/></div>
+          <div class="cfg-row"><label>Palier 2 ‚Äì bonus</label><input id="c-bv2"/></div>
+          <div class="cfg-row"><label>Palier 3 ‚Äì seuil</label><input id="c-b3"/></div>
+          <div class="cfg-row"><label>Palier 3 ‚Äì bonus</label><input id="c-bv3"/></div>
         </div>
         <div class="card">
           <h2>Objectifs</h2>
-          <div class="cfg-row"><label>Jours travaillÈs / mois</label><input id="c-jrs"/></div>
+          <div class="cfg-row"><label>Jours travaill‚Äìs / mois</label><input id="c-jrs"/></div>
           <div class="cfg-row"><label>Cible CA NET / mois</label><input id="c-cible"/></div>
           <div class="cfg-row"><label>Cible CA NET / jour</label><input id="c-cibleJ"/></div>
         </div>
         <div class="card">
           <h2>Alertes & carburant</h2>
           <div class="cfg-row"><label>Prix moyen litre</label><input id="c-prixL"/></div>
-          <div class="cfg-row"><label>CapacitÈ rÈservoir</label><input id="c-tank"/></div>
+          <div class="cfg-row"><label>Capacit‚Äì r‚Äìservoir</label><input id="c-tank"/></div>
           <div class="cfg-row"><label>Conso cible L/100km</label><input id="c-conso"/></div>
           <div class="cfg-row"><label>Seuil alerte wallet</label><input id="c-seuilW"/></div>
           <div class="cfg-row"><label>Note Yango min</label><input id="c-noteMin"/></div>
         </div>
         <div class="card">
           <h2>Notifications</h2>
-          <div class="cfg-row"><label>Email activÈ (1/0)</label><input id="c-nemail"/></div>
-          <div class="cfg-row"><label>WhatsApp activÈ (1/0)</label><input id="c-nwa"/></div>
-          <div class="cfg-row"><label>NumÈro WhatsApp (+221Ö)</label><input id="c-wphone"/></div>
+          <div class="cfg-row"><label>Email activ‚Äì (1/0)</label><input id="c-nemail"/></div>
+          <div class="cfg-row"><label>WhatsApp activ‚Äì (1/0)</label><input id="c-nwa"/></div>
+          <div class="cfg-row"><label>Num‚Äìro WhatsApp (+221‚Äì)</label><input id="c-wphone"/></div>
           <div class="cfg-row"><label>CallMeBot API Key</label><input id="c-wkey"/></div>
         </div>
 
@@ -416,7 +416,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
 
         <div class="card">
           <h2>Import depuis v1</h2>
-          <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Si tu avais saisi des journÈes dans la v1 locale (localStorage), importe-les ici.</p>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Si tu avais saisi des journ√©es dans la v1 locale (localStorage), importe-les ici.</p>
           <input type="file" id="legacy-file" accept=".json"/>
           <button class="btn btn-primary" onclick="importLegacy()" style="margin-top:10px">Importer</button>
         </div>
@@ -465,7 +465,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
   <label class="cfg-label" id="adm-ca-label">CA Yango brut (XOF)</label>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;margin-top:2px">
     <button type="button" id="adm-net-toggle" onclick="admToggleNet()" style="font-size:11px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--bleu);background:transparent;color:var(--bleu);cursor:pointer;font-family:inherit;font-weight:600">Passer en saisie NET</button>
-    <span id="adm-net-hint" style="font-size:11px;color:var(--muted);display:none">Commission dÈduite automatiquement</span>
+    <span id="adm-net-hint" style="font-size:11px;color:var(--muted);display:none">Commission d‚Äìduite automatiquement</span>
   </div>
   <input type="number" id="adm-ca" placeholder="0" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px"/>
 </div>
@@ -494,7 +494,7 @@ h3{font-size:12px;font-weight:600;color:var(--navy-m);text-transform:uppercase;l
     </div>
 <!-- PHOTO MODAL -->
 <div class="photo-modal" id="photo-modal">
-  <button class="close" onclick="$('photo-modal').classList.remove('show')">◊</button>
+  <button class="close" onclick="$('photo-modal').classList.remove('show')">‚Äì</button>
   <img id="photo-modal-img"/>
 </div>
 
@@ -506,9 +506,9 @@ let CH = {};
 function $(id){ return document.getElementById(id); }
 function show(viewId){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); $(viewId).classList.add('active'); }
 function toast(msg, kind){ const t=document.createElement('div'); t.className='toast '+(kind||''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3500); }
-function fmt(n){ return (n==null||isNaN(n))?'ó':new Intl.NumberFormat('fr-FR').format(Math.round(n)); }
+function fmt(n){ return (n==null||isNaN(n))?'‚Äì':new Intl.NumberFormat('fr-FR').format(Math.round(n)); }
 function fmtX(n){ return fmt(n)+' XOF'; }
-function fmt2(n){ return (n==null||isNaN(n))?'ó':Number(n).toFixed(2); }
+function fmt2(n){ return (n==null||isNaN(n))?'‚Äì':Number(n).toFixed(2); }
 function parseISODate(d){
   if(!d) return null;
   var s = String(d).trim();
@@ -536,7 +536,7 @@ async function api(action, body){
     if (!r.ok) return { error: 'HTTP ' + r.status };
     return await r.json();
   } catch(e) {
-    return { error: 'Erreur rÈseau : ' + e.message };
+    return { error: 'Erreur r√©seau : ' + e.message };
   }
 }
 
@@ -544,15 +544,15 @@ async function api(action, body){
 async function doLogin(){
   const u=$('lg-user').value.trim(), p=$('lg-pw').value;
   if(!u||!p) return;
-  $('btn-login').innerHTML='<span class="loader"></span> ConnexionÖ'; $('btn-login').disabled=true;
+  $('btn-login').innerHTML='<span class="loader"></span> Connexion‚Äì'; $('btn-login').disabled=true;
   try{
     const r = await api('login',{username:u, password:p});
     if(r.error){ $('login-err').innerHTML='<div class="alert danger">'+r.error+'</div>'; return; }
-    if(r.role!=='admin'){ $('login-err').innerHTML='<div class="alert danger">AccËs rÈservÈ aux administrateurs</div>'; return; }
+    if(r.role!=='admin'){ $('login-err').innerHTML='<div class="alert danger">Acc√®s r‚Äìserv‚Äì aux administrateurs</div>'; return; }
     TOKEN = r.token; localStorage.setItem('m3a_admin_token', TOKEN);
     ME = r.user;
     initApp();
-  }catch(e){ $('login-err').innerHTML='<div class="alert danger">Erreur rÈseau : '+e.message+'</div>'; }
+  }catch(e){ $('login-err').innerHTML='<div class="alert danger">Erreur r√©seau : '+e.message+'</div>'; }
   finally{ $('btn-login').innerHTML='Se connecter'; $('btn-login').disabled=false; }
 }
 async function doLogout(){ await api('logout',{token:TOKEN}).catch(()=>{}); localStorage.removeItem('m3a_admin_token'); location.reload(); }
@@ -598,7 +598,7 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
 
 /* --- COMPUTE --- */
 function bonusFor(net){
-  if(!CFG) return {amt:0,tr:'ó'};
+  if(!CFG) return {amt:0,tr:'‚Äì'};
   if(net>=+CFG.b3) return {amt:+CFG.bv3, tr:'Palier 3 (>'+fmt(CFG.b3)+')'};
   if(net>=+CFG.b2) return {amt:+CFG.bv2, tr:'Palier 2'};
   if(net>=+CFG.b1) return {amt:+CFG.bv1, tr:'Palier 1'};
@@ -636,7 +636,7 @@ function renderDash(){
   $('dash-period').textContent = md.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
 
   let days = JOURNAL.filter(d=>monthKey(d.date)===m).sort((a,b)=>a.date.localeCompare(b.date));
-  // calc km parcourus en chaÓne (km du jour - km du jour prÈcÈdent)
+  // calc km parcourus en cha‚Äìne (km du jour - km du jour pr√©c√©dent)
   let prevKm = null;
   days.forEach((d,i)=>{
     if(d.km!=null && prevKm!=null) d._kmP = Math.max(0, +d.km - prevKm);
@@ -660,17 +660,17 @@ function renderDash(){
   $('k-ad').textContent = fmtX(ad);
   $('k-com').textContent = fmtX(com);
   $('k-vers').textContent = fmtX(vers);
-  $('k-wal').textContent = lastWal? fmtX(lastWal.walF):'ó';
+  $('k-wal').textContent = lastWal? fmtX(lastWal.walF):'‚Äì';
   $('k-wal-sub').textContent = (lastWal && +lastWal.walF<+CFG.seuilW)?'? Sous le seuil':'OK';
-  $('k-note').textContent = noteMoy? fmt2(noteMoy)+' / 5':'ó';
-  $('k-note-sub').textContent = noteMoy? (noteMoy>=+CFG.noteMin?'= '+CFG.noteMin:'? Sous '+CFG.noteMin):'ó';
+  $('k-note').textContent = noteMoy? fmt2(noteMoy)+' / 5':'‚Äì';
+  $('k-note-sub').textContent = noteMoy? (noteMoy>=+CFG.noteMin?'= '+CFG.noteMin:'? Sous '+CFG.noteMin):'‚Äì';
   $('k-km').textContent = fmt(km)+' km';
   $('k-km-sub').textContent = actDays+' jours actifs';
-  $('k-ckm').textContent = km>0? fmt(net15/km)+' XOF/km':'ó';
+  $('k-ckm').textContent = km>0? fmt(net15/km)+' XOF/km':'‚Äì';
   $('k-carb').textContent = fmtX(carbM);
   $('k-carb-sub').textContent = fmt2(carbL)+' L';
   const conso = (km>0&&carbL>0)?(carbL*100/km):null;
-  $('k-conso').textContent = conso? fmt2(conso):'ó';
+  $('k-conso').textContent = conso? fmt2(conso):'‚Äì';
   $('k-conso-sub').textContent = conso && conso>+CFG.conso*1.15? '? +'+fmt2(conso-+CFG.conso):'OK';
 
   // progression
@@ -683,23 +683,23 @@ function renderDash(){
   $('prog-bonus').textContent = fmtX(b.amt); $('prog-tranche').textContent = b.tr;
   const proj = actDays>0? net15*(+CFG.jrs)/actDays : 0;
   const bProj = bonusFor(proj);
-  $('prog-proj').textContent = fmtX(proj); $('prog-proj-sub').textContent = 'Bonus projetÈ '+fmtX(bProj.amt);
+  $('prog-proj').textContent = fmtX(proj); $('prog-proj-sub').textContent = 'Bonus projet‚Äì '+fmtX(bProj.amt);
   const reste = Math.max(0, cible-net15), jrs = Math.max(1, +CFG.jrs - actDays);
   $('prog-rest').textContent = fmtX(reste/jrs); $('prog-rest-sub').textContent = jrs+' jours restants';
-  $('dash-info').textContent = actDays+' / '+CFG.jrs+' jours travaillÈs ï cible quotidienne NET '+fmtX(+CFG.cibleJ);
+  $('dash-info').textContent = actDays+' / '+CFG.jrs+' jours travaill‚Äìs ‚Äì cible quotidienne NET '+fmtX(+CFG.cibleJ);
 
   // === PAIE CHAUFFEUR - Bilan complet ===
   const payFixe  = +CFG.fixe || 0;
   const payBonus = b.amt || 0;
   const payGross = payFixe + payBonus;
-  const payVers  = vers; // versements cash reÁus ce mois
+  const payVers  = vers; // versements cash re‚Äìus ce mois
 
-  // Charges ponctuelles du mois (pÈage, carburant, rÈparation, etc.)
+  // Charges ponctuelles du mois (p√©age, carburant, r√©paration, etc.)
   const CHARGES_TYPES = ['carburant','peage','controle_routier','reparation','incident','accident','amende','assurance','visite','autre'];
   const evMois = EVENTS_DATA.filter(ev => (monthKey(ev.date||'')||'') === m);
   const chargesMois = evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).reduce((sum, ev) => sum + (+ev.montant||0), 0);
 
-  // NET ¿ VERSER = brut d˚ - versements dÈj‡ reÁus - charges ponctuelles
+  // NET ‚Äì VERSER = brut d‚Äì - versements d‚Äìj‚Äì re‚Äìus - charges ponctuelles
   const payNet = Math.max(0, payGross - payVers);
 
   // KPIs top
@@ -708,7 +708,7 @@ function renderDash(){
   $('pay-b-tr').textContent  = b.tr;
   $('pay-gross').textContent = fmtX(payGross);
 
-  // Tableau dÈtail - rebuild pour inclure charges ponctuelles
+  // Tableau d‚Äìtail - rebuild pour inclure charges ponctuelles
   const pdBody = $('pay-detail-tbl').querySelector('tbody');
   pdBody.innerHTML = `
     <tr style="border-bottom:1px solid var(--border)">
@@ -720,17 +720,17 @@ function renderDash(){
       <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--gold-d)" class="mono">${fmtX(payBonus)}</td>
     </tr>
     <tr style="border-bottom:2px solid var(--border);background:rgba(0,0,0,.03)">
-      <td style="padding:8px 4px;font-weight:700">= Total brut d˚</td>
+      <td style="padding:8px 4px;font-weight:700">= Total brut d‚Äì</td>
       <td style="padding:8px 4px;text-align:right;font-weight:800" class="mono">${fmtX(payGross)}</td>
     </tr>
     <tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash reÁus</td>
+      <td style="padding:8px 4px;color:var(--danger)">&#8722; Versements cash re√ßus</td>
       <td style="padding:8px 4px;text-align:right;font-weight:600;color:var(--danger)" class="mono">- ${fmtX(payVers)}</td>
     </tr>
     ${(function(){var evts=evMois.filter(function(ev){return CHARGES_TYPES.includes(ev.type);});if(!evts.length)return "";var EV_L={carburant:"Carburant",peage:"P\u00e9age",controle_routier:"Contr\u00f4le routier",reparation:"R\u00e9paration",incident:"Incident",accident:"Accident",amende:"Amende",assurance:"Assurance",visite:"Visite tech.",autre:"Autre"};var rows=evts.map(function(ev){return "<tr style=\"border-bottom:1px solid var(--border)\"><td style=\"padding:6px 4px;color:var(--muted);font-size:12px\">\u25cf "+(EV_L[ev.type]||ev.type)+(ev.description?" \u2014 "+ev.description:"")+" <span style=\"color:var(--muted);font-size:11px\">"+frDateShort(ev.date)+"</span></td><td style=\"padding:6px 4px;text-align:right;font-size:12px\" class=\"mono\">"+fmtX(+ev.montant||0)+"</td></tr>";}).join("");return "<tr><td colspan=\"2\" style=\"padding:8px 4px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)\">\u2139\ufe0f \u00c9v\u00e9nements ponctuels (pour info)</td></tr>"+rows;}())}
 
     <tr style="background:rgba(5,150,105,.07)">
-      <td style="padding:10px 4px;font-weight:800;font-size:15px;color:var(--vert)">= NET ¿ VERSER</td>
+      <td style="padding:10px 4px;font-weight:800;font-size:15px;color:var(--vert)">= NET ‚Äì VERSER</td>
       <td style="padding:10px 4px;text-align:right;font-weight:900;font-size:18px;color:var(--vert)" class="mono">${fmtX(payNet)}</td>
     </tr>`;
 
@@ -738,17 +738,17 @@ function renderDash(){
   const badge = $('pay-status-badge');
   const payBtn = $('pay-btn-paid');
   if(payNet <= 0){
-    badge.textContent = '\u2705 Solde = 0 - Rien ‡ verser';
+    badge.textContent = '\u2705 Solde = 0 - Rien ‚Äì verser';
     badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--vert);color:var(--vert);background:var(--vert-l)';
     payBtn.disabled = true;
   } else {
-    badge.textContent = '\u26A0 Reste ‡ verser : ' + fmtX(payNet);
+    badge.textContent = '\u26A0 Reste ‚Äì verser : ' + fmtX(payNet);
     badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--gold);color:var(--gold-d);background:var(--gold-l)';
     payBtn.disabled = false;
   }
 
-  // Note rÈcap
-  $('pay-note').textContent = actDays + ' jours travaillÈs - Base bonus: CA NET ' + fmtX(net15) + ' - Palier: ' + b.tr + '';
+  // Note r√©cap
+  $('pay-note').textContent = actDays + ' jours travaill‚Äìs - Base bonus: CA NET ' + fmtX(net15) + ' - Palier: ' + b.tr + '';
 
   // Stocker pour copie
   window._PAY_SUMMARY = {
@@ -771,16 +771,16 @@ function renderDash(){
 function renderAlerts(days, C, ctx){
   const box = $('alerts-box'); const al = [];
   if(ctx.lastWal && +ctx.lastWal.walF < +CFG.seuilW) al.push({lvl:'danger',i:'?',b:'<strong>Wallet bas</strong> ('+fmtX(ctx.lastWal.walF)+'). Recharger.'});
-  if(ctx.conso && ctx.conso > +CFG.conso*1.15) al.push({lvl:'warn',i:'?',b:'<strong>Conso ÈlevÈe</strong> '+fmt2(ctx.conso)+' L/100km vs cible '+fmt2(CFG.conso)});
+  if(ctx.conso && ctx.conso > +CFG.conso*1.15) al.push({lvl:'warn',i:'?',b:'<strong>Conso ‚Äìlev‚Äìe</strong> '+fmt2(ctx.conso)+' L/100km vs cible '+fmt2(CFG.conso)});
   if(ctx.proj && ctx.proj < +CFG.b1) al.push({lvl:'warn',i:'??',b:'<strong>Projection sous palier 1</strong> ('+fmtX(ctx.proj)+').'});
   if(ctx.proj >= +CFG.b3) al.push({lvl:'ok',i:'?',b:'<strong>Trajectoire palier 100k</strong> ('+fmtX(ctx.proj)+').'});
   const notes = days.filter(d=>d.note_yango!=null).slice(-3);
-  if(notes.length===3 && notes.every(d=>+d.note_yango<+CFG.noteMin)) al.push({lvl:'danger',i:'?',b:'<strong>Note Yango < '+CFG.noteMin+' sur 3 jours consÈcutifs</strong>'});
+  if(notes.length===3 && notes.every(d=>+d.note_yango<+CFG.noteMin)) al.push({lvl:'danger',i:'?',b:'<strong>Note Yango < '+CFG.noteMin+' sur 3 jours cons‚Äìcutifs</strong>'});
   if(al.length===0){ box.innerHTML='<div class="alert ok"><div>?</div><div>Aucune alerte active.</div></div>'; return; }
   box.innerHTML = al.map(a=>`<div class="alert ${a.lvl}"><div>${a.i}</div><div>${a.b}</div></div>`).join('');
 }
 
-/* --- PENDING / ¿ VALIDER --- */
+/* --- PENDING / ‚Äì VALIDER --- */
 function renderPendingBadge(){
   const b = $('bdg-pending');
   if(PENDING.length>0){ b.style.display='inline-flex'; b.textContent = PENDING.length; }
@@ -803,7 +803,7 @@ function renderPending(){
     const c = compRow(s);
     return `<div class="sub-card" id="sub-${s.id}">
       <div class="sub-head">
-        <div class="left"><strong>${frDate(s.date)} ó ${s.username}</strong>${s.vehicle_label||''} ï soumis le ${new Date(s.timestamp).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
+        <div class="left"><strong>${frDate(s.date)} ‚Äì ${s.username}</strong>${s.vehicle_label||''} ‚Äì soumis le ${new Date(s.timestamp).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>
         <div class="right">
           <span class="tag ${s.statut==='ACTIF'?'green':(s.statut==='SETUP'?'setup':'orange')}">${s.statut}</span>
           <span class="tag blue">PENDING</span>
@@ -811,29 +811,29 @@ function renderPending(){
       </div>
       <div class="sub-grid">
         <div>
-          <h3>Valeurs dÈclarÈes par le chauffeur</h3>
+          <h3>Valeurs d‚Äìclar‚Äìes par le chauffeur</h3>
           <div class="sub-fields">
-            <div class="k">Km</div><div class="v">${s.km!=null?fmt(s.km):'ó'}</div>
+            <div class="k">Km</div><div class="v">${s.km!=null?fmt(s.km):'‚Äì'}</div>
             <div class="k">Nb courses</div><div class="v">${s.nb_courses_yango}</div>
             <div class="k">CA Yango brut</div><div class="v">${fmtX(c.brut)}</div>
             <div class="k">+ Hors Yango</div><div class="v">${fmtX(c.ad)}</div>
             <div class="k">- Commissions calc.</div><div class="v">${fmtX(c.com)}</div>
             <div class="k">CA NET (bonus)</div><div class="v">${fmtX(c.net15)}</div>
             <div class="k">Versement cash</div><div class="v" style="color:var(--vert)">${fmtX(c.vers)}</div>
-            <div class="k">Wallet</div><div class="v">${c.walF!=null?fmtX(c.walF):'ó'}</div>
-            <div class="k">Carburant</div><div class="v">${c.carbL>0?(fmt2(c.carbL)+' L / '+fmtX(c.carbM)):'ó'}</div>
-            <div class="k">Note Yango</div><div class="v">${c.note!=null?fmt2(c.note)+' / 5':'ó'}</div>
+            <div class="k">Wallet</div><div class="v">${c.walF!=null?fmtX(c.walF):'‚Äì'}</div>
+            <div class="k">Carburant</div><div class="v">${c.carbL>0?(fmt2(c.carbL)+' L / '+fmtX(c.carbM)):'‚Äì'}</div>
+            <div class="k">Note Yango</div><div class="v">${c.note!=null?fmt2(c.note)+' / 5':'‚Äì'}</div>
           </div>
           ${s.incident?'<div class="alert warn" style="margin-top:10px">Incident : '+s.incident+'</div>':''}
           ${s.remarques?'<div class="alert info" style="margin-top:10px">Remarques : '+s.remarques+'</div>':''}
         </div>
         <div>
-          <h3>PiËces jointes (cliquer pour agrandir)</h3>
+          <h3>Pi√®ces jointes (cliquer pour agrandir)</h3>
           <div class="sub-photos">${photoHtml}</div>
         </div>
       </div>
       <div class="sub-correction" id="corr-${s.id}">
-        <strong style="font-size:12px">Corrections (laisser vide pour garder la valeur dÈclarÈe)</strong>
+        <strong style="font-size:12px">Corrections (laisser vide pour garder la valeur d‚Äìclar‚Äìe)</strong>
         <div class="sub-correction-grid">
           <div><label class="muted" style="font-size:10px">Km</label><input data-field="km" type="number" placeholder="${s.km||''}"/></div>
           <div><label class="muted" style="font-size:10px">CA brut Yango</label><input data-field="ca_yango_brut" type="number" placeholder="${s.ca_yango_brut||''}"/></div>
@@ -842,7 +842,7 @@ function renderPending(){
           <div><label class="muted" style="font-size:10px">Versement</label><input data-field="vers_recu" type="number" placeholder="${s.vers_recu||''}"/></div>
           <div><label class="muted" style="font-size:10px">Wallet</label><input data-field="wal_solde" type="number" placeholder="${s.wal_solde||''}"/></div>
         </div>
-        <div class="field" style="margin-top:8px"><label class="muted" style="font-size:10px">Note du propriÈtaire</label><input data-field="owner_notes" placeholder="(facultatif)"/></div>
+        <div class="field" style="margin-top:8px"><label class="muted" style="font-size:10px">Note du propri√©taire</label><input data-field="owner_notes" placeholder="(facultatif)"/></div>
       </div>
       <div class="sub-actions">
         <button class="btn btn-vert" onclick="validateSub('${s.id}', false)">? Valider tel quel</button>
@@ -871,16 +871,16 @@ async function validateSub(id, withCorrections){
   }
   const r = await api('validate', { token:TOKEN, submission_id:id, corrections, owner_notes: ownerNotes });
   if(r.error){ toast(r.error,'err'); return; }
-  toast('? Soumission validÈe','ok');
+  toast('? Soumission valid√©e','ok');
   $('sub-'+id).style.display='none';
   await refresh();
 }
 async function rejectSub(id){
-  const reason = prompt('Motif du refus (sera envoyÈ au chauffeur) :','');
+  const reason = prompt('Motif du refus (sera envoy‚Äì au chauffeur) :','');
   if(!reason) return;
   const r = await api('reject', { token:TOKEN, submission_id:id, reason });
   if(r.error){ toast(r.error,'err'); return; }
-  toast('Soumission refusÈe','ok');
+  toast('Soumission refus‚Äìe','ok');
   $('sub-'+id).style.display='none';
   await refresh();
 }
@@ -908,9 +908,9 @@ async function loadUsers(){
   const tb = $('users-tbl').querySelector('tbody');
   tb.innerHTML = (r.users||[]).map(u=>`<tr>
     <td><strong>${u.username}</strong></td><td>${u.full_name||''}</td><td><span class="tag ${u.role==='admin'?'red':'blue'}">${u.role}</span></td>
-    <td>${u.vehicle_id||'ó'}</td><td>${u.email||'ó'}</td><td>${u.phone||'ó'}</td>
+    <td>${u.vehicle_id||'‚Äì'}</td><td>${u.email||'‚Äì'}</td><td>${u.phone||'‚Äì'}</td>
     <td>${u.active=='1'?'<span class="tag green">Oui</span>':'<span class="tag setup">Non</span>'}</td>
-    <td><button class="btn-small btn-ghost" onclick="toggleUser('${u.username}')">${u.active=='1'?'DÈsactiver':'Activer'}</button></td></tr>`).join('');
+    <td><button class="btn-small btn-ghost" onclick="toggleUser('${u.username}')">${u.active=='1'?'D‚Äìsactiver':'Activer'}</button></td></tr>`).join('');
 }
 function openAddUser(){ $('adduser-box').style.display='block'; }
 async function addUser(){
@@ -926,14 +926,14 @@ async function addUser(){
   };
   const r = await api('user_add', body);
   if(r.error){ toast(r.error,'err'); return; }
-  toast('Utilisateur crÈÈ ?','ok');
+  toast('Utilisateur cr‚Äì‚Äì ?','ok');
   $('adduser-box').style.display='none';
   ['nu-user','nu-pw','nu-name','nu-phone','nu-veh','nu-email'].forEach(id=>$(id).value='');
   loadUsers();
 }
 async function toggleUser(u){
   const r = await api('user_toggle',{token:TOKEN, username:u});
-  if(r.ok){ toast('Statut modifiÈ','ok'); loadUsers(); }
+  if(r.ok){ toast('Statut modifi‚Äì','ok'); loadUsers(); }
 }
 
 /* --- CONFIG --- */
@@ -957,13 +957,13 @@ async function saveConfig(){
   upd.wave_number = $('c-waveNum') ? $('c-waveNum').value.trim() : '';
   upd.wave_link = $('c-waveLink') ? $('c-waveLink').value.trim() : '';
   const r = await api('config_set',{token:TOKEN, config:upd});
-  if(r.ok){ toast('ParamËtres sauvegardÈs ?','ok'); await loadConfig(); renderDash(); }
+  if(r.ok){ toast('Param√®tres sauvegard‚Äìs ?','ok'); await loadConfig(); renderDash(); }
 }
 
 /* --- EXPORT --- */
 function exportExcel(){
   const wb = XLSX.utils.book_new();
-  const head = ['Date','Statut','Chauffeur','VÈhicule','Km','Courses','CA brut','CA NET 15%','Hors Yango','Versement','Wallet','Carburant L','Carburant XOF','Note','Incident','Remarques','Status'];
+  const head = ['Date','Statut','Chauffeur','V√©hicule','Km','Courses','CA brut','CA NET 15%','Hors Yango','Versement','Wallet','Carburant L','Carburant XOF','Note','Incident','Remarques','Status'];
   const rows = JOURNAL.map(d=>[d.date,d.statut,d.username,d.vehicle_label,d.km,d.nb_courses_yango,d.ca_yango_brut,(+d.ca_yango_brut||0)*(1-(+CFG.comY)/100),d.ca_hors_yango,d.vers_recu,d.wal_solde,d.carb_l,d.carb_xof,d.note_yango,d.incident,d.remarques,d.status]);
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([head,...rows]),'Journal');
   XLSX.writeFile(wb, 'M3A_Yango_Journal_'+todayISO()+'.xlsx');
@@ -978,7 +978,7 @@ function exportCSV(){
 
 /* --- IMPORT LEGACY --- */
 function importLegacy(){
-  const f = $('legacy-file').files[0]; if(!f){ toast('SÈlectionne un fichier .json','err'); return; }
+  const f = $('legacy-file').files[0]; if(!f){ toast('S‚Äìlectionne un fichier .json','err'); return; }
   const r = new FileReader();
   r.onload = async ev=>{
     try{
@@ -986,7 +986,7 @@ function importLegacy(){
       if(!data.days){ toast('Format invalide','err'); return; }
       const resp = await api('import_legacy',{token:TOKEN, days:data.days});
       if(resp.error){ toast(resp.error,'err'); return; }
-      toast('ImportÈ : '+resp.imported+' jours','ok');
+      toast('Import‚Äì : '+resp.imported+' jours','ok');
       await refresh();
     }catch(e){ toast('Erreur : '+e.message,'err'); }
   };
@@ -1010,11 +1010,11 @@ async function loadAdminVehicles(){
   r.users.forEach(u => {
     if(u.role === 'driver' && u.vehicle_id && !seen[u.vehicle_id]){
       seen[u.vehicle_id] = true;
-      ADM_VEHICLES.push({ id: u.vehicle_id, label: u.vehicle_id + ' ó ' + (u.full_name || u.username) });
+      ADM_VEHICLES.push({ id: u.vehicle_id, label: u.vehicle_id + ' ‚Äì ' + (u.full_name || u.username) });
     }
   });
   const sel = $('adm-vehicle');
-  if(sel) sel.innerHTML = '<option value="">ó choisir ó</option>' + ADM_VEHICLES.map(v=>`<option value="${v.id}">${v.label}</option>`).join('');
+  if(sel) sel.innerHTML = '<option value="">‚Äì choisir ‚Äì</option>' + ADM_VEHICLES.map(v=>`<option value="${v.id}">${v.label}</option>`).join('');
 }
 
 function admSetSt(st, btn){
@@ -1049,7 +1049,7 @@ function admToggleNet(){
 async function doAdminSubmit(){
   const vehicle_id = $('adm-vehicle').value.trim();
   const date = $('adm-date').value;
-  if(!vehicle_id){ toast('SÈlectionne un vÈhicule','err'); return; }
+  if(!vehicle_id){ toast('S‚Äìlectionne un v√©hicule','err'); return; }
   if(!date){ toast('La date est obligatoire','err'); return; }
   const statut = document.querySelector('.adm-st-btn.active')?.dataset.st || 'ACTIF';
   const payload = {
@@ -1068,23 +1068,23 @@ async function doAdminSubmit(){
     is_net_input:    _admIsNet
   };
   const btn = $('adm-btn-submit');
-  btn.innerHTML = '<span class="loader"></span> EnvoiÖ'; btn.disabled = true;
+  btn.innerHTML = '<span class="loader"></span> Envoi‚Äì'; btn.disabled = true;
   $('adm-result').innerHTML = '';
   try {
     const r = await api('admin_submit', { token: TOKEN, payload });
     if(r.error){ $('adm-result').innerHTML = '<div class="alert danger">Erreur : '+r.error+'</div>'; return; }
-    $('adm-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">? JournÈe du '+date+' saisie et validÈe (#'+r.submission_id+')</div>';
+    $('adm-result').innerHTML = '<div class="alert success" style="padding:10px 14px;border-radius:8px;background:var(--vert-l);color:var(--vert);font-size:13px">? Journ√©e du '+date+' saisie et valid√©e (#'+r.submission_id+')</div>';
     ['adm-km','adm-nb','adm-ca','adm-ad','adm-vers','adm-wal','adm-cbl','adm-cbm','adm-note','adm-inc','adm-notes'].forEach(id=>{ if($(id)) $(id).value=''; }); if(_admIsNet){ admToggleNet(); }
     await refresh();
-    toast('? Saisie enregistrÈe','ok');
+    toast('? Saisie enregistr‚Äìe','ok');
   } catch(e) {
-    $('adm-result').innerHTML = '<div class="alert danger">Erreur rÈseau : '+e.message+'</div>';
+    $('adm-result').innerHTML = '<div class="alert danger">Erreur r√©seau : '+e.message+'</div>';
   } finally {
     btn.innerHTML = '? Valider la saisie'; btn.disabled = false;
   }
 }
 
-/* === PAIE CHAUFFEUR ó FONCTIONS UTILITAIRES === */
+/* === PAIE CHAUFFEUR ‚Äì FONCTIONS UTILITAIRES === */
 
 function copyPaySummary(){
   const p = window._PAY_SUMMARY;
@@ -1115,7 +1115,7 @@ function markAsPaid(){
   const msg = 'Paiement marque le ' + new Date().toLocaleDateString('fr-FR') + ' : ' + fmtX(p.net);
   $('pay-note').textContent = '\u2705 ' + msg;
   const badge = $('pay-status-badge');
-  badge.textContent = '\u2705 Paye ó ' + new Date().toLocaleDateString('fr-FR');
+  badge.textContent = '\u2705 Paye ‚Äì ' + new Date().toLocaleDateString('fr-FR');
   badge.style.cssText='font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;border:1.5px solid var(--vert);color:var(--vert);background:var(--vert-l)';
   $('pay-btn-paid').disabled = true;
   toast('Paiement enregistre localement','ok');
@@ -1128,13 +1128,13 @@ function markAsPaid(){
     <div class="view-pane" id="pane-factures" style="display:none">
       <div class="flex-between" style="margin:4px 0 14px">
         <div>
-          <h1>&#128203; GÈnÈrateur de Factures</h1>
-          <div class="muted" style="font-size:12px;margin-top:2px">CrÈez et imprimez des factures pour vos clients</div>
+          <h1>&#128203; G‚Äìn‚Äìrateur de Factures</h1>
+          <div class="muted" style="font-size:12px;margin-top:2px">Cr‚Äìez et imprimez des factures pour vos clients</div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn-gold" onclick="previewFacture()">&#128065; AperÁu</button>
+          <button class="btn-gold" onclick="previewFacture()">&#128065; Aper‚Äìu</button>
           <button class="btn-gold" onclick="printFacture()">&#128438; Imprimer / PDF</button>
-          <button class="btn-ico" onclick="resetFacture()">&#10006; RÈinitialiser</button>
+          <button class="btn-ico" onclick="resetFacture()">&#10006; R‚Äìinitialiser</button>
         </div>
       </div>
 
@@ -1148,7 +1148,7 @@ function markAsPaid(){
             <div class="card-header">&#128100; Informations Client</div>
             <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div>
-                <label class="lbl">PrÈnom</label>
+                <label class="lbl">Pr‚Äìnom</label>
                 <input class="inp" id="fac-prenom" placeholder="ex: Mamadou" oninput="liveUpdateFacture()">
               </div>
               <div>
@@ -1156,7 +1156,7 @@ function markAsPaid(){
                 <input class="inp" id="fac-nom" placeholder="ex: Diallo" oninput="liveUpdateFacture()">
               </div>
               <div>
-                <label class="lbl">SociÈtÈ (optionnel)</label>
+                <label class="lbl">Soci‚Äìt‚Äì (optionnel)</label>
                 <input class="inp" id="fac-societe" placeholder="ex: Transport SARL" oninput="liveUpdateFacture()">
               </div>
               <div>
@@ -1164,19 +1164,19 @@ function markAsPaid(){
                 <input class="inp" id="fac-email" placeholder="client@email.com" oninput="liveUpdateFacture()">
               </div>
               <div>
-                <label class="lbl">TÈlÈphone (optionnel)</label>
+                <label class="lbl">T‚Äìl‚Äìphone (optionnel)</label>
                 <input class="inp" id="fac-tel" placeholder="+221 77 000 00 00" oninput="liveUpdateFacture()">
               </div>
               <div>
                 <label class="lbl">Adresse (optionnel)</label>
-                <input class="inp" id="fac-adresse" placeholder="Dakar, SÈnÈgal" oninput="liveUpdateFacture()">
+                <input class="inp" id="fac-adresse" placeholder="Dakar, S‚Äìn‚Äìgal" oninput="liveUpdateFacture()">
               </div>
             </div>
           </div>
 
-          <!-- PÈriode & VÈhicule -->
+          <!-- P‚Äìriode & V√©hicule -->
           <div class="card">
-            <div class="card-header">&#128664; DÈtails de la Prestation</div>
+            <div class="card-header">&#128664; D√©tails de la Prestation</div>
             <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div>
                 <label class="lbl">Du (From)</label>
@@ -1187,7 +1187,7 @@ function markAsPaid(){
                 <input class="inp" type="date" id="fac-to" oninput="liveUpdateFacture()">
               </div>
               <div>
-                <label class="lbl">VÈhicule / Prestation</label>
+                <label class="lbl">V√©hicule / Prestation</label>
                 <input class="inp" id="fac-vehicule" placeholder="ex: Kia K3 - AA 123 DA" oninput="liveUpdateFacture()">
               </div>
               <div>
@@ -1233,23 +1233,23 @@ function markAsPaid(){
           <div class="card">
             <div class="card-header">&#128221; Notes & Conditions</div>
             <div class="card-body">
-              <textarea class="inp" id="fac-notes" rows="3" placeholder="Ex: Paiement ‡ rÈception. Merci pour votre confiance." style="resize:vertical" oninput="liveUpdateFacture()"></textarea>
+              <textarea class="inp" id="fac-notes" rows="3" placeholder="Ex: Paiement ‚Äì r‚Äìception. Merci pour votre confiance." style="resize:vertical" oninput="liveUpdateFacture()"></textarea>
               <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
                 <div>
                   <label class="lbl">Mode de paiement</label>
                   <select class="inp" id="fac-paiement" onchange="liveUpdateFacture()">
                     <option>Wave Mobile Money</option>
                     <option>Orange Money</option>
-                    <option>EspËces</option>
+                    <option>Esp‚Äìces</option>
                     <option>Virement bancaire</option>
-                    <option>ChËque</option>
+                    <option>Ch‚Äìque</option>
                     <option>Autre</option>
                   </select>
                 </div>
                 <div>
                   <label class="lbl">Statut paiement</label>
                   <select class="inp" id="fac-statut" onchange="liveUpdateFacture()">
-                    <option value="payee" style="color:green">? PayÈe</option>
+                    <option value="payee" style="color:green">? Pay‚Äìe</option>
                     <option value="attente">? En attente</option>
                     <option value="partiel">?? Partiel</option>
                   </select>
@@ -1260,18 +1260,18 @@ function markAsPaid(){
 
         </div>
 
-        <!-- AperÁu droite -->
+        <!-- Aper‚Äìu droite -->
         <div>
           <div class="card" style="position:sticky;top:80px">
             <div class="card-header" style="display:flex;justify-content:space-between">
-              <span>&#128065; AperÁu Facture</span>
+              <span>&#128065; Aper‚Äìu Facture</span>
               <span class="muted" style="font-size:11px" id="fac-numero-display"></span>
             </div>
             <div class="card-body" style="padding:0">
               <div id="facture-preview" style="padding:24px;min-height:400px;font-family:'Inter',sans-serif">
                 <div style="text-align:center;color:var(--muted);padding:40px 0">
                   <div style="font-size:36px">&#128203;</div>
-                  <div style="margin-top:8px">Remplissez le formulaire pour voir l'aperÁu</div>
+                  <div style="margin-top:8px">Remplissez le formulaire pour voir l'aper‚Äìu</div>
                 </div>
               </div>
             </div>
@@ -1282,7 +1282,7 @@ function markAsPaid(){
     </div>
 
 <style>
-/* Styles spÈcifiques facture */
+/* Styles sp‚Äìcifiques facture */
 .fac-ligne{display:grid;grid-template-columns:1fr 80px 110px 32px;gap:6px;align-items:center}
 .fac-ligne .inp{padding:6px 8px;font-size:12.5px}
 .fac-ligne-header{display:grid;grid-template-columns:1fr 80px 110px 32px;gap:6px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
@@ -1303,18 +1303,18 @@ let factureLignes = [];
 let factureNum = '';
 
 function initFactures(){
-  // GÈnÈrer numÈro facture
+  // G‚Äìn‚Äìrer num‚Äìro facture
   const d = new Date();
   factureNum = 'FAC-' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '-' + Math.floor(Math.random()*900+100);
   $('fac-numero-display').textContent = factureNum;
-  // Date par dÈfaut
+  // Date par d√©faut
   const today = d.toISOString().split('T')[0];
   const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0];
   $('fac-from').value = firstDay;
   $('fac-to').value = today;
-  // Ligne par dÈfaut
+  // Ligne par d√©faut
   factureLignes = [];
-  addLigne('Location vÈhicule avec chauffeur', 1, 0);
+  addLigne('Location v√©hicule avec chauffeur', 1, 0);
   liveUpdateFacture();
 }
 
@@ -1334,7 +1334,7 @@ function renderLignes(){
   const container = $('fac-lignes');
   container.innerHTML = `
     <div class="fac-ligne-header">
-      <span>Description</span><span>QtÈ</span><span>Prix unit.</span><span></span>
+      <span>Description</span><span>Qt‚Äì</span><span>Prix unit.</span><span></span>
     </div>`;
   factureLignes.forEach(l => {
     const row = document.createElement('div');
@@ -1372,12 +1372,12 @@ function liveUpdateFacture(){
 function fmtDate(d){
   if(!d) return '-';
   const [y,m,j] = d.split('-');
-  const mois = ['','Jan','FÈv','Mar','Avr','Mai','Jun','Jul','Ao˚','Sep','Oct','Nov','DÈc'];
+  const mois = ['','Jan','F‚Äìv','Mar','Avr','Mai','Jun','Jul','Ao‚Äì','Sep','Oct','Nov','D‚Äìc'];
   return j+' '+mois[parseInt(m)]+' '+y;
 }
 
 function statutBadge(s){
-  if(s==='payee') return '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">? PAY…E</span>';
+  if(s==='payee') return '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">? PAY‚ÄìE</span>';
   if(s==='attente') return '<span style="background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">? EN ATTENTE</span>';
   return '<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">?? PARTIEL</span>';
 }
@@ -1412,25 +1412,25 @@ function renderPreview(){
   $('facture-preview').innerHTML = `
     <div style="font-family:'Inter',sans-serif;color:#0F172A;max-width:680px;margin:0 auto">
 
-      <!-- En-tÍte -->
+      <!-- En-t‚Äìte -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:3px solid #C9A227">
         <div>
           <div style="font-size:22px;font-weight:800;letter-spacing:1px">M3A <span style="color:#C9A227">GROUP</span></div>
           <div style="font-size:11px;color:#64748B;margin-top:2px">Yango Business Solutions</div>
-          <div style="font-size:11px;color:#64748B">Dakar, SÈnÈgal</div>
+          <div style="font-size:11px;color:#64748B">Dakar, S‚Äìn‚Äìgal</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:1px">Facture</div>
           <div style="font-size:18px;font-weight:800;color:#0F172A">${factureNum}</div>
-          <div style="font-size:11px;color:#64748B;margin-top:4px">…mise le ${fmtDate(new Date().toISOString().split('T')[0])}</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px">‚Äìmise le ${fmtDate(new Date().toISOString().split('T')[0])}</div>
           <div style="margin-top:8px">${statutBadge(statut)}</div>
         </div>
       </div>
 
-      <!-- PÈriode & Client -->
+      <!-- P‚Äìriode & Client -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
         <div style="background:#F8FAFC;border-radius:10px;padding:14px">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">FacturÈ ‡</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">Factur‚Äì ‚Äì</div>
           <div style="font-weight:700;font-size:15px">${client}</div>
           ${societe ? `<div style="font-size:12px;color:#64748B">${societe}</div>` : ''}
           ${adresse ? `<div style="font-size:12px;color:#64748B">${adresse}</div>` : ''}
@@ -1438,7 +1438,7 @@ function renderPreview(){
           ${tel ? `<div style="font-size:12px;color:#64748B">${tel}</div>` : ''}
         </div>
         <div style="background:#F8FAFC;border-radius:10px;padding:14px">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">PÈriode de prestation</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#64748B;letter-spacing:.8px;margin-bottom:8px">P‚Äìriode de prestation</div>
           ${vehicule ? `<div style="font-weight:600;font-size:13px">?? ${vehicule}</div>` : ''}
           ${desc ? `<div style="font-size:12px;color:#64748B;margin-bottom:4px">${desc}</div>` : ''}
           <div style="font-size:12px;margin-top:6px"><strong>Du :</strong> ${fmtDate(from)}</div>
@@ -1451,7 +1451,7 @@ function renderPreview(){
         <thead>
           <tr style="background:#0F172A;color:#fff">
             <th style="padding:10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-radius:8px 0 0 0">Description</th>
-            <th style="padding:10px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">QtÈ</th>
+            <th style="padding:10px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Qt‚Äì</th>
             <th style="padding:10px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Prix Unit.</th>
             <th style="padding:10px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-radius:0 8px 0 0">Montant</th>
           </tr>
@@ -1486,14 +1486,14 @@ function renderPreview(){
 
       <!-- Footer -->
       <div style="border-top:1px solid #E2E8F0;padding-top:12px;text-align:center;font-size:11px;color:#94A3B8">
-        M3A Group ó Merci pour votre confiance ??
+        M3A Group ‚Äì Merci pour votre confiance ??
       </div>
     </div>`;
 }
 
 function previewFacture(){
   liveUpdateFacture();
-  toast('AperÁu mis ‡ jour','ok');
+  toast('Aper‚Äìu mis ‚Äì jour','ok');
 }
 
 function printFacture(){
@@ -1575,7 +1575,7 @@ function printFacture(){
 
 <script>
 /* ============================================================
-   EDITION ENTREES HISTORIQUE ó ADMIN
+   EDITION ENTREES HISTORIQUE ‚Äì ADMIN
    ============================================================ */
 let _editEntryId = null;
 
@@ -1590,12 +1590,12 @@ function openEditEntry(rowId){
   // Sous-titre
   $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
 
-  // PrÈ-remplir statut
+  // Pr‚Äì-remplir statut
   document.querySelectorAll('[data-est]').forEach(b=>{
     b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
   });
 
-  // PrÈ-remplir champs
+  // Pr‚Äì-remplir champs
   const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
   set('edit-km',   entry.km);
   set('edit-nb',   entry.nb_courses_yango);
@@ -1691,7 +1691,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
 </script>
 </body></html>`;
   
-  // Ouvrir dans nouvelle fenÍtre pour impression
+  // Ouvrir dans nouvelle fen‚Äìtre pour impression
   const w = window.open('','_blank','width=800,height=1000');
   w.document.write(`<!DOCTYPE html><html><head>
     <meta charset="UTF-8">
@@ -1776,7 +1776,7 @@ document.getElementById('edit-entry-modal').addEventListener('click', function(e
 
 <script>
 /* ============================================================
-   EDITION ENTREES HISTORIQUE ó ADMIN
+   EDITION ENTREES HISTORIQUE ‚Äì ADMIN
    ============================================================ */
 let _editEntryId = null;
 
@@ -1791,12 +1791,12 @@ function openEditEntry(rowId){
   // Sous-titre
   $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
 
-  // PrÈ-remplir statut
+  // Pr‚Äì-remplir statut
   document.querySelectorAll('[data-est]').forEach(b=>{
     b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
   });
 
-  // PrÈ-remplir champs
+  // Pr‚Äì-remplir champs
   const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
   set('edit-km',   entry.km);
   set('edit-nb',   entry.nb_courses_yango);
@@ -1904,7 +1904,7 @@ function resetFacture(){
   $('fac-paiement').selectedIndex = 0;
   factureLignes = [];
   initFactures();
-  toast('Formulaire rÈinitialisÈ','ok');
+  toast('Formulaire r‚Äìinitialis‚Äì','ok');
 }
 
     <!-- VIEW EVENTS -->
@@ -2178,7 +2178,7 @@ async function doRejectAdvance(id) {
 
 <script>
 /* ============================================================
-   EDITION ENTREES HISTORIQUE ó ADMIN
+   EDITION ENTREES HISTORIQUE ‚Äì ADMIN
    ============================================================ */
 let _editEntryId = null;
 
@@ -2193,12 +2193,12 @@ function openEditEntry(rowId){
   // Sous-titre
   $('edit-entry-subtitle').textContent = frDate(entry.date) + (entry.vehicle_id ? ' \u2014 ' + entry.vehicle_id : '');
 
-  // PrÈ-remplir statut
+  // Pr‚Äì-remplir statut
   document.querySelectorAll('[data-est]').forEach(b=>{
     b.classList.toggle('active', b.dataset.est === (entry.statut||'ACTIF'));
   });
 
-  // PrÈ-remplir champs
+  // Pr‚Äì-remplir champs
   const set = (id, val) => { const el=$(id); if(el) el.value = (val!=null && val!=='')?val:''; };
   set('edit-km',   entry.km);
   set('edit-nb',   entry.nb_courses_yango);
