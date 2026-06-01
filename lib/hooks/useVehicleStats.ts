@@ -31,9 +31,9 @@ export function useVehicleStats() {
       const supabase = createClient();
 
       // Get all vehicles with their related data
-      const { data: vehicles, error: vehiclesError } = await (supabase
+      const { data: vehicles, error: vehiclesError } = await ((supabase
         .from("vehicles") as any)
-        .select("*");
+        .select("*") as any);
 
       if (vehiclesError) throw vehiclesError;
 
@@ -45,15 +45,15 @@ export function useVehicleStats() {
 
       // For each vehicle, get stats from daily_reports
       const statsPromises = vehicles.map(async (vehicle) => {
-        const { data: reports } = await (supabase
+        const { data: reports } = await ((supabase
           .from("daily_reports") as any)
-          .select("*")
+          .select("*") as any)
           .eq("vehicle_id", vehicle.id);
 
         // Note: expenses table uses driver_id/report_id, not vehicle_id
-        const { data: events } = await (supabase
+        const { data: events } = await ((supabase
           .from("expenses") as any)
-          .select("*");
+          .select("*") as any);
 
         const reports_list = reports || [];
         const events_list = events || [];

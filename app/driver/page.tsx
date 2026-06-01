@@ -85,16 +85,16 @@ export default function DriverDashboard() {
       const supabase = createClient();
 
       // Insert event into database
-      const { data: eventData, error: eventError } = await (supabase
-        .from("expenses")
+      const { data: eventData, error: eventError } = await ((supabase
+        .from("expenses") as any)
         .insert({
           driver_id: profile.id,
           report_id: "", // placeholder, will be filled when daily report is created
           category: newEvent.type,
           amount: newEvent.amount,
           description: newEvent.description,
-        } as any)
-        .select()
+        } as any) as any
+        .select() as any
         .single() as any);
 
       if (eventError) {
@@ -126,9 +126,9 @@ export default function DriverDashboard() {
       const supabase = createClient();
 
       // Calculate totals from expenses
-      const { data: eventData, error: fetchError } = await (supabase
-        .from("expenses")
-        .select("*")
+      const { data: eventData, error: fetchError } = await ((supabase
+        .from("expenses") as any)
+        .select("*") as any
         .eq("driver_id", profile.id) as any);
 
       if (fetchError) {
