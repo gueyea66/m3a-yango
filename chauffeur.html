@@ -1,4 +1,4 @@
-???<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -470,10 +470,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:#F8FAFC;color:#0
         <h2><span class="icon">●</span> Aide rapide</h2>
         <div class="alert-info">
           <strong>Routine du soir :</strong><br/>
-          1. Prends en photo le compteur, l'Écran synthèse Yango, le re–u carburant si tu as fait le plein.<br/>
-          2. Saisis les chiffres cl–s (km, courses, CA, versement).<br/>
+          1. Prends en photo le compteur, l'Écran synthèse Yango, le reçu carburant si tu as fait le plein.<br/>
+          2. Saisis les chiffres clés (km, courses, CA, versement).<br/>
           3. Appuie sur <strong>Envoyer ma journée</strong>.<br/>
-          Le propriétaire est notifi– imm–diatement.
+          Le propriétaire est notifié immédiatement.
         </div>
       </div>
     </div>
@@ -551,7 +551,7 @@ async function checkSession(){
     ME = r.user;
     const c = await api('config_get', { token: TOKEN });
     CFG = c.config;
-    // r–cup véhicule via meta
+    // récup véhicule via meta
     VEH = { id: ME.vehicle_id, plate: '', name: '' };
     initApp();
   }catch(e){ TOKEN=null; localStorage.removeItem('m3a_token'); }
@@ -686,7 +686,7 @@ function addExtraPhoto(type){
     setTimeout(()=>document.getElementById('inp-'+id).click(), 150);
 
   } else {
-    // Document – s–lection multiple
+    // Document – sélection multiple
     const inp = document.createElement('input');
     inp.type = 'file';
     inp.multiple = true;
@@ -726,7 +726,7 @@ function addExtraPhoto(type){
       });
       document.body.removeChild(inp);
     };
-    extraPhotoCount--;   // sera incr–ment– par fichier
+    extraPhotoCount--;   // sera incrémenté par fichier
     inp.click();
     return;
   }
@@ -815,7 +815,7 @@ async function doSubmit(){
   if(statut==='ACTIF'){
     if(!PHOTOS.compteur){ toast('Photo du compteur obligatoire','err'); return; }
     if(!PHOTOS.synthese){ toast('Photo synthèse Yango obligatoire','err'); return; }
-    if(carb_on && !PHOTOS.carburant){ if(!confirm('Plein d–clar– sans re–u – envoyer quand m–me ?')) return; }
+    if(carb_on && !PHOTOS.carburant){ if(!confirm('Plein déclaré sans reçu – envoyer quand même ?')) return; }
   }
 
   let caBrut = +$('f-caY').value || 0;
@@ -845,7 +845,7 @@ async function doSubmit(){
   try{
     const r = await api('submit', { token: TOKEN, payload, photos });
     if(r.error){ toast('Erreur : '+r.error,'err'); return; }
-    toast('? Journée envoy–e – le propriétaire est notifi–','ok');
+    toast('? Journée envoyée – le propriétaire est notifié','ok');
     // reset
     PHOTOS={};
       document.getElementById('extra-photos-container').innerHTML='';
@@ -918,8 +918,8 @@ async function loadHistory(){
 async function changePw(){
   const o = $('pw-old').value, n = $('pw-new').value, n2 = $('pw-new2').value;
   if(!o||!n){ toast('Champs requis','err'); return; }
-  if(n!==n2){ toast('Confirmation diff–rente','err'); return; }
-  if(n.length<6){ toast('Min 6 caract–res','err'); return; }
+  if(n!==n2){ toast('Confirmation différente','err'); return; }
+  if(n.length<6){ toast('Min 6 caractères','err'); return; }
   const r = await api('change_password', { token:TOKEN, old_password:o, new_password:n });
   if(r.error){ toast(r.error,'err'); return; }
   toast('Mot de passe mis – jour ?','ok');
