@@ -93,7 +93,7 @@ export default function DriverDashboard() {
           category: newEvent.type,
           amount: newEvent.amount,
           description: newEvent.description,
-        } as any) as any
+        } as any)
         .select() as any
         .single() as any);
 
