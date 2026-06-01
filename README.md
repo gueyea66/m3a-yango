@@ -1,52 +1,36 @@
-# M3A Yango — Plateforme de suivi VTC Dakar
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Système de suivi opérationnel pour flotte Yango — M3A Solution, Dakar, Sénégal.
+## Getting Started
 
-## 🌐 Accès en production
+First, run the development server:
 
-| Interface | URL |
-|---|---|
-| **Landing Page** | https://gueyea66.github.io/m3a-yango/ |
-| **Espace Chauffeur** | https://gueyea66.github.io/m3a-yango/chauffeur.html |
-| **Espace Propriétaire** | https://gueyea66.github.io/m3a-yango/admin.html |
-
-## ⚙️ Architecture
-
-```
-Frontend (GitHub Pages)  →  fetch() CORS  →  Backend (Apps Script)  →  Google Sheets
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-- **Frontend** : GitHub Pages — HTML/CSS/JS statique (ce repo)
-- **Backend** : Google Apps Script déployé en Web App
-- **DB** : Google Spreadsheet (compte gueye.a66@gmail.com)
-- **Backend URL** : `https://script.google.com/macros/s/AKfycbyCr1QUqofrrxFHUeamWUtQrRKhmEIpBcgQ2srNsxxKZm_A2PyCJI-_7eW3-sgRYjVDIA/exec`
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 📋 Statut déploiement
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-- [x] GitHub Pages actif — frontend en ligne
-- [x] Backend Apps Script déployé et répondant
-- [x] Base de données Google Sheets initialisée (7 onglets)
-- [x] Compte chauffeur Kia K3 actif (`k3`)
-- [ ] Mot de passe admin à réinitialiser
-- [ ] Notifications WhatsApp (CallMeBot) à configurer
-- [ ] Import données v1 (optionnel)
-- [ ] Ajout véhicule 2 — Chevrolet Orlando
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 🚗 Véhicules
+## Learn More
 
-| Véhicule | Compte | Plaque | Statut |
-|---|---|---|---|
-| Kia K3 (diesel, automatique) | `k3` | AB-872-JG | ✅ Actif |
-| Chevrolet Orlando (7 places) | À créer | — | 🔜 À venir |
+To learn more about Next.js, take a look at the following resources:
 
-## Fonctionnalités
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- Saisie quotidienne chauffeur (courses Yango, CA, carburant, km, photos)
-- Validation propriétaire avec photos
-- Journal centralisé + statistiques
-- Notifications email automatiques (à chaque soumission)
-- Notifications WhatsApp via CallMeBot (optionnel)
-- Import historique depuis v1 (localStorage)
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
-*M3A Group — Transport VTC Dakar — Déployé le 29/05/2026*
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
