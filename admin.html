@@ -1,4 +1,4 @@
-﻿???<!DOCTYPE html>
+???<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
@@ -623,10 +623,15 @@ function compRow(r){
 /* --- DASHBOARD --- */
 function buildMonths(){
   const sel = $('dash-month');
-  const m = [...new Set(JOURNAL.map(d=>monthKey(d.date)))].sort();
-  if(!m.includes(monthKey(todayISO()))) m.push(monthKey(todayISO()));
-  sel.innerHTML = m.map(x=>{ const d=new Date(x+'-01T00:00:00'); return `<option value="${x}">${d.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</option>`; }).join('');
-  sel.value = monthKey(todayISO());
+  const prev = sel.value;
+  const m = [...new Set(JOURNAL.map(d=>monthKey(d.date)))].sort().reverse();
+  if(!m.includes(monthKey(todayISO()))) m.unshift(monthKey(todayISO()));
+  const opts = '<option value="all">&#128336; Tout (toutes p&eacute;riodes)</option>' +
+    m.map(x=>{ const d=new Date(x+'-01T00:00:00'); return `<option value="${x}">${d.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</option>`; }).join('');
+  sel.innerHTML = opts;
+  // preserve previous selection
+  if(prev === 'all' || m.includes(prev)) sel.value = prev;
+  else sel.value = monthKey(todayISO());
   sel.onchange = renderDash;
 }
 
@@ -634,10 +639,17 @@ function renderDash(){
   if(!CFG){ return; }
   buildMonths();
   const m = $('dash-month').value;
-  const md = new Date(m+'-01T00:00:00');
-  $('dash-period').textContent = md.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  const isAll = (m === 'all');
+  if(isAll){
+    $('dash-period').textContent = 'Toutes p\u00e9riodes';
+  } else {
+    const md = new Date(m+'-01T00:00:00');
+    $('dash-period').textContent = md.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  }
 
-  let days = JOURNAL.filter(d=>monthKey(d.date)===m).sort((a,b)=>a.date.localeCompare(b.date));
+  let days = isAll
+    ? [...JOURNAL].sort((a,b)=>a.date.localeCompare(b.date))
+    : JOURNAL.filter(d=>monthKey(d.date)===m).sort((a,b)=>a.date.localeCompare(b.date));
   // calc km parcourus en cha–ne (km du jour - km du jour précédent)
   let prevKm = null;
   days.forEach((d,i)=>{
@@ -688,7 +700,7 @@ function renderDash(){
   $('prog-proj').textContent = fmtX(proj); $('prog-proj-sub').textContent = 'Bonus projet– '+fmtX(bProj.amt);
   const reste = Math.max(0, cible-net15), jrs = Math.max(1, +CFG.jrs - actDays);
   $('prog-rest').textContent = fmtX(reste/jrs); $('prog-rest-sub').textContent = jrs+' jours restants';
-  $('dash-info').textContent = actDays+' / '+CFG.jrs+' jours travaill–s – cible quotidienne NET '+fmtX(+CFG.cibleJ);
+  $('dash-info').textContent = isAll ? (actDays+' jours travaill\u00e9s au total') : (actDays+' / '+CFG.jrs+' jours travaill\u00e9s - cible quotidienne NET '+fmtX(+CFG.cibleJ));
 
   // === PAIE CHAUFFEUR - Bilan complet ===
   const payFixe  = +CFG.fixe || 0;
@@ -698,7 +710,7 @@ function renderDash(){
 
   // Charges ponctuelles du mois (péage, carburant, réparation, etc.)
   const CHARGES_TYPES = ['carburant','peage','controle_routier','reparation','incident','accident','amende','assurance','visite','autre'];
-  const evMois = EVENTS_DATA.filter(ev => (monthKey(ev.date||'')||'') === m);
+  const evMois = isAll ? EVENTS_DATA : EVENTS_DATA.filter(ev => (monthKey(ev.date||'')||'') === m);
   const chargesMois = evMois.filter(ev => CHARGES_TYPES.includes(ev.type)).reduce((sum, ev) => sum + (+ev.montant||0), 0);
 
   // NET – VERSER = brut d– - versements d–j– re–us - charges ponctuelles
